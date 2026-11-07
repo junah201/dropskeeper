@@ -2,8 +2,17 @@
  * Battle.net 코드 등록 페이지의 화면 상태를 읽고 확인 버튼을 누른다.
  * Battle.net 탭의 content script 안에서 실행된다.
  *
- * ⚠️ 아래 문구 패턴은 실제 화면으로 아직 검증하지 않은 추정값이다.
- *    실제 버튼·결과 문구를 확인하면 이 파일의 패턴만 고치면 된다.
+ * 실제 화면(HAR)으로 확인한 것:
+ *   - `key-claim?keyCode=` 주소로 들어가면 버튼을 누르지 않아도 서버가 바로 조회까지 진행한다.
+ *     key-claim?keyCode= → 302 /checkout/<b64> → 302 preload/<b64> (페이지가 deviceInfo·csrftoken을 POST)
+ *     → 302 key-lookup/<b64>
+ *   - 오류(이미 등록됨, 유효하지 않음)는 key-lookup 페이지의
+ *     `<blz-alert severity="error">` 안 `.error-notification-banner-content`에 서버가 그려서 내려준다(일반 DOM).
+ *     첫 번째 <p>가 제목("이미 등록된 코드입니다."), 두 번째 <p>가 설명이다.
+ *   - 오류 페이지에도 빈 코드 입력 폼과 비활성 "코드 등록" 버튼이 함께 있다.
+ *
+ * ⚠️ 확인 버튼 문구와 성공 문구 패턴은 아직 검증하지 않은 추정값이다.
+ *    실제 문구를 확인하면 이 파일의 패턴만 고치면 된다.
  */
 import type { FailReason } from '../../types';
 
@@ -33,13 +42,35 @@ const visible = (el: Element): boolean => {
 
 const textOf = (el: Element) => (el.textContent ?? '').replace(/\s+/g, ' ').trim();
 
+/**
+ * Battle.net 상점은 웹 컴포넌트(meka-*, blz-*)로 만들어져 있어 요소가 shadow DOM 안에 숨어 있을 수 있다.
+ * document와 열린 shadow root를 모두 뒤진다.
+ */
+function deepAll(root: ParentNode = document): Element[] {
+  const out: Element[] = [];
+  for (const el of root.querySelectorAll('*')) {
+    out.push(el);
+    if (el.shadowRoot) out.push(...deepAll(el.shadowRoot));
+  }
+  return out;
+}
+
+const deepQueryAll = (selector: string) => deepAll().filter((el) => el.matches(selector));
+
+/** 일반 버튼과 `<meka-button>` 같은 버튼 웹 컴포넌트 */
+const isButtonLike = (el: Element) =>
+  el.matches('button, [role="button"], input[type="submit"]') || (el.localName.includes('-') && el.localName.includes('button'));
+
+const isDisabled = (el: Element) => (el as HTMLButtonElement).disabled === true || el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true';
+
+/** 버튼에 적힌 글자. 웹 컴포넌트 안의 <button>은 글자가 slot으로 들어와 비어 있으므로 바깥 요소 글자를 쓴다. */
+const labelOf = (el: Element) => textOf(el) || (el as HTMLInputElement).value || el.getAttribute('aria-label') || '';
+
 function findConfirmButton(): HTMLElement | undefined {
-  const buttons = [...document.querySelectorAll<HTMLElement>('button, [role="button"], input[type="submit"]')].filter(
-    (b) => visible(b) && !(b as HTMLButtonElement).disabled,
-  );
+  const buttons = deepAll().filter((b) => isButtonLike(b) && visible(b) && !isDisabled(b)) as HTMLElement[];
   for (const want of CONFIRM_TEXTS) {
     const hit = buttons.find((b) => {
-      const t = textOf(b) || (b as HTMLInputElement).value || '';
+      const t = labelOf(b);
       return t.includes(want) && !NEGATIVE_TEXTS.some((n) => t.includes(n));
     });
     if (hit) return hit;
@@ -47,14 +78,33 @@ function findConfirmButton(): HTMLElement | undefined {
   return undefined;
 }
 
+const ERROR_BANNER = '.error-notification-banner-content';
+/** 배너 안쪽 구조가 바뀌어도 잡을 수 있도록 바깥 요소도 본다 */
+const ERROR_ALERT = 'blz-alert[severity="error"]';
+
+/** key-lookup 페이지의 오류 배너를 읽는다. 배너가 있으면 이유를 몰라도 실패로 본다. */
+function readErrorBanner(): { reason: FailReason; message: string } | undefined {
+  const el =
+    deepQueryAll(ERROR_BANNER).find((e) => visible(e) && textOf(e)) ?? deepQueryAll(ERROR_ALERT).find((e) => visible(e) && textOf(e));
+  if (!el) return undefined;
+  const lines = [...el.querySelectorAll('p')].map(textOf).filter(Boolean);
+  const title = lines[0] ?? textOf(el);
+  const all = textOf(el);
+  const reason = ERROR_PATTERNS.find(([, re]) => re.test(title))?.[0] ?? ERROR_PATTERNS.find(([, re]) => re.test(all))?.[0] ?? 'unknown';
+  return { reason, message: title };
+}
+
 /** 알림·오류 영역에 있을 법한 요소의 문구를 모은다 */
 function alertTexts(): string[] {
   const sel = '[role="alert"], [role="status"], [aria-live], [class*="error" i], [class*="alert" i], [class*="success" i], [class*="message" i], h1, h2, h3';
-  return [...document.querySelectorAll(sel)].filter(visible).map(textOf).filter((t) => t.length > 0 && t.length < 300);
+  return deepQueryAll(sel).filter(visible).map(textOf).filter((t) => t.length > 0 && t.length < 300);
 }
 
 export function inspectPage(): BnetPageState {
   if (document.readyState === 'loading') return { kind: 'loading' };
+
+  const banner = readErrorBanner();
+  if (banner) return { kind: 'error', ...banner };
 
   const texts = alertTexts();
   for (const t of texts) {
@@ -62,7 +112,7 @@ export function inspectPage(): BnetPageState {
   }
 
   const btn = findConfirmButton();
-  if (btn) return { kind: 'confirm', buttonText: textOf(btn) };
+  if (btn) return { kind: 'confirm', buttonText: labelOf(btn) };
 
   for (const t of texts) if (SUCCESS_PATTERNS.some((re) => re.test(t))) return { kind: 'success', message: t };
 
@@ -73,6 +123,20 @@ export function inspectPage(): BnetPageState {
 export function clickConfirm(): boolean {
   const btn = findConfirmButton();
   if (!btn) return false;
-  btn.click();
+  // 웹 컴포넌트 버튼이면 안쪽의 실제 <button>을 눌러야 폼 제출이 일어난다
+  const inner = btn.shadowRoot?.querySelector<HTMLElement>('button, [role="button"], input[type="submit"]');
+  (inner ?? btn).click();
   return true;
+}
+
+/** 원인 파악용: 페이지에서 찾은 버튼과 알림 문구를 모은다 */
+export function describePage() {
+  return {
+    url: location.href,
+    buttons: deepAll()
+      .filter(isButtonLike)
+      .map((b) => ({ tag: b.localName, label: labelOf(b), visible: visible(b), disabled: isDisabled(b) })),
+    banners: deepQueryAll(`${ERROR_BANNER}, ${ERROR_ALERT}`).map(textOf),
+    alerts: alertTexts(),
+  };
 }

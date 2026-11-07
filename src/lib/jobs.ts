@@ -13,11 +13,15 @@ import {
   REDEEM_DELAY_MIN,
   RESULT_TIMEOUT,
   isBattlenetLoginPage,
-  isKeyClaimPage,
+  isKeyFlowPage,
   keyClaimUrl,
+  keyLookupCode,
+  sameCode,
 } from './redeem/battlenet/constants';
 
 const MAX_CONSECUTIVE_UNKNOWN = 3;
+/** 코드 하나를 등록하면서 누를 수 있는 버튼 수 (무한 반복 방지) */
+const MAX_CLICKS = 3;
 
 class Pause extends Error {}
 
@@ -73,7 +77,9 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
   await browser.tabs.update(tabId, { url: keyClaimUrl(code) });
   await waitForTabComplete(tabId).catch(() => undefined);
 
-  let clicked = false;
+  // 등록은 여러 화면을 거친다: 입력(key-claim) → 결과(key-lookup) → (유효한 코드면) 받기 확인.
+  // 같은 화면에서 버튼을 두 번 누르지 않도록 누른 화면 주소를 기억한다.
+  const clickedOn = new Set<string>();
   const deadline = Date.now() + RESULT_TIMEOUT;
   let last: BnetPageState | undefined;
 
@@ -81,7 +87,10 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
     const url = await tabUrl(tabId);
     if (isBattlenetLoginPage(url)) throw new Pause('Battle.net 로그인이 필요해요. 로그인한 뒤 재개를 눌러 주세요.');
 
-    const state: BnetPageState | undefined = isKeyClaimPage(url) || clicked ? await inspect(tabId) : undefined;
+    // 결과 페이지 주소에는 코드가 들어 있다. 다른 코드의 결과 화면이면 아직 이동 중이므로 읽지 않는다.
+    const lookupCode = keyLookupCode(url);
+    const ours = !lookupCode || sameCode(lookupCode, code);
+    const state: BnetPageState | undefined = ours && (isKeyFlowPage(url) || clickedOn.size > 0) ? await inspect(tabId) : undefined;
     if (state) last = state;
 
     switch (state?.kind) {
@@ -90,14 +99,15 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
       case 'success':
         return { ok: true, message: state.message };
       case 'confirm':
-        if (!clicked) {
+        if (url && !clickedOn.has(url) && clickedOn.size < MAX_CLICKS) {
           const r = await sendToTab(tabId, { type: 'bnet/confirm' }).catch(() => ({ clicked: false }));
-          clicked = r.clicked;
+          if (r.clicked) clickedOn.add(url);
         }
         break;
     }
     await sleep(500);
   }
+  const clicked = clickedOn.size > 0;
 
   return {
     ok: false,
