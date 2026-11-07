@@ -22,10 +22,25 @@ export const isExpired = (r: { expiresAt?: string }, now = Date.now()) => {
   return t != null && t < now;
 };
 
-/** 화면 표시용: 2027-03-31 → 27.03.31 (한국 시간 기준) */
+/** 화면 표시용: 2027-03-31 23:59:00 → 2027.03.31 (한국 시간 기준) */
 export function fmtDate(s?: string) {
   const t = parseDate(s);
   if (t == null) return '';
   const d = new Date(t + 9 * 3600_000).toISOString();
-  return `${d.slice(2, 4)}.${d.slice(5, 7)}.${d.slice(8, 10)}`;
+  return `${d.slice(0, 4)}.${d.slice(5, 7)}.${d.slice(8, 10)}`;
+}
+
+/** 화면 표시용 시각: 2026.11.08 04:47:06 (한국 시간, 24시간제) */
+export function fmtDateTime(ms: number) {
+  const d = new Date(ms + 9 * 3600_000).toISOString();
+  return `${d.slice(0, 4)}.${d.slice(5, 7)}.${d.slice(8, 10)} ${d.slice(11, 19)}`;
+}
+
+/** 획득일 ~ 만료일. 한쪽이 없으면 있는 쪽만 보여 준다. */
+export function fmtPeriod(start?: string, end?: string) {
+  const a = fmtDate(start);
+  const b = fmtDate(end);
+  if (a && b) return `${a} ~ ${b}`;
+  if (b) return `~ ${b}`;
+  return a ? `${a} ~` : '';
 }

@@ -5,7 +5,7 @@ import { lastLoadedItem, mergeRewards } from '@/lib/storage';
 import { BATTLENET_KEY_CLAIM_URL } from '@/lib/redeem/battlenet/constants';
 import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
-import { fmtDate, isExpired } from '@/lib/expiry';
+import { fmtDateTime, fmtPeriod, isExpired } from '@/lib/expiry';
 import { useStored } from '../hooks';
 import { Bar, Btn, Check, Notice, SelectAllBar, Shell, StatGrid, Tag, Thumb } from '../ui';
 
@@ -175,9 +175,10 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
                   <Thumb src={r.imageUrl} size="lg" />
                   <button type="button" className="min-w-0 flex-1 text-left" onClick={() => !r.code && toggle(k)}>
                     <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
+                    {/* 기간이 잘리지 않도록 캠페인 이름보다 앞에 둔다 */}
                     <div className="truncate text-[11px] text-faint">
-                      {r.campaign ? `${r.campaign} · ` : ''}
-                      {r.expiresAt ? `~${fmtDate(r.expiresAt)}` : ''}
+                      <span className="font-mono tabular-nums">{fmtPeriod(r.acquiredAt, r.expiresAt)}</span>
+                      {r.campaign ? ` · ${r.campaign}` : ''}
                     </div>
                   </button>
                   <RewardTag r={r} />
@@ -186,7 +187,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             })}
           </ul>
         )}
-        {lastLoaded && <p className="mt-auto px-3 py-3 text-[11px] text-faint">마지막 불러오기 {new Date(lastLoaded).toLocaleString('ko-KR')}</p>}
+        {lastLoaded && <p className="mt-auto px-3 py-3 text-[11px] text-faint">마지막 불러오기 <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span></p>}
       </div>
     </Shell>
   );
