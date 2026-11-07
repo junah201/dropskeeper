@@ -49,6 +49,11 @@ export interface RewardEntry extends SourceReward {
   code?: string;
   extractError?: string;
   redeem: RedeemState;
+  /**
+   * 사용자가 목록에서 삭제한 보상. 다시 불러와도 되살아나지 않도록 지우지 않고 표시만 남긴다.
+   * 화면 어디에도 보여 주지 않는다.
+   */
+  dismissed?: boolean;
   updatedAt: number;
 }
 

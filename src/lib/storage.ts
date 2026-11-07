@@ -62,6 +62,16 @@ export function patchReward(key: RewardKey, patch: (r: RewardEntry) => Partial<R
   });
 }
 
+/** 사용자가 고른 보상을 목록에서 삭제한다 (dismissed 표시) */
+export function dismissRewards(keys: RewardKey[]) {
+  return serial(async () => {
+    const all = await rewardsItem.getValue();
+    const now = Date.now();
+    for (const k of keys) if (all[k]) all[k] = { ...all[k], dismissed: true, updatedAt: now };
+    await rewardsItem.setValue(all);
+  });
+}
+
 export function patchJob(patch: (j: Job) => Partial<Job> | null) {
   return serial(async () => {
     const j = await jobItem.getValue();

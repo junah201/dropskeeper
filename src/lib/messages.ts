@@ -29,6 +29,7 @@ export type BnetResponse = {
  */
 export type BackgroundMessage =
   | { type: 'rewards/load'; sourceId: SourceId; tabId: number }
+  | { type: 'rewards/dismiss'; keys: RewardKey[] }
   | { type: 'job/start'; kind: JobKind; tabId: number; keys: RewardKey[] }
   | { type: 'job/pause' }
   | { type: 'job/resume' }

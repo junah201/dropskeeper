@@ -25,6 +25,9 @@ export function RedeemView({ tabId, loginPage, rewards, job }: Props) {
   return <Queue tabId={tabId} loginPage={loginPage} rewards={rewards} jobBusy={job?.status === 'running'} />;
 }
 
+/** 목록에서 삭제한다. 다시 불러와도 되살아나지 않는다. */
+const dismiss = (keys: RewardKey[]) => sendToBackground({ type: 'rewards/dismiss', keys });
+
 async function copy(text: string) {
   try {
     await navigator.clipboard.writeText(text);
@@ -133,6 +136,19 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
               >
                 {copied === k ? '복사됨' : '복사'}
               </button>
+              {failed && (
+                <button
+                  type="button"
+                  className="shrink-0 text-[11px] font-semibold text-bad"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    void dismiss([k]);
+                  }}
+                  title="목록에서 삭제"
+                >
+                  삭제
+                </button>
+              )}
             </li>
           );
         })}
@@ -259,6 +275,8 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
   const oks = items.filter((r) => r.redeem.status === 'success');
   const [tab, setTab] = useState<'fail' | 'ok'>(fails.length ? 'fail' : 'ok');
   const retry = (keys: RewardKey[]) => sendToBackground({ type: 'job/start', kind: 'redeem', tabId: job.tabId, keys });
+  // 이미 사용된 코드는 다시 시도해도 소용없으니 한 번에 지울 수 있게 한다
+  const used = fails.filter((r) => r.redeem.reason === 'already_used');
 
   return (
     <Shell
@@ -268,6 +286,11 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
           {fails.length > 0 && (
             <Btn full onClick={() => retry(fails.map(rewardKey))}>
               실패한 {fails.length}개 모두 다시 시도
+            </Btn>
+          )}
+          {used.length > 0 && (
+            <Btn kind="ghost" full onClick={() => dismiss(used.map(rewardKey))}>
+              이미 사용된 코드 {used.length}개 삭제
             </Btn>
           )}
           <Btn kind="ghost" full onClick={() => sendToBackground({ type: 'job/clear' })}>
@@ -317,9 +340,14 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
                       <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                       <div className="font-mono text-[11.5px] text-sub">{mask(r.code ?? '')}</div>
                     </div>
-                    <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
-                      다시 시도
-                    </Btn>
+                    <div className="flex shrink-0 gap-1">
+                      <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
+                        다시 시도
+                      </Btn>
+                      <Btn kind="ghost" size="sm" onClick={() => dismiss([rewardKey(r)])}>
+                        삭제
+                      </Btn>
+                    </div>
                   </div>
                   <div className="mt-2 rounded bg-bad-soft px-2 py-1.5 text-[11.5px] text-bad">
                     <b>{reasonLabel[reason]}</b> · {reasonHelp[reason]}

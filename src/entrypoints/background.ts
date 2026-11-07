@@ -1,6 +1,6 @@
 import { handleMessages, isBackgroundMessage, sendToTab, type Result } from '@/lib/messages';
 import { recoverJob, runLoop, startJob } from '@/lib/jobs';
-import { jobItem, mergeRewards, patchJob, patchReward } from '@/lib/storage';
+import { dismissRewards, jobItem, mergeRewards, patchJob, patchReward, rewardsItem } from '@/lib/storage';
 
 export default defineBackground(() => {
   void recoverJob();
@@ -20,9 +20,15 @@ export default defineBackground(() => {
         await mergeRewards(msg.sourceId, res.rewards);
         return { ok: true };
       }
-      case 'job/start':
-        await startJob(msg.kind, msg.tabId, msg.keys);
+      case 'rewards/dismiss':
+        await dismissRewards(msg.keys);
         return { ok: true };
+      case 'job/start': {
+        // 삭제한 보상은 작업에 넣지 않는다
+        const all = await rewardsItem.getValue();
+        await startJob(msg.kind, msg.tabId, msg.keys.filter((k) => !all[k]?.dismissed));
+        return { ok: true };
+      }
       case 'job/pause':
         await patchJob(() => ({ status: 'paused', pauseReason: undefined }));
         return { ok: true };
