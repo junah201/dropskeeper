@@ -36,11 +36,21 @@ export function fmtDateTime(ms: number) {
   return `${d.slice(0, 4)}.${d.slice(5, 7)}.${d.slice(8, 10)} ${d.slice(11, 19)}`;
 }
 
-/** 획득일 ~ 만료일. 한쪽이 없으면 있는 쪽만 보여 준다. */
-export function fmtPeriod(start?: string, end?: string) {
-  const a = fmtDate(start);
-  const b = fmtDate(end);
-  if (a && b) return `${a} ~ ${b}`;
-  if (b) return `~ ${b}`;
-  return a ? `${a} ~` : '';
+/** 만료가 이 일수 안으로 남으면 D-n으로 강조한다 */
+export const EXPIRY_SOON_DAYS = 14;
+
+const DAY = 86_400_000;
+/** 한국 시간 기준 날짜 번호 (일 단위) */
+const kstDay = (ms: number) => Math.floor((ms + 9 * 3600_000) / DAY);
+
+/**
+ * 목록 표시용 만료일. 14일 안으로 남으면 `D-5`(당일은 `D-day`)와 soon=true,
+ * 그보다 멀면 `~ 2027.02.28`. 만료일이 없으면 빈 문자열.
+ */
+export function fmtExpiry(s?: string, now = Date.now()): { text: string; soon: boolean } {
+  const t = parseDate(s);
+  if (t == null) return { text: '', soon: false };
+  const days = kstDay(t) - kstDay(now);
+  if (days <= EXPIRY_SOON_DAYS) return { text: days <= 0 ? 'D-day' : `D-${days}`, soon: true };
+  return { text: `~ ${fmtDate(s)}`, soon: false };
 }

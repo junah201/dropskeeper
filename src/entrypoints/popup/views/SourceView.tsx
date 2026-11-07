@@ -5,7 +5,7 @@ import { lastLoadedItem } from '@/lib/storage';
 import { BATTLENET_KEY_CLAIM_URL } from '@/lib/redeem/battlenet/constants';
 import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
-import { fmtDateTime, fmtPeriod, isExpired } from '@/lib/expiry';
+import { fmtDate, fmtDateTime, fmtExpiry, isExpired } from '@/lib/expiry';
 import { useStored } from '../hooks';
 import { Bar, Btn, Check, Notice, SelectAllBar, Shell, StatGrid, Tag, Thumb } from '../ui';
 
@@ -186,11 +186,8 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
                   <Thumb src={r.imageUrl} size="lg" />
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
-                    {/* 기간이 잘리지 않도록 캠페인 이름보다 앞에 둔다 */}
-                    <div className="truncate text-[11px] text-faint">
-                      <span className="font-mono tabular-nums">{fmtPeriod(r.acquiredAt, r.expiresAt)}</span>
-                      {r.campaign ? ` · ${r.campaign}` : ''}
-                    </div>
+                    {/* 만료일이 잘리지 않도록 캠페인 이름보다 앞에 둔다 */}
+                    <ExpiryLine r={r} />
                   </div>
                   <RewardTag r={r} />
                 </li>
@@ -201,6 +198,25 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
         {lastLoaded && <p className="mt-auto px-3 py-3 text-[11px] text-faint">마지막 불러오기 <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span></p>}
       </div>
     </Shell>
+  );
+}
+
+/** 만료일 · 캠페인. 만료가 가까우면 D-n을 주황색으로 강조한다. */
+function ExpiryLine({ r }: { r: RewardEntry }) {
+  const exp = fmtExpiry(r.expiresAt);
+  return (
+    <div className="truncate text-[11px] text-faint">
+      {exp.text && (
+        <span
+          className={`font-mono tabular-nums ${exp.soon ? 'font-semibold text-warn' : ''}`}
+          title={exp.soon ? `${fmtDate(r.expiresAt)} 만료` : undefined}
+        >
+          {exp.text}
+        </span>
+      )}
+      {exp.text && r.campaign ? ' · ' : ''}
+      {r.campaign}
+    </div>
   );
 }
 
