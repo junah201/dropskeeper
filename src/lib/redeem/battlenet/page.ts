@@ -30,6 +30,8 @@ const NEGATIVE_TEXTS = ['취소', '닫기', '돌아가기', 'Cancel', 'Back'];
 const SUCCESS_PATTERNS = [/등록(이|되)/, /추가되었/, /완료/, /받았습니다/, /success/i, /redeemed/i, /added to your account/i];
 const ERROR_PATTERNS: [FailReason, RegExp][] = [
   ['already_used', /이미\s*(사용|등록)|already\s+(been\s+)?(used|redeemed|claimed)/i],
+  // 실제 화면 문구: "이미 보유한 상품입니다."
+  ['already_owned', /이미\s*보유|already\s+own/i],
   ['expired', /만료|expired/i],
   ['invalid', /유효하지|올바르지|잘못된|존재하지|찾을 수 없|invalid|not\s+valid|incorrect/i],
 ];

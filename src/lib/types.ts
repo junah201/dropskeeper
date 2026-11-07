@@ -32,7 +32,7 @@ export type RewardKey = `${SourceId}:${string}`;
 export const rewardKey = (r: Pick<SourceReward, 'sourceId' | 'rewardId'>): RewardKey =>
   `${r.sourceId}:${r.rewardId}`;
 
-export type FailReason = 'already_used' | 'invalid' | 'expired' | 'login_required' | 'unknown';
+export type FailReason = 'already_used' | 'already_owned' | 'invalid' | 'expired' | 'login_required' | 'unknown';
 
 export type RedeemStatus = 'idle' | 'running' | 'success' | 'failed';
 
