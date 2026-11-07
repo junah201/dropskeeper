@@ -170,17 +170,24 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             {visible.map((r, i) => {
               const k = rewardKey(r);
               return (
-                <li key={k} className={`flex items-center gap-2 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''}`}>
-                  {r.code ? <span className="w-4 shrink-0" /> : <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />}
+                // 행 어디를 눌러도 선택된다. 체크박스 클릭도 이 onClick으로 전달된다.
+                <li
+                  key={k}
+                  onClick={r.code ? undefined : () => toggle(k)}
+                  className={`flex items-center gap-2 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''} ${
+                    r.code ? '' : 'cursor-pointer select-none hover:bg-bg'
+                  }`}
+                >
+                  {r.code ? <span className="w-4 shrink-0" /> : <Check on={selected.has(k)} label={r.name} />}
                   <Thumb src={r.imageUrl} size="lg" />
-                  <button type="button" className="min-w-0 flex-1 text-left" onClick={() => !r.code && toggle(k)}>
+                  <div className="min-w-0 flex-1">
                     <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                     {/* 기간이 잘리지 않도록 캠페인 이름보다 앞에 둔다 */}
                     <div className="truncate text-[11px] text-faint">
                       <span className="font-mono tabular-nums">{fmtPeriod(r.acquiredAt, r.expiresAt)}</span>
                       {r.campaign ? ` · ${r.campaign}` : ''}
                     </div>
-                  </button>
+                  </div>
                   <RewardTag r={r} />
                 </li>
               );

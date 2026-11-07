@@ -108,18 +108,26 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
           const k = rewardKey(r);
           const failed = r.redeem.status === 'failed';
           return (
-            <li key={k} className={`flex items-center gap-2.5 px-3 py-2.5 ${i ? 'border-t border-line' : ''}`}>
-              <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />
+            // 행 어디를 눌러도 선택된다. 체크박스 클릭도 이 onClick으로 전달된다.
+            <li
+              key={k}
+              onClick={() => toggle(k)}
+              className={`flex cursor-pointer select-none items-center gap-2.5 px-3 py-2.5 hover:bg-bg ${i ? 'border-t border-line' : ''}`}
+            >
+              <Check on={selected.has(k)} label={r.name} />
               <Thumb src={r.imageUrl} size="lg" />
-              <button type="button" className="min-w-0 flex-1 text-left" onClick={() => toggle(k)}>
+              <div className="min-w-0 flex-1">
                 <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                 <div className="font-mono text-[11.5px] tabular-nums text-sub">{mask(r.code!)}</div>
                 {failed && r.redeem.reason && <div className="mt-0.5 text-[11px] text-bad">지난 시도: {reasonLabel[r.redeem.reason]}</div>}
-              </button>
+              </div>
               <button
                 type="button"
                 className="shrink-0 text-[11px] font-semibold text-accent"
-                onClick={() => copy(r.code!).then(() => setCopied(k))}
+                onClick={(e) => {
+                  e.stopPropagation(); // 복사 버튼은 선택을 바꾸지 않는다
+                  void copy(r.code!).then(() => setCopied(k));
+                }}
                 title="코드 복사"
               >
                 {copied === k ? '복사됨' : '복사'}
