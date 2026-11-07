@@ -124,7 +124,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
               className={`flex cursor-pointer select-none items-center gap-2.5 px-3 py-2.5 hover:bg-bg ${i ? 'border-t border-line' : ''}`}
             >
               <Check on={selected.has(k)} label={r.name} />
-              <Thumb src={r.imageUrl} size="lg" />
+              <Thumb src={r.imageUrl} size="lg" source={r.sourceId} />
               <div className="min-w-0 flex-1">
                 <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                 <div className="font-mono text-[11.5px] tabular-nums text-sub">{mask(r.code!)}</div>
@@ -238,7 +238,7 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
                   !done && !isCurrent && !isNext ? 'opacity-50' : ''
                 }`}
               >
-                <Thumb src={r.imageUrl} />
+                <Thumb src={r.imageUrl} source={r.sourceId} />
                 <div className="min-w-0 flex-1">
                   <div className="truncate">{r.name}</div>
                   {r.code && <div className="font-mono text-[11px] text-faint">{mask(r.code)}</div>}
@@ -343,7 +343,7 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
               return (
                 <li key={rewardKey(r)} className="rounded-md border border-line bg-panel px-3 py-2.5">
                   <div className="flex items-start justify-between gap-2">
-                    <Thumb src={r.imageUrl} />
+                    <Thumb src={r.imageUrl} source={r.sourceId} />
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                       <div className="font-mono text-[11.5px] text-sub">{mask(r.code ?? '')}</div>
@@ -377,7 +377,7 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
         <ul className="border-b border-line bg-panel">
           {oks.map((r, i) => (
             <li key={rewardKey(r)} className={`flex items-center gap-2.5 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
-              <Thumb src={r.imageUrl} />
+              <Thumb src={r.imageUrl} source={r.sourceId} />
               <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold">{r.name}</span>
               <Tag tone="ok">등록됨</Tag>
             </li>

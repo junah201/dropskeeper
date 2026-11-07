@@ -1,4 +1,8 @@
 import { useState, type ReactNode } from 'react';
+import type { SourceId } from '@/lib/types';
+import { sourceMetas } from '@/lib/sources/hosts';
+import soopIcon from '@/assets/sources/soop.png';
+import chzzkIcon from '@/assets/sources/chzzk.png';
 
 export type Step = 'collect' | 'redeem' | null;
 
@@ -106,7 +110,29 @@ export function Bar({ value, total }: { value: number; total: number }) {
 
 const thumbSize = { md: 'h-8 w-8', lg: 'h-10 w-10' } as const;
 
-export function Thumb({ src, size = 'md' }: { src?: string; size?: keyof typeof thumbSize }) {
+/** 플랫폼 아이콘. 외부 요청 없이 확장에 번들한 파비콘을 쓴다. */
+const sourceIcon: Record<SourceId, string> = { soop: soopIcon, chzzk: chzzkIcon };
+
+/**
+ * 보상 썸네일. source를 주면 오른쪽 아래 모서리에 플랫폼 배지를 단다.
+ * 여러 플랫폼 보상이 섞여 나오는 등록 화면에서 어느 플랫폼 것인지 구분하게 한다.
+ */
+export function Thumb({ src, size = 'md', source }: { src?: string; size?: keyof typeof thumbSize; source?: SourceId }) {
+  if (!source) return <ThumbImage src={src} size={size} />;
+  const name = sourceMetas[source].name;
+  return (
+    <span className="relative shrink-0" title={name}>
+      <ThumbImage src={src} size={size} />
+      <img
+        src={sourceIcon[source]}
+        alt={name}
+        className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-[4px] ring-[1.5px] ring-panel"
+      />
+    </span>
+  );
+}
+
+function ThumbImage({ src, size }: { src?: string; size: keyof typeof thumbSize }) {
   const [broken, setBroken] = useState(false);
   // 이미지가 없거나 불러오지 못하면 회색 칸으로 자리만 유지한다
   return src && !broken ? (
