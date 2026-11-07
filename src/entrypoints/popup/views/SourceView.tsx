@@ -168,9 +168,9 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           {visible.map((r, i) => {
             const k = rewardKey(r);
             return (
-              <li key={k} className={`flex items-center gap-2.5 px-4 py-2 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''}`}>
+              <li key={k} className={`flex items-center gap-2 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''}`}>
                 {r.code ? <span className="w-4 shrink-0" /> : <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />}
-                <Thumb src={r.imageUrl} />
+                <Thumb src={r.imageUrl} size="lg" />
                 <button type="button" className="min-w-0 flex-1 text-left" onClick={() => !r.code && toggle(k)}>
                   <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                   <div className="truncate text-[11px] text-faint">
