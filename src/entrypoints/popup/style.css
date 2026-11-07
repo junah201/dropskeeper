@@ -37,6 +37,8 @@ body {
 }
 
 body {
+  /* 스크롤은 팝업 본문(main) 안에서만 생기게 한다 */
+  overflow: hidden;
   background: var(--color-bg);
   color: var(--color-ink);
   font-family: var(--font-sans);

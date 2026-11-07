@@ -137,54 +137,57 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
         </div>
       }
     >
-      <SelectAllBar all={all} some={chosen.length > 0} onToggle={toggleAll}>
-        · {visible.length}개 표시 / 전체 {list.length}개
-      </SelectAllBar>
-      <div className="flex flex-wrap items-center gap-1.5 px-3 py-2">
-        <FilterChip on={hideClaimed} onClick={() => setHideClaimed((v) => !v)}>
-          획득 완료 숨김
-        </FilterChip>
-        {!hideClaimed && unclaimed.length > 0 && (
-          <button type="button" className="rounded bg-[#eef0f3] px-1.5 py-0.5 text-[10.5px] font-semibold text-sub" onClick={selectUnclaimed}>
-            미획득만 선택 ({unclaimed.length})
+      {/* 내용이 짧아도 화면 높이를 채워, 빈 목록 문구는 가운데·마지막 불러오기는 맨 아래에 둔다 */}
+      <div className="flex min-h-full flex-col">
+        <SelectAllBar all={all} some={chosen.length > 0} onToggle={toggleAll}>
+          · {visible.length}개 표시 / 전체 {list.length}개
+        </SelectAllBar>
+        <div className="flex flex-wrap items-center gap-1.5 px-3 py-2">
+          <FilterChip on={hideClaimed} onClick={() => setHideClaimed((v) => !v)}>
+            획득 완료 숨김
+          </FilterChip>
+          {!hideClaimed && unclaimed.length > 0 && (
+            <button type="button" className="rounded bg-[#eef0f3] px-1.5 py-0.5 text-[10.5px] font-semibold text-sub" onClick={selectUnclaimed}>
+              미획득만 선택 ({unclaimed.length})
+            </button>
+          )}
+          <FilterChip on={hideExtracted} onClick={() => setHideExtracted((v) => !v)}>
+            추출됨 숨김
+          </FilterChip>
+          <button className="ml-auto text-[11.5px] font-semibold text-accent disabled:text-faint" onClick={load} disabled={loading}>
+            {loading ? '불러오는 중…' : '다시 불러오기'}
           </button>
-        )}
-        <FilterChip on={hideExtracted} onClick={() => setHideExtracted((v) => !v)}>
-          추출됨 숨김
-        </FilterChip>
-        <button className="ml-auto text-[11.5px] font-semibold text-accent disabled:text-faint" onClick={load} disabled={loading}>
-          {loading ? '불러오는 중…' : '다시 불러오기'}
-        </button>
-      </div>
-      {error && (
-        <div className="px-3 pb-2">
-          <Notice tone="bad">{error}</Notice>
         </div>
-      )}
-      {visible.length === 0 ? (
-        <p className="px-3 py-6 text-center text-[12.5px] text-faint">조건에 맞는 보상이 없어요.</p>
-      ) : (
-        <ul className="border-y border-line bg-panel">
-          {visible.map((r, i) => {
-            const k = rewardKey(r);
-            return (
-              <li key={k} className={`flex items-center gap-2 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''}`}>
-                {r.code ? <span className="w-4 shrink-0" /> : <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />}
-                <Thumb src={r.imageUrl} size="lg" />
-                <button type="button" className="min-w-0 flex-1 text-left" onClick={() => !r.code && toggle(k)}>
-                  <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
-                  <div className="truncate text-[11px] text-faint">
-                    {r.campaign ? `${r.campaign} · ` : ''}
-                    {r.expiresAt ? `~${fmtDate(r.expiresAt)}` : ''}
-                  </div>
-                </button>
-                <RewardTag r={r} />
-              </li>
-            );
-          })}
-        </ul>
-      )}
-      {lastLoaded && <p className="px-3 py-3 text-[11px] text-faint">마지막 불러오기 {new Date(lastLoaded).toLocaleString('ko-KR')}</p>}
+        {error && (
+          <div className="px-3 pb-2">
+            <Notice tone="bad">{error}</Notice>
+          </div>
+        )}
+        {visible.length === 0 ? (
+          <p className="flex flex-1 items-center justify-center px-3 text-center text-[12.5px] text-faint">조건에 맞는 보상이 없어요.</p>
+        ) : (
+          <ul className="border-y border-line bg-panel">
+            {visible.map((r, i) => {
+              const k = rewardKey(r);
+              return (
+                <li key={k} className={`flex items-center gap-2 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''}`}>
+                  {r.code ? <span className="w-4 shrink-0" /> : <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />}
+                  <Thumb src={r.imageUrl} size="lg" />
+                  <button type="button" className="min-w-0 flex-1 text-left" onClick={() => !r.code && toggle(k)}>
+                    <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
+                    <div className="truncate text-[11px] text-faint">
+                      {r.campaign ? `${r.campaign} · ` : ''}
+                      {r.expiresAt ? `~${fmtDate(r.expiresAt)}` : ''}
+                    </div>
+                  </button>
+                  <RewardTag r={r} />
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {lastLoaded && <p className="mt-auto px-3 py-3 text-[11px] text-faint">마지막 불러오기 {new Date(lastLoaded).toLocaleString('ko-KR')}</p>}
+      </div>
     </Shell>
   );
 }
