@@ -4,9 +4,9 @@ import { sourceMetas } from '@/lib/sources/hosts';
 import { failReasonOf, isRetryable, reasonHelp, reasonLabel } from '@/lib/labels';
 import type { Job, RewardEntry, RewardKey } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
-import { isExpired } from '@/lib/expiry';
+import { isExpired, parseDate } from '@/lib/expiry';
 import { useNow } from '../hooks';
-import { Bar, Btn, Check, Notice, SelectAllBar, Shell, Tag, Thumb, mask } from '../ui';
+import { Bar, Btn, Check, ExpiryLine, Notice, SelectAllBar, Shell, Tag, Thumb, mask } from '../ui';
 
 interface Props {
   tabId: number;
@@ -36,13 +36,22 @@ async function copy(text: string) {
   }
 }
 
+/** 정렬용 만료 시각. 만료일이 없으면 맨 뒤로 보낸다. */
+const expiryOrder = (r: RewardEntry) => parseDate(r.expiresAt) ?? Infinity;
+
 // C1: 등록 대기 목록
 function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPage: boolean; rewards: Record<RewardKey, RewardEntry>; jobBusy: boolean }) {
   const list = useMemo(
     () =>
       Object.values(rewards)
         .filter((r) => r.code && r.redeem.status !== 'success' && !isExpired(r))
-        .sort((a, b) => Number(a.redeem.status === 'failed') - Number(b.redeem.status === 'failed') || a.name.localeCompare(b.name)),
+        // 실패한 코드는 뒤로, 그 안에서는 만료가 가까운 순(만료일 없는 것은 맨 뒤), 같으면 이름순
+        .sort(
+          (a, b) =>
+            Number(a.redeem.status === 'failed') - Number(b.redeem.status === 'failed') ||
+            expiryOrder(a) - expiryOrder(b) ||
+            a.name.localeCompare(b.name),
+        ),
     [rewards],
   );
   const [selected, setSelected] = useState<Set<RewardKey>>(() => new Set(list.filter((r) => r.redeem.status !== 'failed').map(rewardKey)));
@@ -128,6 +137,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
               <div className="min-w-0 flex-1">
                 <div className="truncate text-[13.5px] font-semibold">{r.name}</div>
                 <div className="font-mono text-[12.5px] tabular-nums text-sub">{mask(r.code!)}</div>
+                <ExpiryLine r={r} />
                 {failed && <div className="mt-0.5 text-[12px] text-bad">지난 시도: {reasonLabel[failReasonOf(r.redeem.reason)]}</div>}
               </div>
               <button

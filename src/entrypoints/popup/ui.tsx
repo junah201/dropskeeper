@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
-import type { SourceId } from '@/lib/types';
+import type { RewardEntry, SourceId } from '@/lib/types';
+import { fmtDate, fmtExpiry } from '@/lib/expiry';
 import { sourceMetas } from '@/lib/sources/hosts';
 import soopIcon from '@/assets/sources/soop.png';
 import chzzkIcon from '@/assets/sources/chzzk.png';
@@ -181,6 +182,25 @@ export function SelectAllBar({ all, some, onToggle, children }: { all: boolean; 
         전체 선택
       </button>
       <span className="truncate text-faint">{children}</span>
+    </div>
+  );
+}
+
+/** 만료일 · 캠페인. 만료가 가까우면 D-n을 주황색으로 강조한다. */
+export function ExpiryLine({ r }: { r: RewardEntry }) {
+  const exp = fmtExpiry(r.expiresAt);
+  return (
+    <div className="truncate text-[12px] text-faint">
+      {exp.text && (
+        <span
+          className={`font-mono tabular-nums ${exp.soon ? 'font-semibold text-warn' : ''}`}
+          title={exp.soon ? `${fmtDate(r.expiresAt)} 만료` : undefined}
+        >
+          {exp.text}
+        </span>
+      )}
+      {exp.text && r.campaign ? ' · ' : ''}
+      {r.campaign}
     </div>
   );
 }

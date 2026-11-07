@@ -5,9 +5,9 @@ import { lastLoadedItem } from '@/lib/storage';
 import { BATTLENET_KEY_CLAIM_URL } from '@/lib/redeem/battlenet/constants';
 import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
-import { fmtDate, fmtDateTime, fmtExpiry, isExpired } from '@/lib/expiry';
+import { fmtDateTime, isExpired } from '@/lib/expiry';
 import { useStored } from '../hooks';
-import { Bar, Btn, Check, Notice, SelectAllBar, Shell, StatGrid, Tag, Thumb } from '../ui';
+import { Bar, Btn, Check, Notice, ExpiryLine, SelectAllBar, Shell, StatGrid, Tag, Thumb } from '../ui';
 
 interface Props {
   sourceId: SourceId;
@@ -198,25 +198,6 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
         {lastLoaded && <p className="mt-auto px-3 py-3 text-[12px] text-faint">마지막 불러오기 <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span></p>}
       </div>
     </Shell>
-  );
-}
-
-/** 만료일 · 캠페인. 만료가 가까우면 D-n을 주황색으로 강조한다. */
-function ExpiryLine({ r }: { r: RewardEntry }) {
-  const exp = fmtExpiry(r.expiresAt);
-  return (
-    <div className="truncate text-[12px] text-faint">
-      {exp.text && (
-        <span
-          className={`font-mono tabular-nums ${exp.soon ? 'font-semibold text-warn' : ''}`}
-          title={exp.soon ? `${fmtDate(r.expiresAt)} 만료` : undefined}
-        >
-          {exp.text}
-        </span>
-      )}
-      {exp.text && r.campaign ? ' · ' : ''}
-      {r.campaign}
-    </div>
   );
 }
 
