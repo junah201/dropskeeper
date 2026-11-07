@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { sendToBackground } from '@/lib/messages';
 import { sourceMetas } from '@/lib/sources/hosts';
 import { lastLoadedItem } from '@/lib/storage';
@@ -241,8 +241,12 @@ function FilterChip({ on, onClick, children }: { on: boolean; onClick: () => voi
 // B3: 키 추출 중
 function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, RewardEntry> }) {
   const paused = job.status === 'paused';
-  const doneKeys = job.queue.slice(0, job.index);
   const current = job.current ? rewards[job.current] : undefined;
+  // 진행 중인 항목이 목록 밖에 있으면 보이도록 스크롤한다
+  const currentRef = useRef<HTMLLIElement>(null);
+  useEffect(() => {
+    currentRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [job.index, job.current]);
   return (
     <Shell
       step="collect"
@@ -261,44 +265,60 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
         </div>
       }
     >
-      <div className="px-4 pt-6">
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-[15px] font-bold">{paused ? '키 추출 일시정지' : '키 추출 중'}</h2>
-          <span className="font-mono text-[13px] tabular-nums">
-            {job.index} / {job.queue.length}
-          </span>
-        </div>
-        <div className="mt-3">
-          <Bar value={job.index} total={job.queue.length} />
-        </div>
-        {current && <p className="mt-2 truncate text-[12px] text-sub">지금: {current.name}</p>}
-        {paused && job.pauseReason && (
-          <div className="mt-3">
-            <Notice tone="warn">{job.pauseReason}</Notice>
+      {/* 진행 요약은 위에 고정하고, 나머지 높이는 전체 목록이 채운다 */}
+      <div className="flex h-full flex-col">
+        <div className="px-4 pt-5">
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-[15px] font-bold">{paused ? '키 추출 일시정지' : '키 추출 중'}</h2>
+            <span className="font-mono text-[13px] tabular-nums">
+              {job.index} / {job.queue.length}
+            </span>
           </div>
-        )}
-      </div>
-      <ul className="mx-4 mt-5 overflow-hidden rounded-md border border-line bg-panel text-[12px]">
-        {doneKeys
-          .slice(-6)
-          .reverse()
-          .map((k, i) => {
+          <div className="mt-3">
+            <Bar value={job.index} total={job.queue.length} />
+          </div>
+          {paused && job.pauseReason && (
+            <div className="mt-3">
+              <Notice tone="warn">{job.pauseReason}</Notice>
+            </div>
+          )}
+        </div>
+
+        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-md border border-line bg-panel text-[12px]">
+          {job.queue.map((k, i) => {
             const r = rewards[k];
             if (!r) return null;
+            const isCurrent = k === job.current || (!current && i === job.index && !paused);
+            const done = i < job.index;
             return (
-              <li key={k} className={`flex items-center justify-between gap-2 px-3 py-2 ${i ? 'border-t border-line' : ''}`}>
-                <span className="truncate">{r.name}</span>
-                {r.code ? (
-                  <span className="shrink-0 font-mono text-ok">{r.code.slice(0, 4)}-…</span>
+              <li
+                key={k}
+                ref={isCurrent ? currentRef : undefined}
+                className={`flex items-center gap-2.5 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${isCurrent ? 'bg-accent-soft' : ''} ${
+                  !done && !isCurrent ? 'opacity-50' : ''
+                }`}
+              >
+                <Thumb src={r.imageUrl} />
+                <span className="min-w-0 flex-1 truncate">{r.name}</span>
+                {done ? (
+                  r.code ? (
+                    <span className="shrink-0 font-mono text-ok">{r.code.slice(0, 4)}-…</span>
+                  ) : (
+                    <span className="shrink-0 font-semibold text-bad" title={r.extractError}>
+                      실패
+                    </span>
+                  )
+                ) : isCurrent ? (
+                  <span className="shrink-0 font-semibold text-accent">요청 중…</span>
                 ) : (
-                  <span className="shrink-0 text-bad">실패</span>
+                  <span className="shrink-0 text-faint">대기</span>
                 )}
               </li>
             );
           })}
-        {doneKeys.length === 0 && <li className="px-3 py-2 text-faint">첫 코드를 요청하는 중…</li>}
-      </ul>
-      <p className="px-4 pt-3 text-[11px] text-faint">팝업을 닫아도 계속 진행돼요</p>
+        </ul>
+        <p className="px-4 py-3 text-[11px] text-faint">팝업을 닫아도 계속 진행돼요</p>
+      </div>
     </Shell>
   );
 }
