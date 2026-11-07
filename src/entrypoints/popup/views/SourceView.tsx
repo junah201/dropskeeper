@@ -99,7 +99,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             <br />
             오버워치 보상을 가져옵니다
           </h2>
-          <p className="mt-2 text-[12.5px] leading-relaxed text-sub">
+          <p className="mt-2 text-[13.5px] leading-relaxed text-sub">
             로그인된 계정으로 보상 목록을 불러와요. 코드는 다음 단계에서 고른 보상만 추출합니다.
           </p>
           {error && (
@@ -111,7 +111,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             <Btn full onClick={load} disabled={loading}>
               {loading ? '불러오는 중…' : '보상 목록 불러오기'}
             </Btn>
-            <p className="mt-2 text-center text-[11px] text-faint">유효기간이 남은 오버워치 코드형 보상만 가져와요</p>
+            <p className="mt-2 text-center text-[12px] text-faint">유효기간이 남은 오버워치 코드형 보상만 가져와요</p>
           </div>
         </div>
       </Shell>
@@ -124,7 +124,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
       step="collect"
       footer={
         <div className="flex items-center gap-3">
-          <span className="text-[12px] text-sub">
+          <span className="text-[13px] text-sub">
             <b className="text-ink">{chosen.length}개</b> 선택
           </span>
           <div className="flex-1">
@@ -149,7 +149,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           {meta.tracksClaimed && !hideClaimed && unclaimed.length > 0 && (
             <button
               type="button"
-              className="inline-flex h-6 items-center rounded-md border border-line bg-panel px-2 text-[11.5px] font-semibold text-ink hover:bg-bg"
+              className="inline-flex h-6 items-center rounded-md border border-line bg-panel px-2 text-[12.5px] font-semibold text-ink hover:bg-bg"
               onClick={selectUnclaimed}
             >
               미획득만 선택 ({unclaimed.length})
@@ -158,7 +158,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           <FilterChip on={hideExtracted} onClick={() => setHideExtracted((v) => !v)}>
             추출됨 숨김
           </FilterChip>
-          <button className="ml-auto text-[11.5px] font-semibold text-accent disabled:text-faint" onClick={load} disabled={loading}>
+          <button className="ml-auto text-[12.5px] font-semibold text-accent disabled:text-faint" onClick={load} disabled={loading}>
             {loading ? '불러오는 중…' : '다시 불러오기'}
           </button>
         </div>
@@ -168,7 +168,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           </div>
         )}
         {visible.length === 0 ? (
-          <p className="flex flex-1 items-center justify-center px-3 text-center text-[12.5px] text-faint">조건에 맞는 보상이 없어요.</p>
+          <p className="flex flex-1 items-center justify-center px-3 text-center text-[13.5px] text-faint">조건에 맞는 보상이 없어요.</p>
         ) : (
           <ul className="border-y border-line bg-panel">
             {visible.map((r, i) => {
@@ -185,7 +185,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
                   {r.code ? <span className="w-4 shrink-0" /> : <Check on={selected.has(k)} label={r.name} />}
                   <Thumb src={r.imageUrl} size="lg" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
+                    <div className="truncate text-[13.5px] font-semibold">{r.name}</div>
                     {/* 만료일이 잘리지 않도록 캠페인 이름보다 앞에 둔다 */}
                     <ExpiryLine r={r} />
                   </div>
@@ -195,7 +195,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             })}
           </ul>
         )}
-        {lastLoaded && <p className="mt-auto px-3 py-3 text-[11px] text-faint">마지막 불러오기 <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span></p>}
+        {lastLoaded && <p className="mt-auto px-3 py-3 text-[12px] text-faint">마지막 불러오기 <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span></p>}
       </div>
     </Shell>
   );
@@ -205,7 +205,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
 function ExpiryLine({ r }: { r: RewardEntry }) {
   const exp = fmtExpiry(r.expiresAt);
   return (
-    <div className="truncate text-[11px] text-faint">
+    <div className="truncate text-[12px] text-faint">
       {exp.text && (
         <span
           className={`font-mono tabular-nums ${exp.soon ? 'font-semibold text-warn' : ''}`}
@@ -240,7 +240,7 @@ function FilterChip({ on, onClick, children }: { on: boolean; onClick: () => voi
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[11.5px] font-semibold transition-colors ${
+      className={`inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[12.5px] font-semibold transition-colors ${
         on ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-panel text-sub hover:border-check hover:text-ink'
       }`}
     >
@@ -288,7 +288,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
         <div className="px-4 pt-5">
           <div className="flex items-baseline justify-between">
             <h2 className="text-[15px] font-bold">{paused ? '키 추출 일시정지' : '키 추출 중'}</h2>
-            <span className="font-mono text-[13px] tabular-nums">
+            <span className="font-mono text-[14px] tabular-nums">
               {job.index} / {job.queue.length}
             </span>
           </div>
@@ -302,7 +302,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
           )}
         </div>
 
-        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-md border border-line bg-panel text-[12px]">
+        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-md border border-line bg-panel text-[13px]">
           {job.queue.map((k, i) => {
             const r = rewards[k];
             if (!r) return null;
@@ -335,7 +335,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
             );
           })}
         </ul>
-        <p className="px-4 py-3 text-[11px] text-faint">팝업을 닫아도 계속 진행돼요</p>
+        <p className="px-4 py-3 text-[12px] text-faint">팝업을 닫아도 계속 진행돼요</p>
       </div>
     </Shell>
   );
@@ -366,7 +366,7 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
         <h2 className="text-[15px] font-bold">
           {job.status === 'stopped' ? '추출을 중지했어요' : `키 ${ok.length}개를 추출했어요`}
         </h2>
-        <p className="mt-1 text-[12.5px] text-sub">Battle.net 코드 등록 페이지에서 확장을 다시 열면 이어서 등록할 수 있어요.</p>
+        <p className="mt-1 text-[13.5px] text-sub">Battle.net 코드 등록 페이지에서 확장을 다시 열면 이어서 등록할 수 있어요.</p>
         <div className="mt-4">
           <StatGrid
             items={[
@@ -378,7 +378,7 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
         {fail.length > 0 && (
           <ul className="mt-3 grid gap-2">
             {fail.map((r) => (
-              <li key={rewardKey(r)} className="flex items-start justify-between gap-2 rounded-md border border-line bg-panel px-3 py-2.5 text-[12px]">
+              <li key={rewardKey(r)} className="flex items-start justify-between gap-2 rounded-md border border-line bg-panel px-3 py-2.5 text-[13px]">
                 <div className="min-w-0">
                   <div className="truncate font-semibold">{r.name}</div>
                   <div className="text-bad">{r.extractError ?? '알 수 없는 오류'}</div>

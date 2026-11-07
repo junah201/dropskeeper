@@ -16,9 +16,9 @@ export function Shell({ step, children, footer }: { step: Step; children: ReactN
       <header className="flex items-center justify-between border-b border-line bg-panel px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="grid h-6 w-6 place-items-center rounded-[5px] bg-ink text-[10px] font-bold text-white">dk</div>
-          <span className="text-[13px] font-semibold">dropkeeper</span>
+          <span className="text-[14px] font-semibold">dropkeeper</span>
         </div>
-        <ol className="flex items-center gap-1 font-mono text-[11px]">
+        <ol className="flex items-center gap-1 font-mono text-[12px]">
           {steps.map((s, i) => {
             const on = s.id === step;
             return (
@@ -56,7 +56,7 @@ export function Btn({
     <button
       {...rest}
       className={`shrink-0 rounded-md border font-semibold transition-colors disabled:cursor-not-allowed ${
-        size === 'sm' ? 'h-7 px-2.5 text-[12px]' : 'h-9 px-3 text-[13px]'
+        size === 'sm' ? 'h-7 px-2.5 text-[13px]' : 'h-9 px-3 text-[14px]'
       } ${btnClass[kind]} ${full ? 'w-full' : ''}`}
     >
       {children}
@@ -96,7 +96,7 @@ const toneClass: Record<Tone, string> = {
 };
 
 export function Tag({ tone, children }: { tone: Tone; children: ReactNode }) {
-  return <span className={`whitespace-nowrap rounded px-1.5 py-0.5 text-[10.5px] font-semibold ${toneClass[tone]}`}>{children}</span>;
+  return <span className={`whitespace-nowrap rounded px-1.5 py-0.5 text-[11.5px] font-semibold ${toneClass[tone]}`}>{children}</span>;
 }
 
 export function Bar({ value, total }: { value: number; total: number }) {
@@ -150,12 +150,12 @@ function ThumbImage({ src, size }: { src?: string; size: keyof typeof thumbSize 
 }
 
 export function Notice({ tone, children }: { tone: Tone; children: ReactNode }) {
-  return <div className={`rounded-md px-3 py-2.5 text-[12px] leading-relaxed ${toneClass[tone]}`}>{children}</div>;
+  return <div className={`rounded-md px-3 py-2.5 text-[13px] leading-relaxed ${toneClass[tone]}`}>{children}</div>;
 }
 
 export function StatGrid({ items }: { items: [string, ReactNode][] }) {
   return (
-    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-line bg-line text-[12px]">
+    <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-md border border-line bg-line text-[13px]">
       {items.map(([k, v]) => (
         <div key={k} className="bg-panel px-3 py-2">
           <dt className="text-faint">{k}</dt>
@@ -175,7 +175,7 @@ export const mask = (code: string) => {
 
 export function SelectAllBar({ all, some, onToggle, children }: { all: boolean; some: boolean; onToggle: () => void; children?: ReactNode }) {
   return (
-    <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-line bg-bg px-3 py-2 text-[12px]">
+    <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-line bg-bg px-3 py-2 text-[13px]">
       <Check on={all} mixed={!all && some} onChange={onToggle} label="전체 선택" />
       <button type="button" onClick={onToggle} className="font-semibold">
         전체 선택
