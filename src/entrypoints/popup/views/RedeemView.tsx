@@ -6,7 +6,7 @@ import type { Job, RewardEntry, RewardKey } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
 import { isExpired } from '@/lib/expiry';
 import { useNow } from '../hooks';
-import { Bar, Btn, Check, Notice, SelectAllBar, Shell, Tag, mask } from '../ui';
+import { Bar, Btn, Check, Notice, SelectAllBar, Shell, Tag, Thumb, mask } from '../ui';
 
 const HOST = 'kr.checkout.battle.net/key-claim';
 
@@ -113,6 +113,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
           return (
             <li key={k} className={`flex items-center gap-2.5 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
               <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />
+              <Thumb src={r.imageUrl} />
               <button type="button" className="min-w-0 flex-1 text-left" onClick={() => toggle(k)}>
                 <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                 <div className="font-mono text-[11.5px] tabular-nums text-sub">{mask(r.code!)}</div>
@@ -190,8 +191,13 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
       {current?.code && (
         <div className="mx-4 mt-4 rounded-md border border-line bg-panel px-3 py-3">
           <div className="text-[11px] font-semibold text-faint">지금 등록 중</div>
-          <div className="mt-1 truncate text-[13px] font-semibold">{current.name}</div>
-          <div className="mt-0.5 font-mono text-[11.5px] text-sub">{mask(current.code)}</div>
+          <div className="mt-1.5 flex items-center gap-2.5">
+            <Thumb src={current.imageUrl} />
+            <div className="min-w-0">
+              <div className="truncate text-[13px] font-semibold">{current.name}</div>
+              <div className="mt-0.5 font-mono text-[11.5px] text-sub">{mask(current.code)}</div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -265,7 +271,8 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
               return (
                 <li key={rewardKey(r)} className="rounded-md border border-line bg-panel px-3 py-2.5">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
+                    <Thumb src={r.imageUrl} />
+                    <div className="min-w-0 flex-1">
                       <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                       <div className="font-mono text-[11.5px] text-sub">{mask(r.code ?? '')}</div>
                     </div>
@@ -285,8 +292,9 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
       ) : (
         <ul className="border-b border-line bg-panel">
           {oks.map((r, i) => (
-            <li key={rewardKey(r)} className={`flex items-center justify-between gap-2 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
-              <span className="truncate text-[12.5px] font-semibold">{r.name}</span>
+            <li key={rewardKey(r)} className={`flex items-center gap-2.5 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
+              <Thumb src={r.imageUrl} />
+              <span className="min-w-0 flex-1 truncate text-[12.5px] font-semibold">{r.name}</span>
               <Tag tone="ok">등록됨</Tag>
             </li>
           ))}

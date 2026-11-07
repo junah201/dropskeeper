@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 
 export type Step = 'collect' | 'redeem' | null;
 
@@ -106,8 +106,17 @@ export function Bar({ value, total }: { value: number; total: number }) {
 }
 
 export function Thumb({ src }: { src?: string }) {
-  return src ? (
-    <img src={src} alt="" className="h-8 w-8 shrink-0 rounded-[5px] border border-line bg-bg object-cover" />
+  const [broken, setBroken] = useState(false);
+  // 이미지가 없거나 불러오지 못하면 회색 칸으로 자리만 유지한다
+  return src && !broken ? (
+    <img
+      src={src}
+      alt=""
+      loading="lazy"
+      referrerPolicy="no-referrer"
+      onError={() => setBroken(true)}
+      className="h-8 w-8 shrink-0 rounded-[5px] border border-line bg-bg object-cover"
+    />
   ) : (
     <span className="h-8 w-8 shrink-0 rounded-[5px] bg-line" />
   );
