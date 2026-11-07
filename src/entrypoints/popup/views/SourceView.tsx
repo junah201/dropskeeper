@@ -209,10 +209,10 @@ const isClaimedElsewhere = (r: RewardEntry) => !!r.claimed && !r.code;
 
 function RewardTag({ r }: { r: RewardEntry }) {
   if (r.redeem.status === 'success') return <Tag tone="ok">등록됨</Tag>;
-  if (r.code) return <Tag tone="accent">추출됨</Tag>;
+  if (r.code) return <Tag tone="mute">추출됨</Tag>;
   if (r.extractError) return <Tag tone="bad">추출 실패</Tag>;
   if (r.claimed) return <Tag tone="warn">획득 완료</Tag>;
-  return <Tag tone="mute">미추출</Tag>;
+  return <Tag tone="accent">미추출</Tag>;
 }
 
 /**
