@@ -43,6 +43,8 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  /* 한글이 단어 중간에서 줄바꿈되지 않게 어절 단위로만 끊는다 */
+  word-break: keep-all;
 }
 
 #root {
