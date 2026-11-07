@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 
 export type Step = 'collect' | 'redeem' | null;
 
-export function Shell({ step, host, children, footer }: { step: Step; host?: string; children: ReactNode; footer?: ReactNode }) {
+export function Shell({ step, children, footer }: { step: Step; children: ReactNode; footer?: ReactNode }) {
   const steps = [
     { id: 'collect', label: '수집' },
     { id: 'redeem', label: '등록' },
@@ -28,7 +28,6 @@ export function Shell({ step, host, children, footer }: { step: Step; host?: str
           })}
         </ol>
       </header>
-      {host && <div className="px-4 pt-2 font-mono text-[11px] text-faint">{host}</div>}
       <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
       {footer && <footer className="border-t border-line bg-panel px-4 py-3">{footer}</footer>}
     </div>

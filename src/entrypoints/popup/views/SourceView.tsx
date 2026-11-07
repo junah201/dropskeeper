@@ -18,17 +18,16 @@ interface Props {
 
 export function SourceView({ sourceId, tabId, rewards, job }: Props) {
   const meta = sourceMetas[sourceId];
-  const host = new URL(meta.inventoryUrl).host + new URL(meta.inventoryUrl).pathname;
   // 유효기간이 지난 보상은 추출해도 쓸 수 없으니 목록에서 아예 뺀다
   const mine = useMemo(() => Object.values(rewards).filter((r) => r.sourceId === sourceId && !isExpired(r)), [rewards, sourceId]);
 
   if (job?.kind === 'extract' && (job.status === 'running' || job.status === 'paused')) {
-    return <Extracting host={host} job={job} rewards={rewards} />;
+    return <Extracting job={job} rewards={rewards} />;
   }
   if (job?.kind === 'extract' && (job.status === 'done' || job.status === 'stopped')) {
-    return <ExtractDone host={host} job={job} rewards={rewards} />;
+    return <ExtractDone job={job} rewards={rewards} />;
   }
-  return <RewardList host={host} sourceId={sourceId} tabId={tabId} list={mine} jobBusy={job?.status === 'running'} />;
+  return <RewardList sourceId={sourceId} tabId={tabId} list={mine} jobBusy={job?.status === 'running'} />;
 }
 
 async function loadRewards(sourceId: SourceId, tabId: number): Promise<string | null> {
@@ -43,7 +42,7 @@ async function loadRewards(sourceId: SourceId, tabId: number): Promise<string | 
   return null;
 }
 
-function RewardList({ host, sourceId, tabId, list, jobBusy }: { host: string; sourceId: SourceId; tabId: number; list: RewardEntry[]; jobBusy: boolean }) {
+function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; tabId: number; list: RewardEntry[]; jobBusy: boolean }) {
   const meta = sourceMetas[sourceId];
   const lastLoaded = useStored(lastLoadedItem)?.[sourceId];
   const [loading, setLoading] = useState(false);
@@ -95,7 +94,7 @@ function RewardList({ host, sourceId, tabId, list, jobBusy }: { host: string; so
   // B1: 아직 불러온 적 없음
   if (list.length === 0) {
     return (
-      <Shell step="collect" host={host}>
+      <Shell step="collect">
         <div className="flex h-full flex-col px-4 pb-4 pt-6">
           <h2 className="text-[17px] font-bold leading-snug">
             {meta.name} 드롭스 인벤토리에서
@@ -125,7 +124,6 @@ function RewardList({ host, sourceId, tabId, list, jobBusy }: { host: string; so
   return (
     <Shell
       step="collect"
-      host={host}
       footer={
         <div className="flex items-center gap-3">
           <span className="text-[12px] text-sub">
@@ -216,14 +214,13 @@ function FilterChip({ on, onClick, children }: { on: boolean; onClick: () => voi
 }
 
 // B3: 키 추출 중
-function Extracting({ host, job, rewards }: { host: string; job: Job; rewards: Record<RewardKey, RewardEntry> }) {
+function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, RewardEntry> }) {
   const paused = job.status === 'paused';
   const doneKeys = job.queue.slice(0, job.index);
   const current = job.current ? rewards[job.current] : undefined;
   return (
     <Shell
       step="collect"
-      host={host}
       footer={
         <div className="grid grid-cols-2 gap-2">
           {paused ? (
@@ -282,7 +279,7 @@ function Extracting({ host, job, rewards }: { host: string; job: Job; rewards: R
 }
 
 // B4: 추출 완료
-function ExtractDone({ host, job, rewards }: { host: string; job: Job; rewards: Record<RewardKey, RewardEntry> }) {
+function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, RewardEntry> }) {
   const items = job.queue.slice(0, job.index).map((k) => rewards[k]).filter(isDefined);
   const ok = items.filter((r) => r.code);
   const fail = items.filter((r) => !r.code);
@@ -291,7 +288,6 @@ function ExtractDone({ host, job, rewards }: { host: string; job: Job; rewards: 
   return (
     <Shell
       step="collect"
-      host={host}
       footer={
         <div className="grid gap-2">
           <Btn full onClick={() => browser.tabs.create({ url: BATTLENET_KEY_CLAIM_URL })}>

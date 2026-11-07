@@ -8,8 +8,6 @@ import { isExpired } from '@/lib/expiry';
 import { useNow } from '../hooks';
 import { Bar, Btn, Check, Notice, SelectAllBar, Shell, Tag, Thumb, mask } from '../ui';
 
-const HOST = 'kr.checkout.battle.net/key-claim';
-
 interface Props {
   tabId: number;
   loginPage: boolean;
@@ -65,7 +63,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
 
   if (list.length === 0) {
     return (
-      <Shell step="redeem" host={HOST}>
+      <Shell step="redeem">
         <div className="flex h-full flex-col px-4 pb-4 pt-6">
           <h2 className="text-[16px] font-bold">등록할 키가 없어요</h2>
           <p className="mt-1.5 text-[12.5px] leading-relaxed text-sub">드롭스 인벤토리에서 보상을 불러오고 키를 추출하면 여기에 표시돼요.</p>
@@ -84,7 +82,6 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
   return (
     <Shell
       step="redeem"
-      host={HOST}
       footer={
         <div className="flex items-center gap-3">
           <span className="text-[12px] text-sub">
@@ -149,7 +146,6 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
   return (
     <Shell
       step="redeem"
-      host={HOST}
       footer={
         <div className="grid grid-cols-2 gap-2">
           {paused ? (
@@ -221,7 +217,6 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
   return (
     <Shell
       step="redeem"
-      host={HOST}
       footer={
         <div className="grid gap-2">
           {fails.length > 0 && (
