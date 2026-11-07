@@ -22,6 +22,7 @@ pnpm compile   # 타입 검사
 
 - **플랫폼 코드는 `src/lib/sources/<플랫폼>.ts`에만 둔다.** 팝업, 저장소, 작업 실행기는 `SourceId`만 보고 동작해야 한다. 새 플랫폼을 추가하는 순서는 README에 있다.
 - 플랫폼 API는 해당 사이트 탭의 content script에서 호출한다. 그래야 로그인 쿠키가 1st-party로 붙는다. 쿠키 값을 직접 읽거나 저장하지 않는다.
+- 저장소(`src/lib/storage.ts`) 쓰기는 background에서만 한다. popup은 `sendToBackground`로 요청한다. 쓰기 순서 보장이 실행 환경마다 따로 동작하기 때문이다.
 - React와 Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
 - 유효기간이 지난 보상은 목록, 대기열, 통계 어디에도 보여 주지 않는다 (`src/lib/expiry.ts`).
 - Battle.net 등록 페이지의 버튼과 결과 문구 패턴(`src/lib/redeem/battlenet/page.ts`)은 아직 실제 화면으로 검증하지 않은 추정값이다.

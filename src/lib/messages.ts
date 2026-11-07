@@ -1,4 +1,4 @@
-import type { JobKind, RewardKey, SourceReward } from './types';
+import type { JobKind, RewardKey, SourceId, SourceReward } from './types';
 import type { BnetPageState } from './redeem/battlenet/page';
 
 export type Fail = { ok: false; error: string; kind?: string };
@@ -23,15 +23,19 @@ export type BnetResponse = {
   'bnet/confirm': { clicked: boolean };
 };
 
-/** popup → background */
-export type JobMessage =
+/**
+ * popup → background.
+ * 저장소 쓰기는 모두 background에서 하도록 popup은 이 메시지로 요청만 보낸다.
+ */
+export type BackgroundMessage =
+  | { type: 'rewards/load'; sourceId: SourceId; tabId: number }
   | { type: 'job/start'; kind: JobKind; tabId: number; keys: RewardKey[] }
   | { type: 'job/pause' }
   | { type: 'job/resume' }
   | { type: 'job/stop' }
   | { type: 'job/clear' };
 
-type AnyMessage = SourceMessage | BnetMessage | JobMessage;
+type AnyMessage = SourceMessage | BnetMessage | BackgroundMessage;
 type ResponseOf<M extends AnyMessage> = M['type'] extends keyof SourceResponse
   ? SourceResponse[M['type']]
   : M['type'] extends keyof BnetResponse
@@ -42,7 +46,7 @@ export async function sendToTab<M extends SourceMessage | BnetMessage>(tabId: nu
   return (await browser.tabs.sendMessage(tabId, msg)) as ResponseOf<M>;
 }
 
-export async function sendToBackground(msg: JobMessage): Promise<Result> {
+export async function sendToBackground(msg: BackgroundMessage): Promise<Result> {
   return (await browser.runtime.sendMessage(msg)) as Result;
 }
 
@@ -68,4 +72,4 @@ const hasType = (msg: unknown, prefix: string): boolean =>
 
 export const isSourceMessage = (m: unknown): m is SourceMessage => hasType(m, 'source/');
 export const isBnetMessage = (m: unknown): m is BnetMessage => hasType(m, 'bnet/');
-export const isJobMessage = (m: unknown): m is JobMessage => hasType(m, 'job/');
+export const isBackgroundMessage = (m: unknown): m is BackgroundMessage => hasType(m, 'job/') || hasType(m, 'rewards/');

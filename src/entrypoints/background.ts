@@ -1,12 +1,25 @@
-import { handleMessages, isJobMessage } from '@/lib/messages';
+import { handleMessages, isBackgroundMessage, sendToTab, type Result } from '@/lib/messages';
 import { recoverJob, runLoop, startJob } from '@/lib/jobs';
-import { jobItem, patchJob, patchReward } from '@/lib/storage';
+import { jobItem, mergeRewards, patchJob, patchReward } from '@/lib/storage';
 
 export default defineBackground(() => {
   void recoverJob();
 
-  handleMessages(isJobMessage, async (msg) => {
+  handleMessages(isBackgroundMessage, async (msg): Promise<Result> => {
     switch (msg.type) {
+      case 'rewards/load': {
+        // 목록은 플랫폼 탭에서 받아 오고, 저장소 합치기는 여기(background)에서 한다.
+        // 저장소 쓰기를 background 한 곳에 모아야 등록 작업과 동시에 실행돼도 서로 덮어쓰지 않는다.
+        let res;
+        try {
+          res = await sendToTab(msg.tabId, { type: 'source/list' });
+        } catch {
+          return { ok: false, error: '페이지와 연결하지 못했어요. 인벤토리 페이지를 새로고침한 뒤 다시 시도하세요.' };
+        }
+        if (!res?.ok) return { ok: false, error: res?.error ?? '목록을 불러오지 못했어요.', kind: res?.kind };
+        await mergeRewards(msg.sourceId, res.rewards);
+        return { ok: true };
+      }
       case 'job/start':
         await startJob(msg.kind, msg.tabId, msg.keys);
         return { ok: true };

@@ -14,6 +14,8 @@ export const lastLoadedItem = storage.defineItem<Partial<Record<SourceId, number
 });
 
 // 여러 곳에서 동시에 고쳐도 덮어쓰지 않도록 쓰기를 한 줄로 세운다.
+// 이 줄은 실행 환경(popup, background)마다 따로 생기므로, 아래 쓰기 함수는 background에서만 호출한다.
+// popup은 background에 메시지를 보내 쓰기를 요청한다.
 let chain: Promise<unknown> = Promise.resolve();
 function serial<T>(fn: () => Promise<T>): Promise<T> {
   const next = chain.then(fn, fn);

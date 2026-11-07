@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
-import { sendToBackground, sendToTab } from '@/lib/messages';
+import { sendToBackground } from '@/lib/messages';
 import { sourceMetas } from '@/lib/sources/hosts';
-import { lastLoadedItem, mergeRewards } from '@/lib/storage';
+import { lastLoadedItem } from '@/lib/storage';
 import { BATTLENET_KEY_CLAIM_URL } from '@/lib/redeem/battlenet/constants';
 import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
@@ -30,16 +30,14 @@ export function SourceView({ sourceId, tabId, rewards, job }: Props) {
   return <RewardList sourceId={sourceId} tabId={tabId} list={mine} jobBusy={job?.status === 'running'} />;
 }
 
+/** 불러오기와 저장은 background가 맡는다. 실패하면 보여 줄 문구를 돌려준다. */
 async function loadRewards(sourceId: SourceId, tabId: number): Promise<string | null> {
-  let res;
   try {
-    res = await sendToTab(tabId, { type: 'source/list' });
+    const res = await sendToBackground({ type: 'rewards/load', sourceId, tabId });
+    return res.ok ? null : res.error;
   } catch {
-    return '페이지와 연결하지 못했어요. 인벤토리 페이지를 새로고침한 뒤 다시 시도하세요.';
+    return '확장 프로그램과 연결하지 못했어요. 팝업을 다시 열어 주세요.';
   }
-  if (!res?.ok) return res?.error ?? '목록을 불러오지 못했어요.';
-  await mergeRewards(sourceId, res.rewards);
-  return null;
 }
 
 function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; tabId: number; list: RewardEntry[]; jobBusy: boolean }) {
