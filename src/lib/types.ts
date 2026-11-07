@@ -1,5 +1,5 @@
-/** 드롭스를 받아오는 플랫폼. CHZZK 같은 새 플랫폼은 여기에 id를 추가하고 sources/에 구현을 넣는다. */
-export type SourceId = 'soop';
+/** 드롭스를 받아오는 플랫폼. 새 플랫폼은 여기에 id를 추가하고 sources/에 구현을 넣는다. */
+export type SourceId = 'soop' | 'chzzk';
 
 /** 코드를 등록하는 곳. 지금은 Battle.net 하나. */
 export type RedeemTargetId = 'battlenet';
@@ -10,7 +10,7 @@ export type GameId = 'overwatch';
 /** 각 플랫폼이 돌려주는 보상 한 건 (정규화된 형태) */
 export interface SourceReward {
   sourceId: SourceId;
-  /** 플랫폼 안에서 고유한 id (SOOP은 itemCodeIdx) */
+  /** 플랫폼 안에서 고유한 id (SOOP은 itemCodeIdx, CHZZK는 rewardNo) */
   rewardId: string;
   name: string;
   game: GameId;

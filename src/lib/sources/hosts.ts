@@ -9,7 +9,12 @@ export const sourceMetas: Record<SourceId, SourceMeta> = {
     inventoryUrl: 'https://drops.sooplive.com/inventory',
     matches: ['https://drops.sooplive.com/*'],
   },
-  // chzzk: { id: 'chzzk', name: 'CHZZK', inventoryUrl: '...', matches: ['...'] },
+  chzzk: {
+    id: 'chzzk',
+    name: 'CHZZK',
+    inventoryUrl: 'https://game.naver.com/profile#drops',
+    matches: ['https://game.naver.com/*'],
+  },
 };
 
 export const sourceHostPermissions = Object.values(sourceMetas).flatMap((m) => m.matches);

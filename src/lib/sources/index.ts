@@ -1,10 +1,12 @@
 import type { SourceId } from '../types';
 import type { DropSource } from './types';
 import { soopSource } from './soop';
+import { chzzkSource } from './chzzk';
 
 /** content script에서만 쓰는 구현 레지스트리 */
 export const sources: Record<SourceId, DropSource> = {
   soop: soopSource,
+  chzzk: chzzkSource,
 };
 
 export { sourceMetas, sourceIdFromUrl } from './hosts';
