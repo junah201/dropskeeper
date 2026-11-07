@@ -1,4 +1,10 @@
 @import 'tailwindcss';
+/* 본문: Pretendard 가변 폰트. 쓰는 글자가 든 조각 파일만 불러온다. */
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+/* 코드·숫자: 영문과 숫자만 쓰므로 라틴 서브셋만 */
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+@import '@fontsource/ibm-plex-mono/latin-600.css';
 
 /* A 시안(정리표): 흰 패널, 연한 회색 바탕, 파랑 포인트 */
 @theme {
@@ -19,7 +25,7 @@
   --color-warn-soft: #fdf1dc;
   --color-check: #b9c0cc;
 
-  --font-sans: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', 'Segoe UI', system-ui, sans-serif;
+  --font-sans: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 }
 
