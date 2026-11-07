@@ -34,7 +34,7 @@ export function Home({ rewards, job }: { rewards: Record<RewardKey, RewardEntry>
 
         <StatGrid
           items={[
-            ['추출한 키', `${withCode.length}개`],
+            ['추출한 코드', `${withCode.length}개`],
             ['등록 대기', `${withCode.filter((r) => r.redeem.status !== 'success').length}개`],
             ['등록 성공', `${ok}개`],
             ['등록 실패', `${failed}개`],

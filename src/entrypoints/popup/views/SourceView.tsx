@@ -129,7 +129,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           </span>
           <div className="flex-1">
             <Btn full disabled={chosen.length === 0 || jobBusy} onClick={extract}>
-              키 추출 ({chosen.length})
+              코드 추출 ({chosen.length})
             </Btn>
           </div>
         </div>
@@ -256,7 +256,7 @@ function FilterChip({ on, onClick, children }: { on: boolean; onClick: () => voi
   );
 }
 
-// B3: 키 추출 중
+// B3: 코드 추출 중
 function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, RewardEntry> }) {
   const paused = job.status === 'paused';
   const current = job.current ? rewards[job.current] : undefined;
@@ -287,7 +287,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
       <div className="flex h-full flex-col">
         <div className="px-4 pt-5">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-[15px] font-bold">{paused ? '키 추출 일시정지' : '키 추출 중'}</h2>
+            <h2 className="text-[15px] font-bold">{paused ? '코드 추출 일시정지' : '코드 추출 중'}</h2>
             <span className="font-mono text-[14px] tabular-nums">
               {job.index} / {job.queue.length}
             </span>
@@ -364,7 +364,7 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
     >
       <div className="px-4 pb-4 pt-6">
         <h2 className="text-[15px] font-bold">
-          {job.status === 'stopped' ? '추출을 중지했어요' : `키 ${ok.length}개를 추출했어요`}
+          {job.status === 'stopped' ? '추출을 중지했어요' : `코드 ${ok.length}개를 추출했어요`}
         </h2>
         <p className="mt-1 text-[13.5px] text-sub">Battle.net 코드 등록 페이지에서 확장을 다시 열면 이어서 등록할 수 있어요.</p>
         <div className="mt-4">

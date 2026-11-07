@@ -68,8 +68,8 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
     return (
       <Shell step="redeem">
         <div className="flex h-full flex-col px-4 pb-4 pt-6">
-          <h2 className="text-[16px] font-bold">등록할 키가 없어요</h2>
-          <p className="mt-1.5 text-[13.5px] leading-relaxed text-sub">드롭스 인벤토리에서 보상을 불러오고 키를 추출하면 여기에 표시돼요.</p>
+          <h2 className="text-[16px] font-bold">등록할 코드가 없어요</h2>
+          <p className="mt-1.5 text-[13.5px] leading-relaxed text-sub">드롭스 인벤토리에서 보상을 불러오고 코드를 추출하면 여기에 표시돼요.</p>
           <div className="mt-auto grid gap-2">
             {Object.values(sourceMetas).map((m) => (
               <Btn key={m.id} kind="ghost" full onClick={() => browser.tabs.create({ url: m.inventoryUrl })}>
@@ -174,7 +174,7 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
   const waitSec = job.nextAt ? Math.max(0, Math.ceil((job.nextAt - now) / 1000)) : 0;
   const waiting = !paused && !current && waitSec > 0;
 
-  // 진행 중인 행(또는 다음 차례 행)이 보이도록 스크롤한다. 키 추출 화면과 같은 방식.
+  // 진행 중인 행(또는 다음 차례 행)이 보이도록 스크롤한다. 코드 추출 화면과 같은 방식.
   const currentRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
     currentRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });

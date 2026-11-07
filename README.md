@@ -8,7 +8,7 @@
 1. 드롭스 인벤토리에서 확장을 열고 **보상 목록 불러오기**
    - SOOP: `drops.sooplive.com/inventory`
    - CHZZK: `game.naver.com/profile#drops` (네이버 로그인 필요)
-2. 보상을 고르고 **키 추출**
+2. 보상을 고르고 **코드 추출**
 3. Battle.net 코드 등록 페이지(`kr.checkout.battle.net/shop/ko/checkout/key-claim`)에서 확장을 다시 열고 **등록하기**
 4. 실패한 코드는 이유를 확인하고 **다시 시도**
 
