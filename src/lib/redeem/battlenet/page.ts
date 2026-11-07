@@ -14,7 +14,9 @@
  *
  *   - 확인 페이지의 버튼은 `form#submit-key-claim` 안의 `<button>확인</button>`이고, 취소는 `<a>` 링크다.
  *
- * ⚠️ "확인"을 누른 뒤의 성공 화면 문구(SUCCESS_PATTERNS)는 아직 검증하지 않은 추정값이다.
+ *   - "확인"을 누르면 perform-key-claim → purchase-details/key-claim/<코드>("코드 등록을 처리 중입니다.")로 가고,
+ *     페이지가 2초마다 purchase-status를 확인하다 끝나면 새로고침해 "코드가 등록되었습니다."를 보여 준다.
+ *     완료 화면의 "돌아가기", "다른 코드 등록"은 버튼이 아닌 <a> 링크다.
  */
 import type { FailReason } from '../../types';
 
@@ -29,7 +31,11 @@ export type BnetPageState =
 const CONFIRM_TEXTS = ['코드 사용', '사용하기', '등록하기', '등록', '받기', '확인', '계속', 'Redeem', 'Claim', 'Continue', 'Confirm'];
 const NEGATIVE_TEXTS = ['취소', '닫기', '돌아가기', 'Cancel', 'Back'];
 
-const SUCCESS_PATTERNS = [/등록(이|되)/, /추가되었/, /완료/, /받았습니다/, /success/i, /redeemed/i, /added to your account/i];
+// 실제 화면 문구: purchase-details/key-claim/<코드> 페이지의 "코드가 등록되었습니다."
+const SUCCESS_PATTERNS = [/코드가\s*등록되었습니다/];
+// "확인"을 누른 뒤 서버가 처리하는 동안 보이는 화면: "잠시만 기다려주세요. 코드 등록을 처리 중입니다."
+// 페이지가 스스로 상태를 확인하고 새로고침하므로 결과가 나올 때까지 기다린다.
+const PROCESSING_PATTERNS = [/등록을\s*처리\s*중/];
 // 실제 화면으로 확인한 오류 제목만 적는다. 여기에 없는 오류는 unknown으로 두고 원문을 보여 준다.
 const ERROR_PATTERNS: [FailReason, RegExp][] = [
   // "이미 등록된 코드입니다."
@@ -125,10 +131,12 @@ export function inspectPage(): BnetPageState {
     for (const [reason, re] of ERROR_PATTERNS) if (re.test(t)) return { kind: 'error', reason, message: t };
   }
 
+  // 완료 화면에서 다른 버튼을 누르지 않도록 성공 여부를 버튼보다 먼저 본다
+  for (const t of texts) if (SUCCESS_PATTERNS.some((re) => re.test(t))) return { kind: 'success', message: t };
+  if (texts.some((t) => PROCESSING_PATTERNS.some((re) => re.test(t)))) return { kind: 'loading' };
+
   const btn = findConfirmButton();
   if (btn) return { kind: 'confirm', buttonText: labelOf(btn) };
-
-  for (const t of texts) if (SUCCESS_PATTERNS.some((re) => re.test(t))) return { kind: 'success', message: t };
 
   const body = textOf(document.body).slice(0, 200);
   return { kind: 'unknown', message: body };
