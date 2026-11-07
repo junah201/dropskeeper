@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { sendToBackground } from '@/lib/messages';
 import { sourceMetas } from '@/lib/sources/hosts';
 import { reasonHelp, reasonLabel } from '@/lib/labels';
@@ -151,6 +151,13 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
   const fail = done.filter((r) => r.redeem.status === 'failed').length;
   const current = job.current ? rewards[job.current] : undefined;
   const waitSec = job.nextAt ? Math.max(0, Math.ceil((job.nextAt - now) / 1000)) : 0;
+  const waiting = !paused && !current && waitSec > 0;
+
+  // 진행 중인 행(또는 다음 차례 행)이 보이도록 스크롤한다. 키 추출 화면과 같은 방식.
+  const currentRef = useRef<HTMLLIElement>(null);
+  useEffect(() => {
+    currentRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [job.index, job.current]);
 
   return (
     <Shell
@@ -170,49 +177,79 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
         </div>
       }
     >
-      <div className="px-4 pt-6">
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-[15px] font-bold">{paused ? '등록 일시정지' : '등록 중'}</h2>
-          <span className="font-mono text-[13px] tabular-nums">
-            {job.index} / {job.queue.length}
-          </span>
-        </div>
-        <div className="mt-3">
-          <Bar value={job.index} total={job.queue.length} />
-        </div>
-        <div className="mt-3 flex gap-1.5">
-          <Tag tone="ok">성공 {ok}</Tag>
-          <Tag tone="bad">실패 {fail}</Tag>
-          <Tag tone="mute">남음 {job.queue.length - job.index}</Tag>
-        </div>
-      </div>
-
-      {paused && job.pauseReason && (
-        <div className="mx-4 mt-4">
-          <Notice tone="warn">{job.pauseReason}</Notice>
-        </div>
-      )}
-
-      {current?.code && (
-        <div className="mx-4 mt-4 rounded-md border border-line bg-panel px-3 py-3">
-          <div className="text-[11px] font-semibold text-faint">지금 등록 중</div>
-          <div className="mt-1.5 flex items-center gap-2.5">
-            <Thumb src={current.imageUrl} />
-            <div className="min-w-0">
-              <div className="truncate text-[13px] font-semibold">{current.name}</div>
-              <div className="mt-0.5 font-mono text-[11.5px] text-sub">{mask(current.code)}</div>
-            </div>
+      {/* 진행 요약은 위에 고정하고, 나머지 높이는 전체 대기열 목록이 채운다 */}
+      <div className="flex h-full flex-col">
+        <div className="px-4 pt-5">
+          <div className="flex items-baseline justify-between">
+            <h2 className="text-[15px] font-bold">{paused ? '등록 일시정지' : '등록 중'}</h2>
+            <span className="font-mono text-[13px] tabular-nums">
+              {job.index} / {job.queue.length}
+            </span>
           </div>
+          <div className="mt-3">
+            <Bar value={job.index} total={job.queue.length} />
+          </div>
+          <div className="mt-3 flex gap-1.5">
+            <Tag tone="ok">성공 {ok}</Tag>
+            <Tag tone="bad">실패 {fail}</Tag>
+            <Tag tone="mute">남음 {job.queue.length - job.index}</Tag>
+          </div>
+          {paused && job.pauseReason && (
+            <div className="mt-3">
+              <Notice tone="warn">{job.pauseReason}</Notice>
+            </div>
+          )}
         </div>
-      )}
 
-      {!paused && !current && waitSec > 0 && (
-        <div className="mx-4 mt-4">
-          <Notice tone="warn">다음 코드까지 {waitSec}초. 팝업을 닫아도 계속 진행돼요.</Notice>
-        </div>
-      )}
+        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-md border border-line bg-panel text-[12px]">
+          {job.queue.map((k, i) => {
+            const r = rewards[k];
+            if (!r) return null;
+            const isCurrent = k === job.current;
+            // 다음 코드를 기다리는 동안에는 다음 차례 행을 표시한다
+            const isNext = !job.current && i === job.index && !paused;
+            const done = i < job.index;
+            return (
+              <li
+                key={k}
+                ref={isCurrent || isNext ? currentRef : undefined}
+                className={`flex items-center gap-2.5 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${isCurrent ? 'bg-accent-soft' : ''} ${
+                  !done && !isCurrent && !isNext ? 'opacity-50' : ''
+                }`}
+              >
+                <Thumb src={r.imageUrl} />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate">{r.name}</div>
+                  {r.code && <div className="font-mono text-[11px] text-faint">{mask(r.code)}</div>}
+                </div>
+                <RunStatus r={r} done={done} isCurrent={isCurrent} isNext={isNext} waitSec={waiting ? waitSec : 0} />
+              </li>
+            );
+          })}
+        </ul>
+        <p className="px-4 py-3 text-[11px] text-faint">
+          {waiting ? `다음 코드까지 ${waitSec}초 · ` : ''}팝업을 닫아도 계속 진행돼요
+        </p>
+      </div>
     </Shell>
   );
+}
+
+/** 등록 중 목록 오른쪽의 상태 표시 */
+function RunStatus({ r, done, isCurrent, isNext, waitSec }: { r: RewardEntry; done: boolean; isCurrent: boolean; isNext: boolean; waitSec: number }) {
+  if (isCurrent) return <span className="shrink-0 font-semibold text-accent">등록 중…</span>;
+  if (done) {
+    if (r.redeem.status === 'success') return <span className="shrink-0 font-semibold text-ok">등록됨</span>;
+    if (r.redeem.status === 'failed')
+      return (
+        <span className="shrink-0 font-semibold text-bad" title={r.redeem.message}>
+          {reasonLabel[r.redeem.reason ?? 'unknown']}
+        </span>
+      );
+    return <span className="shrink-0 text-faint">건너뜀</span>;
+  }
+  if (isNext && waitSec > 0) return <span className="shrink-0 font-mono text-sub tabular-nums">{waitSec}초 후</span>;
+  return <span className="shrink-0 text-faint">대기</span>;
 }
 
 // C3: 등록 결과 / 재시도
