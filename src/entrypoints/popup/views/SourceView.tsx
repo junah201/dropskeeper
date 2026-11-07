@@ -353,7 +353,13 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
       step="collect"
       footer={
         <div className="grid gap-2">
-          <Btn full onClick={() => browser.tabs.create({ url: BATTLENET_KEY_CLAIM_URL })}>
+          {/* 추출한 코드가 없으면 다시 시도가 다음 할 일이라 주 버튼으로 둔다 */}
+          {fail.length > 0 && (
+            <Btn kind={ok.length > 0 ? 'ghost' : undefined} full onClick={() => retry(fail.map(rewardKey))}>
+              실패한 {fail.length}개 모두 다시 시도
+            </Btn>
+          )}
+          <Btn kind={ok.length > 0 ? undefined : 'ghost'} full onClick={() => browser.tabs.create({ url: BATTLENET_KEY_CLAIM_URL })}>
             Battle.net 등록 페이지 열기
           </Btn>
           <Btn kind="ghost" full onClick={() => sendToBackground({ type: 'job/clear' })}>
@@ -377,15 +383,17 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
         </div>
         {fail.length > 0 && (
           <ul className="mt-3 grid gap-2">
+            {/* 등록 결과 화면의 실패 목록과 같은 모양으로 그린다 */}
             {fail.map((r) => (
-              <li key={rewardKey(r)} className="flex items-start justify-between gap-2 rounded-md border border-line bg-panel px-3 py-2.5 text-[13px]">
-                <div className="min-w-0">
-                  <div className="truncate font-semibold">{r.name}</div>
-                  <div className="text-bad">{r.extractError ?? '알 수 없는 오류'}</div>
+              <li key={rewardKey(r)} className="rounded-md border border-line bg-panel px-3 py-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <Thumb src={r.imageUrl} />
+                  <div className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">{r.name}</div>
+                  <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
+                    다시 시도
+                  </Btn>
                 </div>
-                <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
-                  재시도
-                </Btn>
+                <div className="mt-2 break-all rounded bg-bad-soft px-2 py-1.5 text-[12.5px] text-bad">{r.extractError ?? '알 수 없는 오류'}</div>
               </li>
             ))}
           </ul>
