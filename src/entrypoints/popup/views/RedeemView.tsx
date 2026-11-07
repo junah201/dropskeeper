@@ -299,6 +299,8 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
         </div>
       }
     >
+      {/* 내용이 짧아도 화면 높이를 채워, 빈 목록 문구가 가운데에 오게 한다 */}
+      <div className="flex min-h-full flex-col">
       {job.status === 'stopped' && (
         <div className="px-4 pt-3">
           <Notice tone="mute">
@@ -327,7 +329,7 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
 
       {tab === 'fail' ? (
         fails.length === 0 ? (
-          <p className="px-4 py-6 text-center text-[12.5px] text-faint">실패한 코드가 없어요.</p>
+          <p className="flex flex-1 items-center justify-center px-4 text-center text-[12.5px] text-faint">실패한 코드가 없어요.</p>
         ) : (
           <ul className="grid gap-2 px-4 py-3">
             {fails.map((r) => {
@@ -358,6 +360,8 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
             })}
           </ul>
         )
+      ) : oks.length === 0 ? (
+        <p className="flex flex-1 items-center justify-center px-4 text-center text-[12.5px] text-faint">성공한 코드가 없어요.</p>
       ) : (
         <ul className="border-b border-line bg-panel">
           {oks.map((r, i) => (
@@ -369,6 +373,7 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
           ))}
         </ul>
       )}
+      </div>
     </Shell>
   );
 }
