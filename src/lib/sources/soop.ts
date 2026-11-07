@@ -9,6 +9,10 @@ const SUPPORTED_GAMES: Record<string, SourceReward['game']> = {
 
 const PAGE_SIZE = 20;
 const MAX_PAGES = 50;
+/** 목록 페이지 요청 사이 간격 (ms). 코드 추출 간격(0.4초)과 비슷하게 둔다. */
+const LIST_PAGE_DELAY = 300;
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 interface SoopListItem {
   itemCodeIdx: string;
@@ -96,7 +100,10 @@ export const soopSource: DropSource = {
   async listRewards() {
     const out: SourceReward[] = [];
     let seen = 0;
-    for (let page = 1; page <= MAX_PAGES; page++) {
+    for (let page = 1; ; page++) {
+      // 저장소는 이 목록에 없는 보상을 지우므로, 목록을 끝까지 받지 못하면 결과를 버린다
+      if (page > MAX_PAGES) throw new SourceError('보상이 너무 많아 목록을 끝까지 불러오지 못했어요.');
+      if (page > 1) await sleep(LIST_PAGE_DELAY);
       const res = await post<SoopListResponse>('/api/get_drops_list.php', {
         pageNo: page,
         prePageNo: PAGE_SIZE,
