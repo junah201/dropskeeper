@@ -1,0 +1,297 @@
+import { useMemo, useState } from 'react';
+import { sendToBackground } from '@/lib/messages';
+import { sourceMetas } from '@/lib/sources/hosts';
+import { reasonHelp, reasonLabel } from '@/lib/labels';
+import type { Job, RewardEntry, RewardKey } from '@/lib/types';
+import { isDefined, rewardKey } from '@/lib/types';
+import { isExpired } from '@/lib/expiry';
+import { useNow } from '../hooks';
+import { Bar, Btn, Check, Notice, SelectAllBar, Shell, Tag, mask } from '../ui';
+
+const HOST = 'kr.checkout.battle.net/key-claim';
+
+interface Props {
+  tabId: number;
+  loginPage: boolean;
+  rewards: Record<RewardKey, RewardEntry>;
+  job: Job | null;
+}
+
+export function RedeemView({ tabId, loginPage, rewards, job }: Props) {
+  if (job?.kind === 'redeem' && (job.status === 'running' || job.status === 'paused')) {
+    return <Running job={job} rewards={rewards} />;
+  }
+  if (job?.kind === 'redeem' && (job.status === 'done' || job.status === 'stopped')) {
+    return <Results job={job} rewards={rewards} />;
+  }
+  return <Queue tabId={tabId} loginPage={loginPage} rewards={rewards} jobBusy={job?.status === 'running'} />;
+}
+
+async function copy(text: string) {
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch {
+    /* 무시: 클립보드 권한이 없을 때 */
+  }
+}
+
+// C1: 등록 대기 목록
+function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPage: boolean; rewards: Record<RewardKey, RewardEntry>; jobBusy: boolean }) {
+  const list = useMemo(
+    () =>
+      Object.values(rewards)
+        .filter((r) => r.code && r.redeem.status !== 'success' && !isExpired(r))
+        .sort((a, b) => Number(a.redeem.status === 'failed') - Number(b.redeem.status === 'failed') || a.name.localeCompare(b.name)),
+    [rewards],
+  );
+  const [selected, setSelected] = useState<Set<RewardKey>>(() => new Set(list.filter((r) => r.redeem.status !== 'failed').map(rewardKey)));
+  const [error, setError] = useState<string | null>(null);
+  const [copied, setCopied] = useState<RewardKey | null>(null);
+
+  const chosen = list.filter((r) => selected.has(rewardKey(r)));
+  const all = list.length > 0 && chosen.length === list.length;
+  const toggle = (k: RewardKey) =>
+    setSelected((s) => {
+      const n = new Set(s);
+      n.has(k) ? n.delete(k) : n.add(k);
+      return n;
+    });
+
+  const start = async () => {
+    setError(null);
+    const res = await sendToBackground({ type: 'job/start', kind: 'redeem', tabId, keys: chosen.map(rewardKey) });
+    if (!res.ok) setError(res.error);
+  };
+
+  if (list.length === 0) {
+    return (
+      <Shell step="redeem" host={HOST}>
+        <div className="flex h-full flex-col px-4 pb-4 pt-6">
+          <h2 className="text-[16px] font-bold">등록할 키가 없어요</h2>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed text-sub">드롭스 인벤토리에서 보상을 불러오고 키를 추출하면 여기에 표시돼요.</p>
+          <div className="mt-auto grid gap-2">
+            {Object.values(sourceMetas).map((m) => (
+              <Btn key={m.id} kind="ghost" full onClick={() => browser.tabs.create({ url: m.inventoryUrl })}>
+                {m.name} 드롭스 인벤토리 열기
+              </Btn>
+            ))}
+          </div>
+        </div>
+      </Shell>
+    );
+  }
+
+  return (
+    <Shell
+      step="redeem"
+      host={HOST}
+      footer={
+        <div className="flex items-center gap-3">
+          <span className="text-[12px] text-sub">
+            <b className="text-ink">{chosen.length}개</b> 선택
+          </span>
+          <div className="flex-1">
+            <Btn full disabled={chosen.length === 0 || loginPage || jobBusy} onClick={start}>
+              등록하기 ({chosen.length})
+            </Btn>
+          </div>
+        </div>
+      }
+    >
+      <SelectAllBar all={all} some={chosen.length > 0} onToggle={() => setSelected(all ? new Set() : new Set(list.map(rewardKey)))}>
+        · 등록 대기 {list.length}개
+      </SelectAllBar>
+      {(loginPage || error) && (
+        <div className="px-4 pt-2">
+          <Notice tone={loginPage ? 'warn' : 'bad'}>{loginPage ? 'Battle.net에 먼저 로그인해 주세요.' : error}</Notice>
+        </div>
+      )}
+      <ul className="mt-2 border-y border-line bg-panel">
+        {list.map((r, i) => {
+          const k = rewardKey(r);
+          const failed = r.redeem.status === 'failed';
+          return (
+            <li key={k} className={`flex items-center gap-2.5 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
+              <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />
+              <button type="button" className="min-w-0 flex-1 text-left" onClick={() => toggle(k)}>
+                <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
+                <div className="font-mono text-[11.5px] tabular-nums text-sub">{mask(r.code!)}</div>
+                {failed && r.redeem.reason && <div className="mt-0.5 text-[11px] text-bad">지난 시도: {reasonLabel[r.redeem.reason]}</div>}
+              </button>
+              <button
+                type="button"
+                className="shrink-0 text-[11px] font-semibold text-accent"
+                onClick={() => copy(r.code!).then(() => setCopied(k))}
+                title="코드 복사"
+              >
+                {copied === k ? '복사됨' : '복사'}
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="px-4 py-3 text-[11px] text-faint">코드 사이 3~6초 간격 · 이 탭에서 하나씩 등록해요</p>
+    </Shell>
+  );
+}
+
+// C2: 등록 진행 중
+function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, RewardEntry> }) {
+  const paused = job.status === 'paused';
+  const now = useNow(!paused);
+  const done = job.queue.slice(0, job.index).map((k) => rewards[k]).filter(isDefined);
+  const ok = done.filter((r) => r.redeem.status === 'success').length;
+  const fail = done.filter((r) => r.redeem.status === 'failed').length;
+  const current = job.current ? rewards[job.current] : undefined;
+  const waitSec = job.nextAt ? Math.max(0, Math.ceil((job.nextAt - now) / 1000)) : 0;
+
+  return (
+    <Shell
+      step="redeem"
+      host={HOST}
+      footer={
+        <div className="grid grid-cols-2 gap-2">
+          {paused ? (
+            <Btn onClick={() => sendToBackground({ type: 'job/resume' })}>재개</Btn>
+          ) : (
+            <Btn kind="ghost" onClick={() => sendToBackground({ type: 'job/pause' })}>
+              일시정지
+            </Btn>
+          )}
+          <Btn kind="danger" onClick={() => sendToBackground({ type: 'job/stop' })}>
+            중지
+          </Btn>
+        </div>
+      }
+    >
+      <div className="px-4 pt-6">
+        <div className="flex items-baseline justify-between">
+          <h2 className="text-[15px] font-bold">{paused ? '등록 일시정지' : '등록 중'}</h2>
+          <span className="font-mono text-[13px] tabular-nums">
+            {job.index} / {job.queue.length}
+          </span>
+        </div>
+        <div className="mt-3">
+          <Bar value={job.index} total={job.queue.length} />
+        </div>
+        <div className="mt-3 flex gap-1.5">
+          <Tag tone="ok">성공 {ok}</Tag>
+          <Tag tone="bad">실패 {fail}</Tag>
+          <Tag tone="mute">남음 {job.queue.length - job.index}</Tag>
+        </div>
+      </div>
+
+      {paused && job.pauseReason && (
+        <div className="mx-4 mt-4">
+          <Notice tone="warn">{job.pauseReason}</Notice>
+        </div>
+      )}
+
+      {current?.code && (
+        <div className="mx-4 mt-4 rounded-md border border-line bg-panel px-3 py-3">
+          <div className="text-[11px] font-semibold text-faint">지금 등록 중</div>
+          <div className="mt-1 truncate text-[13px] font-semibold">{current.name}</div>
+          <div className="mt-0.5 font-mono text-[11.5px] text-sub">{mask(current.code)}</div>
+        </div>
+      )}
+
+      {!paused && !current && waitSec > 0 && (
+        <div className="mx-4 mt-4">
+          <Notice tone="warn">다음 코드까지 {waitSec}초. 팝업을 닫아도 계속 진행돼요.</Notice>
+        </div>
+      )}
+    </Shell>
+  );
+}
+
+// C3: 등록 결과 / 재시도
+function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, RewardEntry> }) {
+  const items = job.queue.map((k) => rewards[k]).filter(isDefined);
+  const fails = items.filter((r) => r.redeem.status === 'failed');
+  const oks = items.filter((r) => r.redeem.status === 'success');
+  const [tab, setTab] = useState<'fail' | 'ok'>(fails.length ? 'fail' : 'ok');
+  const retry = (keys: RewardKey[]) => sendToBackground({ type: 'job/start', kind: 'redeem', tabId: job.tabId, keys });
+
+  return (
+    <Shell
+      step="redeem"
+      host={HOST}
+      footer={
+        <div className="grid gap-2">
+          {fails.length > 0 && (
+            <Btn full onClick={() => retry(fails.map(rewardKey))}>
+              실패한 {fails.length}개 모두 다시 시도
+            </Btn>
+          )}
+          <Btn kind="ghost" full onClick={() => sendToBackground({ type: 'job/clear' })}>
+            대기 목록으로
+          </Btn>
+        </div>
+      }
+    >
+      {job.status === 'stopped' && (
+        <div className="px-4 pt-3">
+          <Notice tone="mute">
+            등록을 중지했어요. {job.queue.length - job.index}개는 시도하지 않았어요.
+          </Notice>
+        </div>
+      )}
+      <div role="tablist" className="flex border-b border-line px-4 pt-3 text-[12.5px]">
+        {(
+          [
+            ['fail', '실패', fails.length],
+            ['ok', '성공', oks.length],
+          ] as const
+        ).map(([id, label, n]) => (
+          <button
+            key={id}
+            role="tab"
+            aria-selected={tab === id}
+            onClick={() => setTab(id)}
+            className={`border-b-2 px-3 pb-2 font-semibold ${tab === id ? 'border-ink text-ink' : 'border-transparent text-faint'}`}
+          >
+            {label} <span className="font-mono">{n}</span>
+          </button>
+        ))}
+      </div>
+
+      {tab === 'fail' ? (
+        fails.length === 0 ? (
+          <p className="px-4 py-6 text-center text-[12.5px] text-faint">실패한 코드가 없어요.</p>
+        ) : (
+          <ul className="grid gap-2 px-4 py-3">
+            {fails.map((r) => {
+              const reason = r.redeem.reason ?? 'unknown';
+              return (
+                <li key={rewardKey(r)} className="rounded-md border border-line bg-panel px-3 py-2.5">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
+                      <div className="font-mono text-[11.5px] text-sub">{mask(r.code ?? '')}</div>
+                    </div>
+                    <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
+                      다시 시도
+                    </Btn>
+                  </div>
+                  <div className="mt-2 rounded bg-bad-soft px-2 py-1.5 text-[11.5px] text-bad">
+                    <b>{reasonLabel[reason]}</b> · {reasonHelp[reason]}
+                    {r.redeem.message && <div className="mt-0.5 break-all font-mono opacity-80">원문: {r.redeem.message}</div>}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )
+      ) : (
+        <ul className="border-b border-line bg-panel">
+          {oks.map((r, i) => (
+            <li key={rewardKey(r)} className={`flex items-center justify-between gap-2 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
+              <span className="truncate text-[12.5px] font-semibold">{r.name}</span>
+              <Tag tone="ok">등록됨</Tag>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Shell>
+  );
+}

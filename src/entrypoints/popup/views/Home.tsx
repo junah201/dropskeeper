@@ -1,0 +1,57 @@
+import { sourceMetas } from '@/lib/sources/hosts';
+import { BATTLENET_KEY_CLAIM_URL } from '@/lib/redeem/battlenet/constants';
+import type { Job, RewardEntry, RewardKey } from '@/lib/types';
+import { isExpired } from '@/lib/expiry';
+import { Btn, Notice, Shell, StatGrid } from '../ui';
+
+export function Home({ rewards, job }: { rewards: Record<RewardKey, RewardEntry>; job: Job | null }) {
+  const list = Object.values(rewards).filter((r) => r.redeem.status === 'success' || !isExpired(r));
+  const withCode = list.filter((r) => r.code);
+  const ok = list.filter((r) => r.redeem.status === 'success').length;
+  const failed = list.filter((r) => r.redeem.status === 'failed').length;
+  const open = (url: string) => browser.tabs.create({ url });
+  const activeJob = job && (job.status === 'running' || job.status === 'paused') ? job : null;
+
+  return (
+    <Shell step={null}>
+      <div className="flex h-full flex-col gap-4 px-4 pb-4 pt-5">
+        <div>
+          <h1 className="text-[16px] font-bold leading-snug">드롭스 페이지나 Battle.net 등록 페이지에서 열어 주세요</h1>
+          <p className="mt-1.5 text-[12.5px] leading-relaxed text-sub">
+            드롭스 인벤토리에서 코드를 모으고, Battle.net 코드 등록 페이지에서 한 번에 등록합니다.
+          </p>
+        </div>
+
+        {activeJob && (
+          <Notice tone={activeJob.status === 'paused' ? 'warn' : 'accent'}>
+            {activeJob.kind === 'extract' ? '코드 추출' : '코드 등록'}이 {activeJob.status === 'paused' ? '일시정지되어' : '진행 중이에요'}{' '}
+            ({activeJob.index}/{activeJob.queue.length}).
+            <button className="ml-1 font-semibold underline" onClick={() => browser.tabs.update(activeJob.tabId, { active: true })}>
+              작업 탭으로 이동
+            </button>
+          </Notice>
+        )}
+
+        <StatGrid
+          items={[
+            ['추출한 키', `${withCode.length}개`],
+            ['등록 대기', `${withCode.filter((r) => r.redeem.status !== 'success').length}개`],
+            ['등록 성공', `${ok}개`],
+            ['등록 실패', `${failed}개`],
+          ]}
+        />
+
+        <div className="mt-auto grid gap-2">
+          {Object.values(sourceMetas).map((m) => (
+            <Btn key={m.id} kind="ghost" full onClick={() => open(m.inventoryUrl)}>
+              {m.name} 드롭스 인벤토리 열기
+            </Btn>
+          ))}
+          <Btn full onClick={() => open(BATTLENET_KEY_CLAIM_URL)}>
+            Battle.net 코드 등록 페이지 열기
+          </Btn>
+        </div>
+      </div>
+    </Shell>
+  );
+}
