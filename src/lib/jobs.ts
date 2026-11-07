@@ -12,6 +12,7 @@ import {
   REDEEM_DELAY_MAX,
   REDEEM_DELAY_MIN,
   RESULT_TIMEOUT,
+  isBattlenetCheckout,
   isBattlenetLoginPage,
   isKeyFlowPage,
   keyClaimUrl,
@@ -90,7 +91,11 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
     // 결과 페이지 주소에는 코드가 들어 있다. 다른 코드의 결과 화면이면 아직 이동 중이므로 읽지 않는다.
     const lookupCode = keyLookupCode(url);
     const ours = !lookupCode || sameCode(lookupCode, code);
-    const state: BnetPageState | undefined = ours && (isKeyFlowPage(url) || clickedOn.size > 0) ? await inspect(tabId) : undefined;
+    // '이미 보유한 상품' 같은 상품 단위 오류는 결과 페이지가 아닌 다른 결제 페이지에 뜰 수 있어 checkout 전체를 읽는다.
+    // 다만 그런 페이지에서는 오류 배너만 믿고, 성공 판단과 버튼 클릭은 등록 흐름 페이지(또는 버튼을 누른 뒤)에서만 한다.
+    const inFlow = isKeyFlowPage(url) || clickedOn.size > 0;
+    const read: BnetPageState | undefined = ours && isBattlenetCheckout(url) ? await inspect(tabId) : undefined;
+    const state = read && (inFlow || read.kind === 'error') ? read : undefined;
     if (state) last = state;
 
     switch (state?.kind) {
