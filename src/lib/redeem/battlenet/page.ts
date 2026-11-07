@@ -5,14 +5,16 @@
  * 실제 화면(HAR)으로 확인한 것:
  *   - `key-claim?keyCode=` 주소로 들어가면 버튼을 누르지 않아도 서버가 바로 조회까지 진행한다.
  *     key-claim?keyCode= → 302 /checkout/<b64> → 302 preload/<b64> (페이지가 deviceInfo·csrftoken을 POST)
- *     → 302 key-lookup/<b64>
+ *     → 302 key-lookup/<b64>         (오류: 이미 등록됨, 유효하지 않음 등)
+ *     → 302 confirm-key-claim/<b64>  (유효한 코드: 상품 이름·계정과 "확인" 버튼. 누르면 같은 주소로 csrftoken POST)
  *   - 오류(이미 등록됨, 유효하지 않음)는 key-lookup 페이지의
  *     `<blz-alert severity="error">` 안 `.error-notification-banner-content`에 서버가 그려서 내려준다(일반 DOM).
  *     첫 번째 <p>가 제목("이미 등록된 코드입니다."), 두 번째 <p>가 설명이다.
  *   - 오류 페이지에도 빈 코드 입력 폼과 비활성 "코드 등록" 버튼이 함께 있다.
  *
- * ⚠️ 확인 버튼 문구와 성공 문구 패턴은 아직 검증하지 않은 추정값이다.
- *    실제 문구를 확인하면 이 파일의 패턴만 고치면 된다.
+ *   - 확인 페이지의 버튼은 `form#submit-key-claim` 안의 `<button>확인</button>`이고, 취소는 `<a>` 링크다.
+ *
+ * ⚠️ "확인"을 누른 뒤의 성공 화면 문구(SUCCESS_PATTERNS)는 아직 검증하지 않은 추정값이다.
  */
 import type { FailReason } from '../../types';
 
@@ -72,7 +74,12 @@ const isDisabled = (el: Element) => (el as HTMLButtonElement).disabled === true 
 /** 버튼에 적힌 글자. 웹 컴포넌트 안의 <button>은 글자가 slot으로 들어와 비어 있으므로 바깥 요소 글자를 쓴다. */
 const labelOf = (el: Element) => textOf(el) || (el as HTMLInputElement).value || el.getAttribute('aria-label') || '';
 
+/** 확인 페이지(confirm-key-claim)의 실제 제출 버튼 */
+const KEY_CLAIM_SUBMIT = 'form#submit-key-claim button';
+
 function findConfirmButton(): HTMLElement | undefined {
+  const submit = [...document.querySelectorAll<HTMLElement>(KEY_CLAIM_SUBMIT)].find((b) => visible(b) && !isDisabled(b));
+  if (submit) return submit;
   const buttons = deepAll().filter((b) => isButtonLike(b) && visible(b) && !isDisabled(b)) as HTMLElement[];
   for (const want of CONFIRM_TEXTS) {
     const hit = buttons.find((b) => {

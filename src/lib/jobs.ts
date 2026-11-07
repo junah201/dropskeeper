@@ -78,7 +78,7 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
   await browser.tabs.update(tabId, { url: keyClaimUrl(code) });
   await waitForTabComplete(tabId).catch(() => undefined);
 
-  // 등록은 여러 화면을 거친다: 입력(key-claim) → 결과(key-lookup) → (유효한 코드면) 받기 확인.
+  // 등록은 여러 화면을 거친다: 입력(key-claim) → 오류면 결과(key-lookup), 유효하면 확인(confirm-key-claim)에서 "확인" 클릭.
   // 같은 화면에서 버튼을 두 번 누르지 않도록 누른 화면 주소를 기억한다.
   const clickedOn = new Set<string>();
   const deadline = Date.now() + RESULT_TIMEOUT;
@@ -88,7 +88,7 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
     const url = await tabUrl(tabId);
     if (isBattlenetLoginPage(url)) throw new Pause('Battle.net 로그인이 필요해요. 로그인한 뒤 재개를 눌러 주세요.');
 
-    // 결과 페이지 주소에는 코드가 들어 있다. 다른 코드의 결과 화면이면 아직 이동 중이므로 읽지 않는다.
+    // 확인·결과 페이지 주소에는 코드가 들어 있다. 다른 코드의 화면이면 아직 이동 중이므로 읽지 않는다.
     const lookupCode = keyLookupCode(url);
     const ours = !lookupCode || sameCode(lookupCode, code);
     // '이미 보유한 상품' 같은 상품 단위 오류는 결과 페이지가 아닌 다른 결제 페이지에 뜰 수 있어 checkout 전체를 읽는다.

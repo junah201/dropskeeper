@@ -18,15 +18,23 @@ export const isKeyClaimPage = (url: string | undefined) => !!url?.startsWith(BAT
 export const BATTLENET_KEY_LOOKUP_URL = `${BATTLENET_CHECKOUT_ORIGIN}/shop/ko/checkout/key-lookup/`;
 export const isKeyLookupPage = (url: string | undefined) => !!url?.startsWith(BATTLENET_KEY_LOOKUP_URL);
 
-/** 코드 등록 흐름에 속한 페이지 (입력 페이지 또는 결과 페이지) */
-export const isKeyFlowPage = (url: string | undefined) => isKeyClaimPage(url) || isKeyLookupPage(url);
+/**
+ * 유효한 코드면 key-lookup 대신 이 확인 페이지로 간다. 상품 이름과 계정이 보이고 "확인" 버튼이 있다.
+ * "확인"은 일반 `<form method="post">` 제출이라 같은 주소로 csrftoken만 POST된다.
+ * 예: /shop/ko/checkout/confirm-key-claim/a2N8YzcyY2FkZTd8...
+ */
+export const BATTLENET_CONFIRM_KEY_CLAIM_URL = `${BATTLENET_CHECKOUT_ORIGIN}/shop/ko/checkout/confirm-key-claim/`;
+export const isConfirmKeyClaimPage = (url: string | undefined) => !!url?.startsWith(BATTLENET_CONFIRM_KEY_CLAIM_URL);
+
+/** 코드 등록 흐름에 속한 페이지 (입력, 확인, 결과 페이지) */
+export const isKeyFlowPage = (url: string | undefined) => isKeyClaimPage(url) || isConfirmKeyClaimPage(url) || isKeyLookupPage(url);
 
 /**
- * 결과 페이지 주소에 들어 있는 코드를 꺼낸다.
+ * 확인·결과 페이지 주소에 들어 있는 코드를 꺼낸다.
  * 마지막 경로가 base64로 인코딩된 `kc|<식별자>|<코드>` 형식이다.
  */
 export function keyLookupCode(url: string | undefined): string | undefined {
-  if (!isKeyLookupPage(url)) return undefined;
+  if (!isKeyLookupPage(url) && !isConfirmKeyClaimPage(url)) return undefined;
   try {
     const seg = decodeURIComponent(new URL(url!).pathname.split('/').pop() ?? '');
     const parts = atob(seg).split('|');

@@ -25,8 +25,8 @@ pnpm compile   # 타입 검사
 - 저장소(`src/lib/storage.ts`) 쓰기는 background에서만 한다. popup은 `sendToBackground`로 요청한다. 쓰기 순서 보장이 실행 환경마다 따로 동작하기 때문이다.
 - React와 Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
 - 유효기간이 지난 보상은 목록, 대기열, 통계 어디에도 보여 주지 않는다 (`src/lib/expiry.ts`).
-- Battle.net 등록 흐름은 `key-claim?keyCode=` → `preload/<base64>`(자동 POST) → `key-lookup/<base64>` 결과 페이지 순서이고, 여기까지는 버튼 없이 리다이렉트로 진행된다. 결과 페이지 주소에는 `kc|<조회마다 바뀌는 식별자>|<코드>`가 base64로 들어 있다.
-- 오류 배너(`.error-notification-banner-content`, 예: "이미 등록된 코드입니다.")는 실제 화면으로 확인했다. 확인 버튼과 성공 문구 패턴(`src/lib/redeem/battlenet/page.ts`)은 아직 추정값이다.
+- Battle.net 등록 흐름은 `key-claim?keyCode=` → `preload/<base64>`(자동 POST)까지 버튼 없이 리다이렉트로 진행된다. 그다음 오류면 `key-lookup/<base64>` 결과 페이지, 유효한 코드면 `confirm-key-claim/<base64>` 확인 페이지로 간다. 확인 페이지의 "확인" 버튼(`form#submit-key-claim`)은 같은 주소로 csrftoken을 POST한다. 두 페이지 주소 모두 `kc|<조회마다 바뀌는 식별자>|<코드>`가 base64로 들어 있다.
+- 오류 배너(`.error-notification-banner-content`, 예: "이미 등록된 코드입니다.")는 실제 화면으로 확인했다. 유효한 코드의 확인 페이지와 "확인" 버튼도 실제 화면으로 확인했다. "확인"을 누른 뒤의 성공 문구 패턴(`src/lib/redeem/battlenet/page.ts`)은 아직 추정값이다.
 - CAPTCHA나 봇 탐지는 우회하지 않는다. 감지되면 일시정지하고 사용자에게 맡긴다.
 
 ## 커밋 규칙
