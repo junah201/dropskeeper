@@ -140,7 +140,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
       <SelectAllBar all={all} some={chosen.length > 0} onToggle={toggleAll}>
         · {visible.length}개 표시 / 전체 {list.length}개
       </SelectAllBar>
-      <div className="flex flex-wrap items-center gap-1.5 px-4 py-2">
+      <div className="flex flex-wrap items-center gap-1.5 px-3 py-2">
         <FilterChip on={hideClaimed} onClick={() => setHideClaimed((v) => !v)}>
           획득 완료 숨김
         </FilterChip>
@@ -157,12 +157,12 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
         </button>
       </div>
       {error && (
-        <div className="px-4 pb-2">
+        <div className="px-3 pb-2">
           <Notice tone="bad">{error}</Notice>
         </div>
       )}
       {visible.length === 0 ? (
-        <p className="px-4 py-6 text-center text-[12.5px] text-faint">조건에 맞는 보상이 없어요.</p>
+        <p className="px-3 py-6 text-center text-[12.5px] text-faint">조건에 맞는 보상이 없어요.</p>
       ) : (
         <ul className="border-y border-line bg-panel">
           {visible.map((r, i) => {
@@ -184,7 +184,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           })}
         </ul>
       )}
-      {lastLoaded && <p className="px-4 py-3 text-[11px] text-faint">마지막 불러오기 {new Date(lastLoaded).toLocaleString('ko-KR')}</p>}
+      {lastLoaded && <p className="px-3 py-3 text-[11px] text-faint">마지막 불러오기 {new Date(lastLoaded).toLocaleString('ko-KR')}</p>}
     </Shell>
   );
 }

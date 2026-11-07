@@ -99,7 +99,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
         · 등록 대기 {list.length}개
       </SelectAllBar>
       {(loginPage || error) && (
-        <div className="px-4 pt-2">
+        <div className="px-3 pt-2">
           <Notice tone={loginPage ? 'warn' : 'bad'}>{loginPage ? 'Battle.net에 먼저 로그인해 주세요.' : error}</Notice>
         </div>
       )}
@@ -108,7 +108,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
           const k = rewardKey(r);
           const failed = r.redeem.status === 'failed';
           return (
-            <li key={k} className={`flex items-center gap-2.5 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
+            <li key={k} className={`flex items-center gap-2.5 px-3 py-2.5 ${i ? 'border-t border-line' : ''}`}>
               <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />
               <Thumb src={r.imageUrl} size="lg" />
               <button type="button" className="min-w-0 flex-1 text-left" onClick={() => toggle(k)}>
@@ -128,7 +128,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
           );
         })}
       </ul>
-      <p className="px-4 py-3 text-[11px] text-faint">코드 사이 3~6초 간격 · 이 탭에서 하나씩 등록해요</p>
+      <p className="px-3 py-3 text-[11px] text-faint">코드 사이 3~6초 간격 · 이 탭에서 하나씩 등록해요</p>
     </Shell>
   );
 }

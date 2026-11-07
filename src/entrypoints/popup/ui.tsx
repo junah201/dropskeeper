@@ -149,7 +149,7 @@ export const mask = (code: string) => {
 
 export function SelectAllBar({ all, some, onToggle, children }: { all: boolean; some: boolean; onToggle: () => void; children?: ReactNode }) {
   return (
-    <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-line bg-bg px-4 py-2 text-[12px]">
+    <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-line bg-bg px-3 py-2 text-[12px]">
       <Check on={all} mixed={!all && some} onChange={onToggle} label="전체 선택" />
       <button type="button" onClick={onToggle} className="font-semibold">
         전체 선택
