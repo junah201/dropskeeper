@@ -31,6 +31,8 @@ export interface SourceMeta {
   inventoryUrl: string;
   /** content script와 host_permissions에 쓰는 match pattern */
   matches: string[];
+  /** 플랫폼이 '획득 완료'(코드를 이미 받아 감) 여부를 알려 주는지. false면 관련 필터를 숨긴다. */
+  tracksClaimed: boolean;
 }
 
 export class SourceError extends Error {

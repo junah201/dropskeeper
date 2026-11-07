@@ -141,10 +141,12 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           · {visible.length}개 표시 / 전체 {list.length}개
         </SelectAllBar>
         <div className="flex flex-wrap items-center gap-1.5 px-3 py-2">
-          <FilterChip on={hideClaimed} onClick={() => setHideClaimed((v) => !v)}>
-            획득 완료 숨김
-          </FilterChip>
-          {!hideClaimed && unclaimed.length > 0 && (
+          {meta.tracksClaimed && (
+            <FilterChip on={hideClaimed} onClick={() => setHideClaimed((v) => !v)}>
+              획득 완료 숨김
+            </FilterChip>
+          )}
+          {meta.tracksClaimed && !hideClaimed && unclaimed.length > 0 && (
             <button
               type="button"
               className="inline-flex h-6 items-center rounded-md border border-line bg-panel px-2 text-[11.5px] font-semibold text-ink hover:bg-bg"

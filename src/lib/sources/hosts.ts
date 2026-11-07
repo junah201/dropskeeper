@@ -8,12 +8,14 @@ export const sourceMetas: Record<SourceId, SourceMeta> = {
     name: 'SOOP',
     inventoryUrl: 'https://drops.sooplive.com/inventory',
     matches: ['https://drops.sooplive.com/*'],
+    tracksClaimed: true,
   },
   chzzk: {
     id: 'chzzk',
     name: 'CHZZK',
     inventoryUrl: 'https://game.naver.com/profile#drops',
     matches: ['https://game.naver.com/*'],
+    tracksClaimed: false,
   },
 };
 
