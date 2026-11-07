@@ -158,7 +158,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
           );
         })}
       </ul>
-      <p className="px-3 py-3 text-[11px] text-faint">코드 사이 3~6초 간격 · 이 탭에서 하나씩 등록해요</p>
+      <p className="px-3 py-3 text-[11px] text-faint">코드 사이 0.5~1초 간격 · 이 탭에서 하나씩 등록해요</p>
     </Shell>
   );
 }
