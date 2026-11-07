@@ -147,7 +147,11 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             획득 완료 숨김
           </FilterChip>
           {!hideClaimed && unclaimed.length > 0 && (
-            <button type="button" className="rounded bg-[#eef0f3] px-1.5 py-0.5 text-[10.5px] font-semibold text-sub" onClick={selectUnclaimed}>
+            <button
+              type="button"
+              className="inline-flex h-6 items-center rounded-md border border-line bg-panel px-2 text-[11.5px] font-semibold text-ink hover:bg-bg"
+              onClick={selectUnclaimed}
+            >
               미획득만 선택 ({unclaimed.length})
             </button>
           )}
@@ -211,14 +215,26 @@ function RewardTag({ r }: { r: RewardEntry }) {
   return <Tag tone="mute">미추출</Tag>;
 }
 
+/**
+ * 켜고 끄는 필터. 상태 태그(Tag)와 구분되도록 테두리·체크 표시·24px 높이를 가진 버튼 모양으로 그린다.
+ */
 function FilterChip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
   return (
     <button
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`rounded px-1.5 py-0.5 text-[10.5px] font-semibold ${on ? 'bg-accent-soft text-accent' : 'bg-[#eef0f3] text-sub'}`}
+      className={`inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[11.5px] font-semibold transition-colors ${
+        on ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-panel text-sub hover:border-check hover:text-ink'
+      }`}
     >
+      <span className={`grid h-3 w-3 place-items-center rounded-[3px] ${on ? 'bg-accent' : 'border border-check'}`} aria-hidden>
+        {on && (
+          <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
+            <path d="M1.5 5.2 4 7.5 8.5 2.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </span>
       {children}
     </button>
   );
