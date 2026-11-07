@@ -32,6 +32,8 @@ const ERROR_PATTERNS: [FailReason, RegExp][] = [
   ['already_used', /이미\s*(사용|등록)|already\s+(been\s+)?(used|redeemed|claimed)/i],
   // 실제 화면 문구: "이미 보유한 상품입니다."
   ['already_owned', /이미\s*보유|already\s+own/i],
+  // 실제 화면 문구: "입력한 키는 등록할 수 없습니다. 코드를 확인한 후 다시 시도해 주세요. ... 점검 중일 수 있으니 ..."
+  ['not_redeemable', /등록할\s*수\s*없|cannot\s+be\s+redeemed/i],
   ['expired', /만료|expired/i],
   ['invalid', /유효하지|올바르지|잘못된|존재하지|찾을 수 없|invalid|not\s+valid|incorrect/i],
 ];
