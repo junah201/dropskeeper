@@ -110,7 +110,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
           return (
             <li key={k} className={`flex items-center gap-2.5 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
               <Check on={selected.has(k)} onChange={() => toggle(k)} label={r.name} />
-              <Thumb src={r.imageUrl} />
+              <Thumb src={r.imageUrl} size="lg" />
               <button type="button" className="min-w-0 flex-1 text-left" onClick={() => toggle(k)}>
                 <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                 <div className="font-mono text-[11.5px] tabular-nums text-sub">{mask(r.code!)}</div>

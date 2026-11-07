@@ -104,7 +104,9 @@ export function Bar({ value, total }: { value: number; total: number }) {
   );
 }
 
-export function Thumb({ src }: { src?: string }) {
+const thumbSize = { md: 'h-8 w-8', lg: 'h-10 w-10' } as const;
+
+export function Thumb({ src, size = 'md' }: { src?: string; size?: keyof typeof thumbSize }) {
   const [broken, setBroken] = useState(false);
   // 이미지가 없거나 불러오지 못하면 회색 칸으로 자리만 유지한다
   return src && !broken ? (
@@ -114,10 +116,10 @@ export function Thumb({ src }: { src?: string }) {
       loading="lazy"
       referrerPolicy="no-referrer"
       onError={() => setBroken(true)}
-      className="h-8 w-8 shrink-0 rounded-[5px] border border-line bg-bg object-cover"
+      className={`${thumbSize[size]} shrink-0 rounded-[5px] border border-line bg-bg object-cover`}
     />
   ) : (
-    <span className="h-8 w-8 shrink-0 rounded-[5px] bg-line" />
+    <span className={`${thumbSize[size]} shrink-0 rounded-[5px] bg-line`} />
   );
 }
 
