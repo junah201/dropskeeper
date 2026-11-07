@@ -7,7 +7,7 @@ import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
 import { fmtDateTime, isExpired } from '@/lib/expiry';
 import { useStored } from '../hooks';
-import { Bar, Btn, Check, Notice, ExpiryLine, SelectAllBar, Shell, StatGrid, Tag, Thumb } from '../ui';
+import { Bar, Btn, Check, Notice, ExpiryLine, SelectAllBar, Shell, StatGrid, Tag, Thumb, mask } from '../ui';
 
 interface Props {
   sourceId: SourceId;
@@ -301,7 +301,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
                 <span className="min-w-0 flex-1 truncate">{r.name}</span>
                 {done ? (
                   r.code ? (
-                    <span className="shrink-0 font-mono text-ok">{r.code.slice(0, 4)}-…</span>
+                    <span className="shrink-0 font-mono text-ok">{mask(r.code)}</span>
                   ) : (
                     <span className="shrink-0 font-semibold text-bad" title={r.extractError}>
                       실패
