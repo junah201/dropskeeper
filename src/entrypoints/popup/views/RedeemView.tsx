@@ -90,10 +90,15 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
           <span className="text-[12px] text-sub">
             <b className="text-ink">{chosen.length}개</b> 선택
           </span>
-          <div className="flex-1">
-            <Btn full disabled={chosen.length === 0 || loginPage || jobBusy} onClick={start}>
-              등록하기 ({chosen.length})
+          <div className="flex flex-1 gap-2">
+            <Btn kind="ghost" disabled={chosen.length === 0 || jobBusy} onClick={() => dismiss(chosen.map(rewardKey))} title="선택한 코드를 목록에서 삭제">
+              삭제
             </Btn>
+            <div className="flex-1">
+              <Btn full disabled={chosen.length === 0 || loginPage || jobBusy} onClick={start}>
+                등록하기 ({chosen.length})
+              </Btn>
+            </div>
           </div>
         </div>
       }
