@@ -23,14 +23,22 @@ function serial<T>(fn: () => Promise<T>): Promise<T> {
   return next;
 }
 
-/** 새로 불러온 목록을 합친다. 이미 꺼낸 코드와 등록 결과는 유지한다. */
+/**
+ * 새로 불러온 목록을 합친다. 이미 꺼낸 코드와 등록 결과는 유지한다.
+ * `list`는 그 플랫폼의 등록 가능한 보상 전체여야 한다 (일부만 넘기면 나머지가 지워진다).
+ */
 export function mergeRewards(sourceId: SourceId, list: SourceReward[]) {
   return serial(async () => {
     const all = await rewardsItem.getValue();
     const now = Date.now();
-    // 기한이 지난 보상은 저장해 둘 이유가 없다. 등록에 성공한 기록만 남긴다.
+    const incoming = new Set(list.map(rewardKey));
     for (const [key, r] of Object.entries(all) as [RewardKey, RewardEntry][]) {
-      if (r.sourceId === sourceId && isExpired(r, now) && r.redeem.status !== 'success') delete all[key];
+      if (r.sourceId !== sourceId) continue;
+      // 기한이 지난 보상은 저장해 둘 이유가 없다. 등록에 성공한 기록만 남긴다.
+      if (isExpired(r, now) && r.redeem.status !== 'success') delete all[key];
+      // 플랫폼 목록에서 사라진 보상은 더 이상 코드를 꺼낼 수 없으니 지운다.
+      // 이미 꺼낸 코드는 등록에 쓸 수 있으므로 남긴다.
+      else if (!incoming.has(key) && !r.code) delete all[key];
     }
     for (const r of list.filter((x) => !isExpired(x, now))) {
       const key = rewardKey(r);
