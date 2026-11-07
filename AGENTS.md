@@ -5,7 +5,7 @@ dropkeeper 저장소에서 작업하는 사람과 AI 에이전트를 위한 안�
 ## 프로젝트
 
 스트리밍 플랫폼 드롭스 보상 코드를 모아 Battle.net에 차례로 등록하는 Chrome(MV3) 확장 프로그램입니다.
-지금은 SOOP 드롭스(오버워치)를 지원하고, CHZZK를 추가할 예정입니다.
+지금은 SOOP과 CHZZK 드롭스(오버워치)를 지원합니다.
 
 - 스택: WXT, TypeScript, React, Tailwind CSS v4, pnpm
 - 백엔드 없음. 상태는 모두 `chrome.storage.local`에 저장

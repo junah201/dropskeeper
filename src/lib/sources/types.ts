@@ -6,7 +6,7 @@ import type { SourceId, SourceReward } from '../types';
  * 구현은 그 플랫폼 페이지에 주입된 content script 안에서 실행된다.
  * 같은 출처에서 요청하므로 로그인 쿠키가 자동으로 붙는다.
  *
- * 새 플랫폼(예: CHZZK)을 추가하는 순서:
+ * 새 플랫폼을 추가하는 순서:
  *   1. types.ts의 SourceId에 id 추가
  *   2. sources/<id>.ts에 DropSource 구현
  *   3. sources/hosts.ts에 메타 정보 추가
