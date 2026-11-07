@@ -99,11 +99,12 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
         · 등록 대기 {list.length}개
       </SelectAllBar>
       {(loginPage || error) && (
-        <div className="px-3 pt-2">
+        <div className="border-b border-line px-3 py-2">
           <Notice tone={loginPage ? 'warn' : 'bad'}>{loginPage ? 'Battle.net에 먼저 로그인해 주세요.' : error}</Notice>
         </div>
       )}
-      <ul className="mt-2 border-y border-line bg-panel">
+      {/* 위 전체 선택 줄이 아래 테두리를 가지므로 목록은 바로 붙이고 아래 테두리만 둔다 */}
+      <ul className="border-b border-line bg-panel">
         {list.map((r, i) => {
           const k = rewardKey(r);
           const failed = r.redeem.status === 'failed';
