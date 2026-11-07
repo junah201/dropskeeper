@@ -32,7 +32,8 @@ export type RewardKey = `${SourceId}:${string}`;
 export const rewardKey = (r: Pick<SourceReward, 'sourceId' | 'rewardId'>): RewardKey =>
   `${r.sourceId}:${r.rewardId}`;
 
-export type FailReason = 'already_used' | 'already_owned' | 'not_redeemable' | 'invalid' | 'expired' | 'login_required' | 'unknown';
+/** Battle.net 등록 실패 이유. 화면에서 직접 확인한 4가지 외에는 모두 unknown이다. */
+export type FailReason = 'already_used' | 'already_owned' | 'not_redeemable' | 'product_unavailable' | 'unknown';
 
 export type RedeemStatus = 'idle' | 'running' | 'success' | 'failed';
 

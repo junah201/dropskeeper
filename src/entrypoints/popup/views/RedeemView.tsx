@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { sendToBackground } from '@/lib/messages';
 import { sourceMetas } from '@/lib/sources/hosts';
-import { reasonHelp, reasonLabel } from '@/lib/labels';
+import { failReasonOf, reasonHelp, reasonLabel } from '@/lib/labels';
 import type { Job, RewardEntry, RewardKey } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
 import { isExpired } from '@/lib/expiry';
@@ -123,7 +123,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
               <div className="min-w-0 flex-1">
                 <div className="truncate text-[12.5px] font-semibold">{r.name}</div>
                 <div className="font-mono text-[11.5px] tabular-nums text-sub">{mask(r.code!)}</div>
-                {failed && r.redeem.reason && <div className="mt-0.5 text-[11px] text-bad">지난 시도: {reasonLabel[r.redeem.reason]}</div>}
+                {failed && <div className="mt-0.5 text-[11px] text-bad">지난 시도: {reasonLabel[failReasonOf(r.redeem.reason)]}</div>}
               </div>
               <button
                 type="button"
@@ -258,8 +258,8 @@ function RunStatus({ r, done, isCurrent, isNext, waitSec }: { r: RewardEntry; do
     if (r.redeem.status === 'success') return <span className="shrink-0 font-semibold text-ok">등록됨</span>;
     if (r.redeem.status === 'failed')
       return (
-        <span className="shrink-0 font-semibold text-bad" title={r.redeem.message}>
-          {reasonLabel[r.redeem.reason ?? 'unknown']}
+        <span className="shrink-0 font-semibold text-bad">
+          {reasonLabel[failReasonOf(r.redeem.reason)]}
         </span>
       );
     return <span className="shrink-0 text-faint">건너뜀</span>;
@@ -333,7 +333,7 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
         ) : (
           <ul className="grid gap-2 px-4 py-3">
             {fails.map((r) => {
-              const reason = r.redeem.reason ?? 'unknown';
+              const reason = failReasonOf(r.redeem.reason);
               return (
                 <li key={rewardKey(r)} className="rounded-md border border-line bg-panel px-3 py-2.5">
                   <div className="flex items-start justify-between gap-2">
@@ -353,7 +353,10 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
                   </div>
                   <div className="mt-2 rounded bg-bad-soft px-2 py-1.5 text-[11.5px] text-bad">
                     <b>{reasonLabel[reason]}</b> · {reasonHelp[reason]}
-                    {r.redeem.message && <div className="mt-0.5 break-all font-mono opacity-80">원문: {r.redeem.message}</div>}
+                    {/* 이유를 아는 실패는 설명으로 충분하니 원문은 알 수 없는 오류일 때만 보여 준다 */}
+                    {reason === 'unknown' && r.redeem.message && (
+                      <div className="mt-0.5 break-all font-mono opacity-80">원문: {r.redeem.message}</div>
+                    )}
                   </div>
                 </li>
               );

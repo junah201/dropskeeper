@@ -28,14 +28,16 @@ const CONFIRM_TEXTS = ['코드 사용', '사용하기', '등록하기', '등록'
 const NEGATIVE_TEXTS = ['취소', '닫기', '돌아가기', 'Cancel', 'Back'];
 
 const SUCCESS_PATTERNS = [/등록(이|되)/, /추가되었/, /완료/, /받았습니다/, /success/i, /redeemed/i, /added to your account/i];
+// 실제 화면으로 확인한 오류 제목만 적는다. 여기에 없는 오류는 unknown으로 두고 원문을 보여 준다.
 const ERROR_PATTERNS: [FailReason, RegExp][] = [
-  ['already_used', /이미\s*(사용|등록)|already\s+(been\s+)?(used|redeemed|claimed)/i],
-  // 실제 화면 문구: "이미 보유한 상품입니다."
-  ['already_owned', /이미\s*보유|already\s+own/i],
-  // 실제 화면 문구: "입력한 키는 등록할 수 없습니다. 코드를 확인한 후 다시 시도해 주세요. ... 점검 중일 수 있으니 ..."
-  ['not_redeemable', /등록할\s*수\s*없|cannot\s+be\s+redeemed/i],
-  ['expired', /만료|expired/i],
-  ['invalid', /유효하지|올바르지|잘못된|존재하지|찾을 수 없|invalid|not\s+valid|incorrect/i],
+  // "이미 등록된 코드입니다."
+  ['already_used', /이미\s*등록된\s*코드/],
+  // "이미 보유한 상품입니다."
+  ['already_owned', /이미\s*보유한\s*상품/],
+  // "입력한 키는 등록할 수 없습니다. … 점검 중일 수 있으니 다음에 시도해 주세요."
+  ['not_redeemable', /키는\s*등록할\s*수\s*없/],
+  // "해당 상품을 등록하실 수 없습니다."
+  ['product_unavailable', /상품을\s*등록하실\s*수\s*없/],
 ];
 
 const visible = (el: Element): boolean => {
@@ -95,7 +97,8 @@ function readErrorBanner(): { reason: FailReason; message: string } | undefined 
   const title = lines[0] ?? textOf(el);
   const all = textOf(el);
   const reason = ERROR_PATTERNS.find(([, re]) => re.test(title))?.[0] ?? ERROR_PATTERNS.find(([, re]) => re.test(all))?.[0] ?? 'unknown';
-  return { reason, message: title };
+  // 이유를 모르는 오류는 사용자가 원문을 보고 판단하도록 배너 전체 문구를 남긴다
+  return { reason, message: reason === 'unknown' ? all : title };
 }
 
 /** 알림·오류 영역에 있을 법한 요소의 문구를 모은다 */

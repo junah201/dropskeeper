@@ -122,7 +122,7 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
 
 async function processRedeem(job: Job, key: RewardKey, r: RewardEntry, unknownStreak: { n: number }) {
   if (!r.code) {
-    await patchReward(key, () => ({ redeem: { status: 'failed', reason: 'invalid', message: '추출된 코드가 없어요.', at: Date.now() } }));
+    await patchReward(key, () => ({ redeem: { status: 'failed', reason: 'unknown', message: '추출된 코드가 없어요.', at: Date.now() } }));
     return;
   }
   await patchReward(key, () => ({ redeem: { status: 'running' } }));
