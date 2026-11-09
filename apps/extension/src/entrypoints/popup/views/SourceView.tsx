@@ -11,7 +11,8 @@ import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
 import { fmtDateTime, isExpired } from '@/lib/expiry';
 import { useStored } from '../hooks';
-import { Bar, Btn, Check, CodeChip, Notice, ExpiryLine, Rich, SelectAllBar, SelectedCount, Shell, StatGrid, Tag, Thumb } from '../ui';
+import { BusyLabel, ChipBtn, FailCard, FilterChip, FootNote, Hint, IntroBody, ProgressHeader, ProgressList, ProgressRow, QuietTag, RewardRow, StatusText, TextBtn } from '@dropskeeper/popup-ui';
+import { Btn, CodeChip, Notice, ExpiryLine, Rich, SelectAllBar, SelectedCount, Shell, StatGrid, Tag } from '../ui';
 
 interface Props {
   sourceId: SourceId;
@@ -97,30 +98,22 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
   if (list.length === 0) {
     return (
       <Shell step="collect">
-        <div className="flex h-full flex-col px-4 pb-4 pt-6">
-          {/* 줄바꿈은 번역문에 넣고 whitespace-pre-line으로 살린다 */}
-          <h2 className="whitespace-pre-line text-[16px] font-semibold leading-snug">{i18n.t('source.introTitle', { name: meta.name })}</h2>
-          <p className="mt-2 text-[13px] leading-relaxed text-sub">{i18n.t('source.introDescription')}</p>
-          {error && (
-            <div className="mt-4">
-              <Notice tone="bad">{tx(error)}</Notice>
-            </div>
-          )}
-          <div className="mt-auto">
-            <Btn full onClick={load} disabled={loading} aria-busy={loading}>
-              {loading ? (
-                // inline-flex로 두면 글줄 기준선에 맞춰져 버튼 가운데보다 2px쯤 위로 뜬다. 블록 flex로 버튼 높이 가운데에 놓는다.
-                <span className="flex items-center justify-center gap-2">
-                  <LoaderCircle size={16} strokeWidth={2} className="animate-spin motion-reduce:animate-none" aria-hidden />
-                  {i18n.t('source.loading')}
-                </span>
-              ) : (
-                i18n.t('source.load')
-              )}
-            </Btn>
-            <p className="mt-2 text-center text-[12px] text-faint">{i18n.t('source.loadHint')}</p>
-          </div>
-        </div>
+        <IntroBody
+          title={i18n.t('source.introTitle', { name: meta.name })}
+          description={i18n.t('source.introDescription')}
+          notice={error && <Notice tone="bad">{tx(error)}</Notice>}
+        >
+          <Btn full onClick={load} disabled={loading} aria-busy={loading}>
+            {loading ? (
+              <BusyLabel icon={<LoaderCircle size={16} strokeWidth={2} className="animate-spin motion-reduce:animate-none" aria-hidden />}>
+                {i18n.t('source.loading')}
+              </BusyLabel>
+            ) : (
+              i18n.t('source.load')
+            )}
+          </Btn>
+          <Hint>{i18n.t('source.loadHint')}</Hint>
+        </IntroBody>
       </Shell>
     );
   }
@@ -147,9 +140,9 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           some={chosen.length > 0}
           onToggle={toggleAll}
           action={
-            <button className="text-[12px] font-medium text-accent underline-offset-2 hover:underline disabled:text-faint disabled:no-underline" onClick={load} disabled={loading}>
+            <TextBtn onClick={load} disabled={loading}>
               {loading ? i18n.t('source.loadingShort') : i18n.t('source.reload')}
-            </button>
+            </TextBtn>
           }
         >
           {i18n.t('source.shownOfTotal', { shown: visible.length, total: list.length })}
@@ -161,13 +154,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             </FilterChip>
           )}
           {meta.tracksClaimed && !hideClaimed && unclaimed.length > 0 && (
-            <button
-              type="button"
-              className="inline-flex h-6 items-center rounded-md border border-line bg-panel px-2 text-[12px] font-medium text-ink hover:bg-bg"
-              onClick={selectUnclaimed}
-            >
-              {i18n.t('source.selectUnclaimed', { count: unclaimed.length })}
-            </button>
+            <ChipBtn onClick={selectUnclaimed}>{i18n.t('source.selectUnclaimed', { count: unclaimed.length })}</ChipBtn>
           )}
           <FilterChip on={hideExtracted} onClick={() => setHideExtracted((v) => !v)}>
             {i18n.t('source.hideExtracted')}
@@ -185,23 +172,18 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             {visible.map((r, i) => {
               const k = rewardKey(r);
               return (
-                // 행 어디를 눌러도 선택된다. 체크박스 클릭도 이 onClick으로 전달된다.
-                <li
+                <RewardRow
                   key={k}
-                  onClick={r.code ? undefined : () => toggle(k)}
-                  className={`flex items-center gap-2 px-3 py-2 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''} ${
-                    r.code ? '' : 'cursor-pointer select-none hover:bg-bg'
-                  }`}
-                >
-                  {r.code ? <span className="w-4 shrink-0" /> : <Check on={selected.has(k)} label={r.name} />}
-                  <Thumb src={r.imageUrl} size="lg" />
-                  <div className="min-w-0 flex-1">
-                    <div className="truncate text-[14px] font-medium">{r.name}</div>
-                    {/* 만료일이 잘리지 않도록 캠페인 이름보다 앞에 둔다 */}
-                    <ExpiryLine r={r} />
-                  </div>
-                  <RewardTag r={r} />
-                </li>
+                  first={i === 0}
+                  selectable={!r.code}
+                  checked={selected.has(k)}
+                  dim={r.redeem.status === 'success'}
+                  onClick={() => toggle(k)}
+                  thumb={r.imageUrl}
+                  name={r.name}
+                  meta={<ExpiryLine r={r} />}
+                  tag={<RewardTag r={r} />}
+                />
               );
             })}
           </ul>
@@ -221,32 +203,7 @@ function RewardTag({ r }: { r: RewardEntry }) {
   if (r.extractError) return <Tag tone="bad">{i18n.t('source.tagExtractFailed')}</Tag>;
   if (r.claimed) return <Tag tone="warn">{i18n.t('source.tagClaimed')}</Tag>;
   // 기본 상태라 알약 없이 옅은 글자로만 적는다
-  return <span className="whitespace-nowrap px-1.5 text-[12px] text-faint">{i18n.t('source.tagNotExtracted')}</span>;
-}
-
-/**
- * 켜고 끄는 필터. 상태 태그(Tag)와 구분되도록 테두리·체크 표시·24px 높이를 가진 버튼 모양으로 그린다.
- */
-function FilterChip({ on, onClick, children }: { on: boolean; onClick: () => void; children: React.ReactNode }) {
-  return (
-    <button
-      type="button"
-      aria-pressed={on}
-      onClick={onClick}
-      className={`inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[12px] font-medium transition-colors ${
-        on ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-panel text-sub hover:border-check hover:text-ink'
-      }`}
-    >
-      <span className={`grid h-3 w-3 place-items-center rounded-[3px] ${on ? 'bg-accent' : 'border border-check'}`} aria-hidden>
-        {on && (
-          <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
-            <path d="M1.5 5.2 4 7.5 8.5 2.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        )}
-      </span>
-      {children}
-    </button>
-  );
+  return <QuietTag>{i18n.t('source.tagNotExtracted')}</QuietTag>;
 }
 
 // B3: 코드 추출 중
@@ -278,58 +235,49 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
     >
       {/* 진행 요약은 위에 고정하고, 나머지 높이는 전체 목록이 채운다 */}
       <div className="flex h-full flex-col">
-        <div className="px-4 pt-5">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-[16px] font-semibold">{paused ? i18n.t('extracting.paused') : i18n.t('extracting.running')}</h2>
-            <span className="font-mono text-[18px] font-medium tabular-nums">
-              {job.index}
-              <span className="text-faint"> / {job.queue.length}</span>
-            </span>
-          </div>
-          <div className="mt-3">
-            <Bar value={job.index} total={job.queue.length} />
-          </div>
+        <ProgressHeader title={paused ? i18n.t('extracting.paused') : i18n.t('extracting.running')} index={job.index} total={job.queue.length}>
           {paused && job.pauseReason && (
             <div className="mt-3">
               <Notice tone="warn">{tx(job.pauseReason)}</Notice>
             </div>
           )}
-        </div>
+        </ProgressHeader>
 
-        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-[10px] border border-line bg-panel text-[13px]">
+        <ProgressList>
           {job.queue.map((k, i) => {
             const r = rewards[k];
             if (!r) return null;
             const isCurrent = k === job.current || (!current && i === job.index && !paused);
             const done = i < job.index;
             return (
-              <li
+              <ProgressRow
                 key={k}
                 ref={isCurrent ? currentRef : undefined}
-                className={`flex items-center gap-3 px-3 py-2 ${i ? 'border-t border-line' : ''} ${isCurrent ? 'bg-accent-soft' : ''} ${
-                  !done && !isCurrent ? 'opacity-50' : ''
-                }`}
-              >
-                <Thumb src={r.imageUrl} />
-                <span className="min-w-0 flex-1 truncate">{r.name}</span>
-                {done ? (
-                  r.code ? (
-                    <CodeChip code={r.code} size="sm" />
+                first={i === 0}
+                current={isCurrent}
+                dim={!done && !isCurrent}
+                thumb={r.imageUrl}
+                name={r.name}
+                status={
+                  done ? (
+                    r.code ? (
+                      <CodeChip code={r.code} size="sm" />
+                    ) : (
+                      <StatusText tone="bad" title={r.extractError && tx(r.extractError)}>
+                        {i18n.t('common.failed')}
+                      </StatusText>
+                    )
+                  ) : isCurrent ? (
+                    <StatusText tone="accent">{i18n.t('extracting.requesting')}</StatusText>
                   ) : (
-                    <span className="shrink-0 font-medium text-bad" title={r.extractError && tx(r.extractError)}>
-                      {i18n.t('common.failed')}
-                    </span>
+                    <StatusText tone="faint">{i18n.t('common.waiting')}</StatusText>
                   )
-                ) : isCurrent ? (
-                  <span className="shrink-0 font-medium text-accent">{i18n.t('extracting.requesting')}</span>
-                ) : (
-                  <span className="shrink-0 text-faint">{i18n.t('common.waiting')}</span>
-                )}
-              </li>
+                }
+              />
             );
           })}
-        </ul>
-        <p className="px-4 py-3 text-[12px] text-faint">{i18n.t('common.keepsRunning')}</p>
+        </ProgressList>
+        <FootNote>{i18n.t('common.keepsRunning')}</FootNote>
       </div>
     </Shell>
   );
@@ -379,16 +327,18 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
           <ul className="mt-3 grid gap-2">
             {/* 등록 결과 화면의 실패 목록과 같은 모양으로 그린다 */}
             {fail.map((r) => (
-              <li key={rewardKey(r)} className="rounded-[10px] border border-line bg-panel p-3">
-                <div className="flex items-center justify-between gap-2">
-                  <Thumb src={r.imageUrl} />
-                  <div className="min-w-0 flex-1 truncate text-[14px] font-medium">{r.name}</div>
+              <FailCard
+                key={rewardKey(r)}
+                thumb={r.imageUrl}
+                name={r.name}
+                actions={
                   <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
                     {i18n.t('common.retry')}
                   </Btn>
-                </div>
-                <div className="mt-2 break-all rounded bg-bad-soft p-2 text-[12px] text-bad">{r.extractError ? tx(r.extractError) : i18n.t('common.unknownError')}</div>
-              </li>
+                }
+              >
+                {r.extractError ? tx(r.extractError) : i18n.t('common.unknownError')}
+              </FailCard>
             ))}
           </ul>
         )}

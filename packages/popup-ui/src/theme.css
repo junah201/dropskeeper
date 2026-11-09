@@ -1,0 +1,37 @@
+/*
+ * 팝업 색과 글꼴. 확장 팝업과 소개 사이트 데모가 같이 쓴다.
+ * 쓰는 쪽 CSS에서 `@import 'tailwindcss';` 다음에 불러온다.
+ */
+/* 본문: Pretendard 가변 폰트. 쓰는 글자가 든 조각 파일만 불러온다. */
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+/* 코드·숫자: 영문과 숫자만 쓰므로 라틴 서브셋만 */
+@import '@fontsource/ibm-plex-mono/latin-400.css';
+@import '@fontsource/ibm-plex-mono/latin-500.css';
+@import '@fontsource/ibm-plex-mono/latin-600.css';
+
+/* 이 패키지의 컴포넌트에 쓴 클래스도 Tailwind가 찾게 한다 */
+@source './';
+
+/* 흰 패널, 연한 회색 바탕, 파랑 포인트 */
+@theme {
+  --color-bg: #f6f7f9;
+  --color-panel: #ffffff;
+  --color-line: #e1e4ea;
+  --color-ink: #151a23;
+  --color-sub: #5d6676;
+  --color-faint: #8b93a1;
+  --color-accent: #2350d8;
+  --color-accent-hover: #1c43b8;
+  --color-accent-soft: #e8eefc;
+  --color-ok: #13795b;
+  --color-ok-soft: #e3f4ec;
+  --color-bad: #c2362b;
+  --color-bad-soft: #fbe9e7;
+  --color-warn: #a15c00;
+  --color-warn-soft: #fdf1dc;
+  --color-check: #b9c0cc;
+  --color-mute-soft: #eef0f3;
+
+  --font-sans: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}

@@ -8,7 +8,8 @@ import type { FailReason, Job, RewardEntry, RewardKey } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
 import { isExpired, parseDate } from '@/lib/expiry';
 import { useNow } from '../hooks';
-import { Bar, Btn, Check, ExpiryLine, CodeChip, Counts, Notice, SelectAllBar, SelectedCount, Shell, Tag, Thumb } from '../ui';
+import { DoneRow, FailCard, FootNote, ProgressHeader, ProgressList, ProgressRow, QueueRow, ResultTabs, StatusText, TextBtn } from '@dropskeeper/popup-ui';
+import { Btn, ExpiryLine, CodeChip, Counts, Notice, SelectAllBar, SelectedCount, Shell, Tag, sourceBadge } from '../ui';
 
 interface Props {
   tabId: number;
@@ -149,50 +150,43 @@ function Queue({
           const k = rewardKey(r);
           const failed = r.redeem.status === 'failed';
           return (
-            // 행 어디를 눌러도 선택된다. 체크박스 클릭도 이 onClick으로 전달된다.
-            <li
+            <QueueRow
               key={k}
+              first={i === 0}
+              checked={selected.has(k)}
               onClick={() => toggle(k)}
-              className={`flex cursor-pointer select-none items-center gap-3 px-3 py-2 hover:bg-bg ${i ? 'border-t border-line' : ''}`}
-            >
-              <Check on={selected.has(k)} label={r.name} />
-              <Thumb src={r.imageUrl} size="lg" source={r.sourceId} />
-              <div className="min-w-0 flex-1">
-                <div className="truncate text-[14px] font-medium">{r.name}</div>
-                {/* 코드와 만료일을 한 줄에 두어 "무엇을, 언제까지"가 같이 읽히게 한다 */}
-                <div className="mt-1 flex items-center gap-2">
-                  <CodeChip code={r.code!} />
-                  <div className="min-w-0">
-                    <ExpiryLine r={r} />
-                  </div>
-                </div>
-                {failed && <div className="mt-1 text-[12px] text-bad">{i18n.t('redeem.lastAttempt', { reason: reasonLabel(failReasonOf(r.redeem.reason)) })}</div>}
-              </div>
-              <button
-                type="button"
-                className="shrink-0 text-[12px] font-medium text-accent underline-offset-2 hover:underline"
-                onClick={(e) => {
-                  e.stopPropagation(); // 복사 버튼은 선택을 바꾸지 않는다
-                  void copy(r.code!).then(() => setCopied(k));
-                }}
-                title={i18n.t('common.copyCode')}
-              >
-                {copied === k ? i18n.t('common.copied') : i18n.t('common.copy')}
-              </button>
-              {failed && (
-                <button
-                  type="button"
-                  className="shrink-0 text-[12px] font-medium text-bad underline-offset-2 hover:underline"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    void dismiss([k]);
-                  }}
-                  title={i18n.t('common.deleteFromList')}
-                >
-                  {i18n.t('common.delete')}
-                </button>
-              )}
-            </li>
+              thumb={r.imageUrl}
+              badge={sourceBadge(r.sourceId)}
+              name={r.name}
+              code={<CodeChip code={r.code!} />}
+              meta={<ExpiryLine r={r} />}
+              failedText={failed ? i18n.t('redeem.lastAttempt', { reason: reasonLabel(failReasonOf(r.redeem.reason)) }) : undefined}
+              actions={
+                <>
+                  <TextBtn
+                    onClick={(e) => {
+                      e.stopPropagation(); // 복사 버튼은 선택을 바꾸지 않는다
+                      void copy(r.code!).then(() => setCopied(k));
+                    }}
+                    title={i18n.t('common.copyCode')}
+                  >
+                    {copied === k ? i18n.t('common.copied') : i18n.t('common.copy')}
+                  </TextBtn>
+                  {failed && (
+                    <TextBtn
+                      tone="bad"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void dismiss([k]);
+                      }}
+                      title={i18n.t('common.deleteFromList')}
+                    >
+                      {i18n.t('common.delete')}
+                    </TextBtn>
+                  )}
+                </>
+              }
+            />
           );
         })}
       </ul>
@@ -238,17 +232,7 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
     >
       {/* 진행 요약은 위에 고정하고, 나머지 높이는 전체 대기열 목록이 채운다 */}
       <div className="flex h-full flex-col">
-        <div className="px-4 pt-5">
-          <div className="flex items-baseline justify-between">
-            <h2 className="text-[16px] font-semibold">{paused ? i18n.t('redeem.paused') : i18n.t('redeem.running')}</h2>
-            <span className="font-mono text-[18px] font-medium tabular-nums">
-              {job.index}
-              <span className="text-faint"> / {job.queue.length}</span>
-            </span>
-          </div>
-          <div className="mt-3">
-            <Bar value={job.index} total={job.queue.length} />
-          </div>
+        <ProgressHeader title={paused ? i18n.t('redeem.paused') : i18n.t('redeem.running')} index={job.index} total={job.queue.length}>
           <div className="mt-3">
             <Counts
               items={[
@@ -263,9 +247,9 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
               <Notice tone="warn">{tx(job.pauseReason)}</Notice>
             </div>
           )}
-        </div>
+        </ProgressHeader>
 
-        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-[10px] border border-line bg-panel text-[13px]">
+        <ProgressList>
           {job.queue.map((k, i) => {
             const r = rewards[k];
             if (!r) return null;
@@ -274,31 +258,26 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
             const isNext = !job.current && i === job.index && !paused;
             const done = i < job.index;
             return (
-              <li
+              <ProgressRow
                 key={k}
                 ref={isCurrent || isNext ? currentRef : undefined}
-                className={`flex items-center gap-3 px-3 py-2 ${i ? 'border-t border-line' : ''} ${isCurrent ? 'bg-accent-soft' : ''} ${
-                  !done && !isCurrent && !isNext ? 'opacity-50' : ''
-                }`}
-              >
-                <Thumb src={r.imageUrl} source={r.sourceId} />
-                <div className="min-w-0 flex-1">
-                  <div className="truncate">{r.name}</div>
-                  {r.code && (
-                    <div className="mt-1">
-                      <CodeChip code={r.code} size="sm" />
-                    </div>
-                  )}
-                </div>
-                <RunStatus r={r} done={done} isCurrent={isCurrent} isNext={isNext} waitSec={waiting ? waitSec : 0} />
-              </li>
+                first={i === 0}
+                current={isCurrent}
+                dim={!done && !isCurrent && !isNext}
+                thumb={r.imageUrl}
+                badge={sourceBadge(r.sourceId)}
+                name={r.name}
+                twoLine
+                code={r.code && <CodeChip code={r.code} size="sm" />}
+                status={<RunStatus r={r} done={done} isCurrent={isCurrent} isNext={isNext} waitSec={waiting ? waitSec : 0} />}
+              />
             );
           })}
-        </ul>
-        <p className="px-4 py-3 text-[12px] text-faint">
+        </ProgressList>
+        <FootNote>
           {waiting ? i18n.t('redeem.nextIn', { seconds: waitSec }) : ''}
           {i18n.t('common.keepsRunning')}
-        </p>
+        </FootNote>
       </div>
     </Shell>
   );
@@ -306,19 +285,14 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
 
 /** 등록 중 목록 오른쪽의 상태 표시 */
 function RunStatus({ r, done, isCurrent, isNext, waitSec }: { r: RewardEntry; done: boolean; isCurrent: boolean; isNext: boolean; waitSec: number }) {
-  if (isCurrent) return <span className="shrink-0 font-medium text-accent">{i18n.t('redeem.statusRunning')}</span>;
+  if (isCurrent) return <StatusText tone="accent">{i18n.t('redeem.statusRunning')}</StatusText>;
   if (done) {
-    if (r.redeem.status === 'success') return <span className="shrink-0 font-medium text-ok">{i18n.t('common.redeemed')}</span>;
-    if (r.redeem.status === 'failed')
-      return (
-        <span className="shrink-0 font-medium text-bad">
-          {reasonLabel(failReasonOf(r.redeem.reason))}
-        </span>
-      );
-    return <span className="shrink-0 text-faint">{i18n.t('redeem.statusSkipped')}</span>;
+    if (r.redeem.status === 'success') return <StatusText tone="ok">{i18n.t('common.redeemed')}</StatusText>;
+    if (r.redeem.status === 'failed') return <StatusText tone="bad">{reasonLabel(failReasonOf(r.redeem.reason))}</StatusText>;
+    return <StatusText tone="faint">{i18n.t('redeem.statusSkipped')}</StatusText>;
   }
-  if (isNext && waitSec > 0) return <span className="shrink-0 font-mono text-sub tabular-nums">{i18n.t('redeem.statusIn', { seconds: waitSec })}</span>;
-  return <span className="shrink-0 text-faint">{i18n.t('common.waiting')}</span>;
+  if (isNext && waitSec > 0) return <StatusText tone="timer">{i18n.t('redeem.statusIn', { seconds: waitSec })}</StatusText>;
+  return <StatusText tone="faint">{i18n.t('common.waiting')}</StatusText>;
 }
 
 // C3: 등록 결과 / 재시도
@@ -360,24 +334,14 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
           <Notice tone="mute">{i18n.t('redeem.stoppedNotice', job.queue.length - job.index)}</Notice>
         </div>
       )}
-      <div role="tablist" className="flex border-b border-line px-4 pt-3 text-[14px]">
-        {(
-          [
-            ['fail', i18n.t('common.failed'), fails.length],
-            ['ok', i18n.t('common.succeeded'), oks.length],
-          ] as const
-        ).map(([id, label, n]) => (
-          <button
-            key={id}
-            role="tab"
-            aria-selected={tab === id}
-            onClick={() => setTab(id)}
-            className={`border-b-2 px-3 pb-2 font-medium ${tab === id ? 'border-ink text-ink' : 'border-transparent text-faint'}`}
-          >
-            {label} <span className="font-mono tabular-nums">{n}</span>
-          </button>
-        ))}
-      </div>
+      <ResultTabs
+        tabs={[
+          { id: 'fail', label: i18n.t('common.failed'), count: fails.length },
+          { id: 'ok', label: i18n.t('common.succeeded'), count: oks.length },
+        ]}
+        value={tab}
+        onChange={setTab}
+      />
 
       {tab === 'fail' ? (
         fails.length === 0 ? (
@@ -387,16 +351,14 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
             {fails.map((r) => {
               const reason = failReasonOf(r.redeem.reason);
               return (
-                <li key={rewardKey(r)} className="rounded-[10px] border border-line bg-panel p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <Thumb src={r.imageUrl} source={r.sourceId} />
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-[14px] font-medium">{r.name}</div>
-                      <div className="mt-1">
-                        <CodeChip code={r.code ?? ''} />
-                      </div>
-                    </div>
-                    <div className="flex shrink-0 gap-1">
+                <FailCard
+                  key={rewardKey(r)}
+                  thumb={r.imageUrl}
+                  badge={sourceBadge(r.sourceId)}
+                  name={r.name}
+                  code={<CodeChip code={r.code ?? ''} />}
+                  actions={
+                    <>
                       {isRetryable(reason) && (
                         <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
                           {i18n.t('common.retry')}
@@ -405,16 +367,15 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
                       <Btn kind="ghost" size="sm" onClick={() => dismiss([rewardKey(r)])}>
                         {i18n.t('common.delete')}
                       </Btn>
-                    </div>
-                  </div>
-                  <div className="mt-2 rounded bg-bad-soft p-2 text-[12px] text-bad">
-                    <span className="font-medium">{reasonLabel(reason)}</span> · {reasonHelp(reason)}
-                    {/* 이유를 아는 실패는 설명으로 충분하니 원문은 알 수 없는 오류일 때만 보여 준다 */}
-                    {reason === 'unknown' && r.redeem.message && (
-                      <div className="mt-0.5 break-all font-mono opacity-80">{i18n.t('redeem.rawMessage', { text: tx(r.redeem.message) })}</div>
-                    )}
-                  </div>
-                </li>
+                    </>
+                  }
+                >
+                  <span className="font-medium">{reasonLabel(reason)}</span> · {reasonHelp(reason)}
+                  {/* 이유를 아는 실패는 설명으로 충분하니 원문은 알 수 없는 오류일 때만 보여 준다 */}
+                  {reason === 'unknown' && r.redeem.message && (
+                    <div className="mt-0.5 break-all font-mono opacity-80">{i18n.t('redeem.rawMessage', { text: tx(r.redeem.message) })}</div>
+                  )}
+                </FailCard>
               );
             })}
           </ul>
@@ -424,11 +385,14 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
       ) : (
         <ul className="border-b border-line bg-panel">
           {oks.map((r, i) => (
-            <li key={rewardKey(r)} className={`flex items-center gap-3 px-4 py-2 ${i ? 'border-t border-line' : ''}`}>
-              <Thumb src={r.imageUrl} source={r.sourceId} />
-              <span className="min-w-0 flex-1 truncate text-[14px] font-medium">{r.name}</span>
-              <Tag tone="ok">{i18n.t('common.redeemed')}</Tag>
-            </li>
+            <DoneRow
+              key={rewardKey(r)}
+              first={i === 0}
+              thumb={r.imageUrl}
+              badge={sourceBadge(r.sourceId)}
+              name={r.name}
+              tag={<Tag tone="ok">{i18n.t('common.redeemed')}</Tag>}
+            />
           ))}
         </ul>
       )}
