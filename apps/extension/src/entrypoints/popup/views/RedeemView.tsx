@@ -236,9 +236,9 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
           <div className="mt-3">
             <Counts
               items={[
-                { label: i18n.t('common.succeeded'), value: ok, dot: 'bg-ok' },
-                { label: i18n.t('common.failed'), value: fail, dot: 'bg-bad' },
-                { label: i18n.t('redeem.remaining'), value: job.queue.length - job.index, dot: 'bg-check' },
+                { label: i18n.t('common.succeeded'), value: ok, tone: 'ok' },
+                { label: i18n.t('common.failed'), value: fail, tone: 'bad' },
+                { label: i18n.t('redeem.remaining'), value: job.queue.length - job.index, tone: 'mute' },
               ]}
             />
           </div>

@@ -223,9 +223,9 @@ export function DemoPopup({ scene, t }: { scene: Scene; t: T }) {
               <div className="mt-3">
                 <Counts
                   items={[
-                    { label: t('common.succeeded'), value: done - fail, dot: 'bg-ok' },
-                    { label: t('common.failed'), value: fail, dot: 'bg-bad' },
-                    { label: t('redeem.remaining'), value: N - done, dot: 'bg-check' },
+                    { label: t('common.succeeded'), value: done - fail, tone: 'ok' },
+                    { label: t('common.failed'), value: fail, tone: 'bad' },
+                    { label: t('redeem.remaining'), value: N - done, tone: 'mute' },
                   ]}
                 />
               </div>

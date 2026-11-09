@@ -108,6 +108,15 @@ export function Btn({
   );
 }
 
+/** 체크박스와 필터 칩 안의 흰 체크 표시. 그리는 칸 크기에 맞춰 size와 선 굵기만 바꾼다. */
+function CheckMark({ size, strokeWidth }: { size: number; strokeWidth: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 10 10" fill="none" aria-hidden>
+      <path d="M1.5 5.2 4 7.5 8.5 2.5" stroke="#fff" strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 export function Check({ on, mixed, onChange, label }: { on: boolean; mixed?: boolean; onChange?: () => void; label?: string }) {
   return (
     <button
@@ -120,11 +129,7 @@ export function Check({ on, mixed, onChange, label }: { on: boolean; mixed?: boo
         on || mixed ? 'border-accent bg-accent' : 'border-check bg-panel'
       }`}
     >
-      {on && !mixed && (
-        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden>
-          <path d="M1.5 5.2 4 7.5 8.5 2.5" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      )}
+      {on && !mixed && <CheckMark size={10} strokeWidth={1.8} />}
       {mixed && <span className="h-[2px] w-2 rounded bg-white" />}
     </button>
   );
@@ -218,13 +223,21 @@ export function StatGrid({ items }: { items: { label: string; value: number; ton
   );
 }
 
+const dotClass: Record<Tone, string> = {
+  ok: 'bg-ok',
+  bad: 'bg-bad',
+  warn: 'bg-warn',
+  mute: 'bg-check',
+  accent: 'bg-accent',
+};
+
 /** 진행 중 개수 줄. 색은 점에만 두고 숫자는 mono로 조용히 적는다. */
-export function Counts({ items }: { items: { label: string; value: number; dot: string }[] }) {
+export function Counts({ items }: { items: { label: string; value: number; tone: Tone }[] }) {
   return (
     <dl className="flex items-center gap-4 text-[13px]">
-      {items.map(({ label, value, dot }) => (
+      {items.map(({ label, value, tone }) => (
         <div key={label} className="flex items-center gap-2">
-          <span className={`h-1.5 w-1.5 rounded-full ${dot}`} aria-hidden />
+          <span className={`h-1.5 w-1.5 rounded-full ${dotClass[tone]}`} aria-hidden />
           <dt className="text-sub">{label}</dt>
           <dd className="font-mono tabular-nums text-ink">{value}</dd>
         </div>
@@ -323,11 +336,7 @@ export function FilterChip({ on, onClick, children }: { on: boolean; onClick?: (
       }`}
     >
       <span className={`grid h-3 w-3 place-items-center rounded-[3px] ${on ? 'bg-accent' : 'border border-check'}`} aria-hidden>
-        {on && (
-          <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
-            <path d="M1.5 5.2 4 7.5 8.5 2.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        )}
+        {on && <CheckMark size={8} strokeWidth={2} />}
       </span>
       {children}
     </button>
