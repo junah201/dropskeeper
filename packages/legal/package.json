@@ -1,0 +1,25 @@
+{
+  "name": "@dropskeeper/legal",
+  "description": "개인정보처리방침·이용약관 본문. 확장과 소개 사이트가 같이 쓴다.",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./legal.css": "./src/legal.css"
+  },
+  "scripts": {
+    "compile": "tsc --noEmit"
+  },
+  "dependencies": {
+    "pretendard": "^1.3.9"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "react": "^19.3.1",
+    "typescript": "^7.0.2"
+  }
+}

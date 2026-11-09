@@ -1,4 +1,4 @@
-/* 개인정보처리방침·이용약관 페이지(src/legal) 공용 스타일. 팝업과 같은 색과 글꼴을 쓴다. */
+/* 개인정보처리방침·이용약관 페이지 공용 스타일. 확장과 소개 사이트가 같이 쓰며, 팝업과 같은 색과 글꼴을 쓴다. */
 @import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 
 :root {

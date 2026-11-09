@@ -1,4 +1,4 @@
-import { mountLegalPage } from '@/legal/LegalPage';
-import { privacy } from '@/legal/privacy';
+import { privacy } from '@dropskeeper/legal';
+import { mountLegalPage } from '@/lib/legal';
 
 mountLegalPage(privacy);

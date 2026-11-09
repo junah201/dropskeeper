@@ -12,6 +12,7 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
+    "@dropskeeper/legal": "workspace:*",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@wxt-dev/i18n": "^0.2.8",
     "lucide-react": "^1.70.0",

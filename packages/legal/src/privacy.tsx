@@ -1,8 +1,7 @@
-import type { UiLang } from '@/lib/i18n';
-import type { LegalDoc } from './LegalPage';
+import type { LegalDoc, LegalLang } from './LegalPage';
 
 // 한국어와 영어 본문은 같은 내용을 담는다. 한쪽을 고치면 다른 쪽도 같이 고친다.
-export const privacy: Record<UiLang, LegalDoc> = {
+export const privacy: Record<LegalLang, LegalDoc> = {
   ko: {
     title: '개인정보처리방침',
     effective: '시행일: 2026년 11월 9일',
