@@ -1,5 +1,5 @@
-// 확장 팝업의 실제 문구(apps/extension/src/locales/*.yml)를 빌드할 때 읽어 온다.
-// 동작 데모가 확장과 같은 문구를 보여 주도록, 사이트에 따로 옮겨 적지 않는다. (서버에서만 쓴다)
+// 확장 팝업 문구(apps/extension/src/locales/*.yml)를 빌드할 때 읽어 온다. 서버에서만 쓴다.
+// 동작 데모가 확장과 같은 문구를 보이도록 사이트에 따로 옮겨 적지 않는다.
 import { parse } from 'yaml';
 import ko from '../../extension/src/locales/ko.yml?raw';
 import en from '../../extension/src/locales/en.yml?raw';

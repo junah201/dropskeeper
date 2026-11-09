@@ -28,7 +28,7 @@ const MAX_CONSECUTIVE_UNKNOWN = 3;
 /** 코드 하나를 등록하면서 누를 수 있는 버튼 수 (무한 반복 방지) */
 const MAX_CLICKS = 3;
 
-/** 작업을 일시정지하고 이유를 보여 준다 */
+/** 던지면 작업이 일시정지되고 text가 이유로 보인다 */
 class Pause extends LocalError {}
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

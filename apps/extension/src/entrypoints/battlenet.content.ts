@@ -10,7 +10,7 @@ export default defineContentScript({
       switch (msg.type) {
         case 'bnet/inspect': {
           const state = inspectPage();
-          // 원인 파악용 로그. 같은 상태가 반복되면 한 번만 남긴다. (Battle.net 탭의 개발자 도구 콘솔에서 확인)
+          // 원인 파악용 로그. 같은 상태는 한 번만 남긴다 (Battle.net 탭의 개발자 도구 콘솔).
           const key = JSON.stringify(state);
           if (key !== lastLog) {
             lastLog = key;

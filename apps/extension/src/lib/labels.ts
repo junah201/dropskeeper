@@ -4,7 +4,7 @@ import type { FailReason } from './types';
 // 이유별 이름과 도움말은 locales의 reason.<이유>.label / help에 있다.
 const FAIL_REASONS: readonly FailReason[] = ['already_used', 'already_owned', 'not_redeemable', 'product_unavailable', 'unknown'];
 
-/** 다시 시도할 만한 실패인지. 이미 사용된 코드·이미 보유한 상품은 다시 해도 같아서 삭제만 보여 준다. */
+/** 다시 시도할 만한 실패인지. 이미 사용된 코드·이미 보유한 상품은 결과가 같아 삭제만 보여 준다. */
 export const isRetryable = (reason: FailReason): boolean => reason !== 'already_used' && reason !== 'already_owned';
 
 /** 저장된 이유를 지금 쓰는 이유로 맞춘다. 예전 버전이 남긴 이유(invalid 등)는 unknown으로 본다. */

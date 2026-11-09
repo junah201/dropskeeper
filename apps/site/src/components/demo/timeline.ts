@@ -70,7 +70,7 @@ function make(defs: Def[], frozen: number): Timeline {
 
 const form: BnState = { kind: 'form' };
 const PRESS = 450;
-/** 1..n 번째 step 시각 */
+/** step 간격의 시각 n개: step, 2·step, …, n·step */
 const steps = (n: number, step: number) => Array.from({ length: n }, (_, k) => (k + 1) * step);
 
 /** 1단계: 드롭스 인벤토리에서 보상을 불러와 고르고 코드를 추출한다 */

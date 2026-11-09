@@ -30,7 +30,7 @@ export function useActiveTab(): ActiveTab | undefined {
       tabId = t?.id;
       setTab({ id: t?.id, url: t?.url });
     });
-    // host_permissions에 있는 사이트로 이동할 때만 changeInfo.url이 채워진다. 팝업 화면을 고를 때 필요한 것도 그 사이트뿐이다.
+    // changeInfo.url은 host_permissions에 있는 사이트로 갈 때만 채워진다. 팝업 화면을 고르는 데는 그것으로 충분하다.
     const onUpdated = (id: number, info: { url?: string }) => {
       if (id === tabId && info.url) setTab({ id, url: info.url });
     };

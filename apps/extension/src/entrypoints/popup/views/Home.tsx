@@ -41,7 +41,7 @@ export function Home({ rewards, job }: { rewards: Record<RewardKey, RewardEntry>
           </Notice>
         )}
 
-        {/* 다음에 할 일을 알려 주는 숫자는 등록 대기 하나라 그것만 포인트 색으로 칠한다 */}
+        {/* 다음에 할 일을 알려 주는 등록 대기 숫자만 포인트 색으로 칠한다 */}
         <StatGrid
           items={[
             { label: i18n.t('home.statExtracted'), value: withCode.length },

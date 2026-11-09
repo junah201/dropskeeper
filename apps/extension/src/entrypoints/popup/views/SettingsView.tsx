@@ -6,7 +6,7 @@ import type { Settings } from '@/lib/types';
 import { usePopup } from '../context';
 import { CodeChip, Shell, Switch } from '../ui';
 
-/** 미리보기에 쓰는 예시 코드. 실제 코드가 아니고, Battle.net 코드와 같은 4-4-5-4-4 형식만 맞췄다. */
+/** 미리보기용 가짜 코드. 형식만 Battle.net 코드(4-4-5-4-4)와 같다. */
 const SAMPLE_CODE = 'K7QX-M2PL-9RT4W-WN4D-H8ZC';
 
 const openPage = (path: '/privacy.html' | '/terms.html') => browser.tabs.create({ url: browser.runtime.getURL(path) });
@@ -55,7 +55,7 @@ function SettingRow({
   description: string;
   on: boolean;
   onChange: (next: boolean) => void;
-  /** 설정이 화면에 어떻게 보이는지 바로 보여 주는 미리보기 */
+  /** 바꾼 설정이 바로 반영되는 미리보기 */
   children?: ComponentChildren;
 }) {
   const descId = useId();

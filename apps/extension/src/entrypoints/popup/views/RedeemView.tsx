@@ -144,7 +144,7 @@ function Queue({
           )}
         </div>
       )}
-      {/* 위 전체 선택 줄이 아래 테두리를 가지므로 목록은 바로 붙이고 아래 테두리만 둔다 */}
+      {/* 전체 선택 줄에 아래 테두리가 있어 목록은 바로 붙이고 아래 테두리만 둔다 */}
       <ul className="border-b border-line bg-panel">
         {list.map((r, i) => {
           const k = rewardKey(r);
@@ -206,7 +206,7 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
   const waitSec = job.nextAt ? Math.max(0, Math.ceil((job.nextAt - now) / 1000)) : 0;
   const waiting = !paused && !current && waitSec > 0;
 
-  // 진행 중인 행(또는 다음 차례 행)이 보이도록 스크롤한다. 코드 추출 화면과 같은 방식.
+  // 진행 중인 행(또는 다음 차례 행)이 보이도록 스크롤한다
   const currentRef = useRef<HTMLLIElement>(null);
   useEffect(() => {
     currentRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
@@ -302,7 +302,7 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
   const oks = items.filter((r) => r.redeem.status === 'success');
   const [tab, setTab] = useState<'fail' | 'ok'>(fails.length ? 'fail' : 'ok');
   const retry = (keys: RewardKey[]) => sendToBackground({ type: 'job/start', kind: 'redeem', tabId: job.tabId, keys });
-  // 이미 사용된 코드·이미 보유한 상품은 다시 시도해도 소용없으니 재시도에서 빼고 한 번에 지울 수 있게 한다
+  // 이미 사용된 코드·이미 보유한 상품은 다시 해도 같으니 재시도에서 빼고 한 번에 지우게 한다
   const retryable = fails.filter((r) => isRetryable(failReasonOf(r.redeem.reason)));
   const hopeless = fails.filter((r) => !isRetryable(failReasonOf(r.redeem.reason)));
 
@@ -371,7 +371,7 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
                   }
                 >
                   <span className="font-medium">{reasonLabel(reason)}</span> · {reasonHelp(reason)}
-                  {/* 이유를 아는 실패는 설명으로 충분하니 원문은 알 수 없는 오류일 때만 보여 준다 */}
+                  {/* 이유를 아는 실패는 설명으로 충분하니 원문은 unknown일 때만 보여 준다 */}
                   {reason === 'unknown' && r.redeem.message && (
                     <div className="mt-0.5 break-all font-mono opacity-80">{i18n.t('redeem.rawMessage', { text: tx(r.redeem.message) })}</div>
                   )}

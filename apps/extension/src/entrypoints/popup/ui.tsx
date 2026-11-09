@@ -1,5 +1,4 @@
-// 팝업 화면 부품. 모양은 @dropskeeper/popup-ui에 있고(소개 사이트 데모와 같이 쓴다),
-// 여기서는 번역(#i18n)과 팝업 설정(usePopup)을 채워 views가 짧게 쓰도록 감싼다.
+// @dropskeeper/popup-ui 부품에 번역(#i18n)과 팝업 설정(usePopup)을 채워, views가 짧게 쓰도록 감싼다.
 import type { ComponentChildren } from 'preact';
 import { i18n } from '#i18n';
 import type { RewardEntry, SourceId } from '@/lib/types';

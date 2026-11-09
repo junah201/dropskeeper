@@ -1,8 +1,7 @@
 /**
  * 실행 환경 사이로 넘기는 문구.
  *
- * 화면 문구는 src/locales/*.yml에 있고 `i18n.t()`로 읽는다. 언어는 브라우저 언어를 따른다.
- * background·content script가 만든 문구(오류, 일시정지 이유)는 저장소에 남아 나중에 보이므로,
+ * background·content script가 만든 문구(오류, 일시정지 이유)는 저장소에 남았다가 나중에 보이므로,
  * 번역한 문장 대신 키를 넘기고 popup이 보여 줄 때 번역한다.
  */
 import { i18n, type GeneratedI18nStructure } from '#i18n';

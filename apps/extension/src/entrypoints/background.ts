@@ -9,8 +9,7 @@ export default defineBackground(() => {
   handleMessages(isBackgroundMessage, async (msg): Promise<Result> => {
     switch (msg.type) {
       case 'rewards/load': {
-        // 목록은 플랫폼 탭에서 받아 오고, 저장소 합치기는 여기(background)에서 한다.
-        // 저장소 쓰기를 background 한 곳에 모아야 등록 작업과 동시에 실행돼도 서로 덮어쓰지 않는다.
+        // 목록만 플랫폼 탭에서 받고 합치기는 여기서 한다. 쓰기를 background에 모아야 등록 작업과 겹쳐도 덮어쓰지 않는다.
         let res;
         try {
           res = await sendToTab(msg.tabId, { type: 'source/list' });

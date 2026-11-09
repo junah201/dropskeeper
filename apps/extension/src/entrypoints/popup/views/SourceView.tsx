@@ -133,7 +133,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
         </div>
       }
     >
-      {/* 내용이 짧아도 화면 높이를 채워, 빈 목록 문구는 가운데·마지막 불러오기는 맨 아래에 둔다 */}
+      {/* 내용이 짧아도 화면 높이를 채운다. 빈 목록 문구는 가운데, 마지막 불러오기 시각은 맨 아래에 온다 */}
       <div className="flex min-h-full flex-col">
         <SelectAllBar
           all={all}

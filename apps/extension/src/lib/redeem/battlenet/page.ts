@@ -43,7 +43,7 @@ const PAGE_TEXTS: Record<BattlenetPageLanguage, PageTexts> = {
   ko: {
     confirm: ['코드 사용', '사용하기', '등록하기', '등록', '받기', '확인', '계속'],
     negative: ['취소', '닫기', '돌아가기'],
-    // 실제 화면 문구: purchase-details/key-claim/<코드> 페이지의 "코드가 등록되었습니다."
+    // purchase-details/key-claim/<코드> 페이지의 "코드가 등록되었습니다."
     success: [/코드가\s*등록되었습니다/],
     // "잠시만 기다려주세요. 코드 등록을 처리 중입니다."
     processing: [/등록을\s*처리\s*중/],
@@ -58,7 +58,7 @@ const PAGE_TEXTS: Record<BattlenetPageLanguage, PageTexts> = {
       ['product_unavailable', /상품을\s*등록하실\s*수\s*없/],
     ],
   },
-  // English. 실제 화면으로 확인한 문구만 적는다. 모르는 오류 배너는 unknown(원문 표시)이 된다.
+  // English. 등록할 수 없는 상품(product_unavailable) 문구는 아직 확인하지 못했다.
   en: {
     confirm: ['Redeem', 'Claim', 'Continue', 'Confirm'],
     negative: ['Cancel', 'Close', 'Back'],

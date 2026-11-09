@@ -4,7 +4,7 @@ import preact from '@preact/preset-vite';
 import { sourceHostPermissions } from './src/lib/sources/hosts';
 import { BATTLENET_HOST_PERMISSIONS } from './src/lib/redeem/battlenet/constants';
 
-// public/icon/ 의 PNG. 원본은 public/icon.svg
+// public/icon/의 PNG. 원본은 public/icon.svg
 const ICONS = {
   16: 'icon/16.png',
   32: 'icon/32.png',

@@ -8,8 +8,7 @@ export const BATTLENET_REGIONS = ['kr', 'us', 'eu', 'tw'] as const;
 export type BattlenetRegion = (typeof BATTLENET_REGIONS)[number];
 
 /**
- * 등록 결과를 화면 문구로 읽으므로, 문구 표(page.ts)가 있는 언어의 페이지에서만 등록한다.
- * 주소의 언어 부분은 `ko`(한국어)와 `en`(English) 두 가지다.
+ * 등록 결과를 화면 문구로 읽으므로 문구 표(page.ts)가 있는 언어(`ko`, `en`)의 페이지에서만 등록한다.
  */
 export const BATTLENET_PAGE_LANGUAGES = ['ko', 'en'] as const;
 export type BattlenetPageLanguage = (typeof BATTLENET_PAGE_LANGUAGES)[number];
@@ -68,7 +67,7 @@ const pathOf = (url: string | undefined) => parseCheckout(url)?.path;
 export const isKeyClaimPage = (url: string | undefined) => pathOf(url)?.startsWith('key-claim') ?? false;
 
 /**
- * 코드를 제출하면 이동하는 결과 페이지. 오류(이미 등록됨, 유효하지 않음)도 이 페이지에 표시된다.
+ * 등록할 수 없는 코드(이미 등록됨, 유효하지 않음 등)의 결과 페이지. 오류는 배너로 보인다.
  * 예: /shop/ko/checkout/key-lookup/a2N8ZDVhNjFlMDB8OE45Vi1HQkdILTVENkpQLVQ2UDktVkZIOQ==
  */
 export const isKeyLookupPage = (url: string | undefined) => pathOf(url)?.startsWith('key-lookup/') ?? false;
