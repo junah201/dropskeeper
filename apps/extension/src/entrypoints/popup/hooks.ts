@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'preact/hooks';
 import type { WxtStorageItem } from '#imports';
 
 /** storage 항목을 읽고 바뀔 때마다 다시 그린다. 처음 읽기 전에는 undefined. */

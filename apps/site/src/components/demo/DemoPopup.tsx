@@ -27,8 +27,8 @@ import {
   sourceIcons,
   type Step,
 } from '@dropskeeper/popup-ui';
-import { LoaderCircle } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { LoaderCircle } from 'lucide-preact';
+import type { ComponentChildren } from 'preact';
 import { FAIL_AT, N, rewards, type DemoReward } from './data';
 import type { T } from './text';
 import type { Scene } from './timeline';
@@ -38,7 +38,7 @@ const badge = { src: sourceIcons.soop, name: 'SOOP' };
 // 눌리는 순간의 버튼 모양 (확장의 active:scale-[0.98]와 hover 색)
 const pressed = 'scale-[0.98] bg-accent-hover';
 
-function Frame({ t, step, footer, children }: { t: T; step: Step; footer?: ReactNode; children: ReactNode }) {
+function Frame({ t, step, footer, children }: { t: T; step: Step; footer?: ComponentChildren; children: ComponentChildren }) {
   return (
     <Shell step={step} stepLabels={{ collect: t('step.collect'), redeem: t('step.redeem') }} logo="/favicon.svg" settingsLabel={t('common.settings')} footer={footer}>
       {children}

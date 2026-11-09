@@ -1,6 +1,6 @@
 // 팝업 화면 부품. 모양은 @dropskeeper/popup-ui에 있고(소개 사이트 데모와 같이 쓴다),
 // 여기서는 번역(#i18n)과 팝업 설정(usePopup)을 채워 views가 짧게 쓰도록 감싼다.
-import type { ReactNode } from 'react';
+import type { ComponentChildren } from 'preact';
 import { i18n } from '#i18n';
 import type { RewardEntry, SourceId } from '@/lib/types';
 import { expiryDays, fmtDate } from '@/lib/expiry';
@@ -17,8 +17,8 @@ export function Shell({
   title,
 }: {
   step: UI.Step;
-  children: ReactNode;
-  footer?: ReactNode;
+  children: ComponentChildren;
+  footer?: ComponentChildren;
   /** 주면 로고 대신 뒤로 가기와 제목을 보여 준다 (설정 화면) */
   title?: string;
 }) {
@@ -55,7 +55,7 @@ export function CodeChip({ code, size }: { code: string; size?: 'sm' | 'md' }) {
   return <UI.CodeChip code={code} size={size} masked={settings.maskCodes} />;
 }
 
-export function SelectAllBar(props: { all: boolean; some: boolean; onToggle: () => void; action?: ReactNode; children?: ReactNode }) {
+export function SelectAllBar(props: { all: boolean; some: boolean; onToggle: () => void; action?: ComponentChildren; children?: ComponentChildren }) {
   return <UI.SelectAllBar {...props} label={i18n.t('common.selectAll')} />;
 }
 

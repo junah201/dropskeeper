@@ -1,12 +1,12 @@
 // 팝업 화면을 이루는 큰 조각(목록 행, 진행 머리말, 실패 카드 등).
 // 확장의 views/*.tsx와 소개 사이트의 데모가 같은 조각으로 화면을 짠다. 데이터와 문구는 쓰는 쪽이 채운다.
-import type { ReactNode, Ref } from 'react';
+import type { ComponentChildren, Ref } from 'preact';
 import { Bar, Check, Thumb } from './parts';
 
 type Badge = { src: string; name: string };
 
 /** 처음 화면: 제목·설명이 위, 버튼이 맨 아래 (드롭스 인벤토리에서 처음 열었을 때) */
-export function IntroBody({ title, description, notice, children }: { title: string; description: string; notice?: ReactNode; children: ReactNode }) {
+export function IntroBody({ title, description, notice, children }: { title: string; description: string; notice?: ComponentChildren; children: ComponentChildren }) {
   return (
     <div className="flex h-full flex-col px-4 pb-4 pt-6">
       {/* 줄바꿈은 번역문에 넣고 whitespace-pre-line으로 살린다 */}
@@ -19,7 +19,7 @@ export function IntroBody({ title, description, notice, children }: { title: str
 }
 
 /** 버튼 안 "불러오는 중" 표시. 블록 flex로 버튼 높이 가운데에 놓는다. */
-export function BusyLabel({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+export function BusyLabel({ icon, children }: { icon: ComponentChildren; children: ComponentChildren }) {
   return (
     <span className="flex items-center justify-center gap-2">
       {icon}
@@ -29,7 +29,7 @@ export function BusyLabel({ icon, children }: { icon: ReactNode; children: React
 }
 
 /** 버튼 아래 작은 안내 */
-export function Hint({ children }: { children: ReactNode }) {
+export function Hint({ children }: { children: ComponentChildren }) {
   return <p className="mt-2 text-center text-[12px] text-faint">{children}</p>;
 }
 
@@ -53,8 +53,8 @@ export function RewardRow({
   thumb?: string;
   name: string;
   /** 이름 아래 줄 (만료일 · 캠페인) */
-  meta?: ReactNode;
-  tag?: ReactNode;
+  meta?: ComponentChildren;
+  tag?: ComponentChildren;
 }) {
   return (
     // 행 어디를 눌러도 선택된다. 체크박스 클릭도 이 onClick으로 전달된다.
@@ -77,7 +77,7 @@ export function RewardRow({
 }
 
 /** 진행 화면 위쪽 요약: 제목, n / 전체, 진행 막대. children은 그 아래에 붙는다. */
-export function ProgressHeader({ title, index, total, children }: { title: string; index: number; total: number; children?: ReactNode }) {
+export function ProgressHeader({ title, index, total, children }: { title: string; index: number; total: number; children?: ComponentChildren }) {
   return (
     <div className="px-4 pt-5">
       <div className="flex items-baseline justify-between">
@@ -96,7 +96,7 @@ export function ProgressHeader({ title, index, total, children }: { title: strin
 }
 
 /** 진행 화면의 전체 대기열 목록. 남은 높이를 채우고 안에서 스크롤된다. */
-export function ProgressList({ children }: { children: ReactNode }) {
+export function ProgressList({ children }: { children: ComponentChildren }) {
   return <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-[10px] border border-line bg-panel text-[13px]">{children}</ul>;
 }
 
@@ -121,10 +121,10 @@ export function ProgressRow({
   badge?: Badge;
   name: string;
   /** 이름 아래 코드 칩 (twoLine일 때) */
-  code?: ReactNode;
+  code?: ComponentChildren;
   /** 이름 아래에 코드를 두는 두 줄 모양 (등록 화면) */
   twoLine?: boolean;
-  status: ReactNode;
+  status: ComponentChildren;
 }) {
   return (
     <li ref={ref} className={`flex items-center gap-3 px-3 py-2 ${first ? '' : 'border-t border-line'} ${current ? 'bg-accent-soft' : ''} ${dim ? 'opacity-50' : ''}`}>
@@ -151,7 +151,7 @@ const statusClass = {
 } as const;
 
 /** 진행 목록 오른쪽의 상태 글자 (요청 중…, 대기, 등록됨, 실패 이유) */
-export function StatusText({ tone, title, children }: { tone: keyof typeof statusClass; title?: string; children: ReactNode }) {
+export function StatusText({ tone, title, children }: { tone: keyof typeof statusClass; title?: string; children: ComponentChildren }) {
   return (
     <span className={`shrink-0 ${statusClass[tone]}`} title={title}>
       {children}
@@ -160,7 +160,7 @@ export function StatusText({ tone, title, children }: { tone: keyof typeof statu
 }
 
 /** 화면 맨 아래 작은 안내 (팝업을 닫아도 계속 진행돼요) */
-export function FootNote({ children }: { children: ReactNode }) {
+export function FootNote({ children }: { children: ComponentChildren }) {
   return <p className="px-4 py-3 text-[12px] text-faint">{children}</p>;
 }
 
@@ -183,11 +183,11 @@ export function QueueRow({
   thumb?: string;
   badge?: Badge;
   name: string;
-  code: ReactNode;
-  meta?: ReactNode;
+  code: ComponentChildren;
+  meta?: ComponentChildren;
   /** 지난 시도에서 실패한 이유 */
   failedText?: string;
-  actions?: ReactNode;
+  actions?: ComponentChildren;
 }) {
   return (
     // 행 어디를 눌러도 선택된다. 체크박스 클릭도 이 onClick으로 전달된다.
@@ -209,7 +209,7 @@ export function QueueRow({
 }
 
 /** 실패한 항목 카드: 이름·코드·버튼, 아래에 빨간 이유 칸. 추출 실패와 등록 실패가 같은 모양을 쓴다. */
-export function FailCard({ thumb, badge, name, code, actions, children }: { thumb?: string; badge?: Badge; name: string; code?: ReactNode; actions?: ReactNode; children: ReactNode }) {
+export function FailCard({ thumb, badge, name, code, actions, children }: { thumb?: string; badge?: Badge; name: string; code?: ComponentChildren; actions?: ComponentChildren; children: ComponentChildren }) {
   return (
     <li className="rounded-[10px] border border-line bg-panel p-3">
       <div className={`flex justify-between gap-2 ${code ? 'items-start' : 'items-center'}`}>
@@ -245,7 +245,7 @@ export function ResultTabs<T extends string>({ tabs, value, onChange }: { tabs: 
 }
 
 /** 성공 탭의 한 줄 */
-export function DoneRow({ first, thumb, badge, name, tag }: { first: boolean; thumb?: string; badge?: Badge; name: string; tag: ReactNode }) {
+export function DoneRow({ first, thumb, badge, name, tag }: { first: boolean; thumb?: string; badge?: Badge; name: string; tag: ComponentChildren }) {
   return (
     <li className={`flex items-center gap-3 px-4 py-2 ${first ? '' : 'border-t border-line'}`}>
       <Thumb src={thumb} badge={badge} />

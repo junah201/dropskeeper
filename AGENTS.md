@@ -7,7 +7,7 @@ DropsKeeper 저장소에서 작업하는 사람과 AI 에이전트를 위한 안
 스트리밍 플랫폼 드롭스 보상 코드를 모아 Battle.net에 차례로 등록하는 Chrome(MV3) 확장 프로그램입니다.
 지금은 SOOP과 CHZZK 드롭스(오버워치)를 지원합니다.
 
-- 스택: WXT, TypeScript, React, Tailwind CSS v4, pnpm 워크스페이스. 소개 사이트는 Astro
+- 스택: WXT, TypeScript, Preact, Tailwind CSS v4, pnpm 워크스페이스. 소개 사이트는 Astro
 - 백엔드 없음. 상태는 모두 `chrome.storage.local`에 저장
 - 사용자의 메인 브라우저는 Brave(Chromium)
 
@@ -36,17 +36,18 @@ pnpm site:build   # 소개 사이트 빌드 → apps/site/dist
 - **플랫폼 코드는 `src/lib/sources/<플랫폼>.ts`에만 둔다.** 팝업, 저장소, 작업 실행기는 `SourceId`만 보고 동작해야 한다. 새 플랫폼을 추가하는 순서는 README에 있다.
 - 플랫폼 API는 해당 사이트 탭의 content script에서 호출한다. 그래야 로그인 쿠키가 1st-party로 붙는다. 쿠키 값을 직접 읽거나 저장하지 않는다.
 - 저장소(`src/lib/storage.ts`) 쓰기는 background에서만 한다. popup은 `sendToBackground`로 요청한다. 쓰기 순서 보장이 실행 환경마다 따로 동작하기 때문이다.
-- 확장에서 React는 확장 페이지(팝업, 개인정보처리방침·이용약관)에서만, Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
+- 확장에서 Preact는 확장 페이지(팝업, 개인정보처리방침·이용약관)에서만, Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
 - 팝업의 생김새는 `packages/popup-ui/src/`에 둔다. 부품은 문구와 동작을 props로만 받고 확장 API(`browser`, `#i18n`)와 확장 상태를 쓰지 않는다. 확장은 `src/entrypoints/popup/ui.tsx`에서 번역과 설정을 채워 감싸고, `views/*.tsx`는 데이터와 동작만 맡는다. 팝업 화면을 바꾸면 사이트 데모(`apps/site/src/components/demo/DemoPopup.tsx`)도 같은 구성으로 맞춘다.
 - 플랫폼 아이콘은 `packages/popup-ui/src/assets/<플랫폼>.png`에 두고 `sourceIcons`로 내보낸다.
 - 개인정보처리방침·이용약관 본문은 `packages/legal/src/`에 언어별 JSX로 둔다. 한국어와 영어 본문은 같은 내용을 담아야 하므로 한쪽을 고치면 다른 쪽도 고친다. 확장과 사이트 모두 두 문서를 같은 폴더의 `privacy.html`, `terms.html`로 내보내므로 본문 안 링크는 `./terms.html`처럼 상대 경로로 쓴다. 이 패키지는 확장 API(`browser`, `#i18n`)를 쓰지 않는다.
-- 소개 사이트(`apps/site`)는 Astro로 빌드 때 정적 HTML을 만든다. React 컴포넌트는 `client:` 지시어 없이 서버에서만 그리고, 스타일은 Tailwind를 쓴다. 예외는 소개 페이지의 단계별 동작 데모(`src/components/demo/StepDemo.tsx`) 하나로, `client:visible`로 화면에 보일 때만 불러온다. 데모 팝업 문구는 사이트에 옮겨 적지 않고 빌드 때 확장의 `src/locales/*.yml`에서 읽는다(`src/popupText.ts`). 모든 페이지는 `/ko/...`, `/en/...` 아래(`src/pages/[lang]/`)에 두고, 언어 없는 주소(`/`, `/privacy`, `/terms`)는 브라우저 언어를 보고 옮겨 주는 페이지(`src/layouts/Redirect.astro`, JS가 꺼져 있으면 `ko`)로 둔다. 새 페이지를 만들면 언어 없는 주소도 같이 만든다. 문구는 `apps/site/src/i18n.ts`에 같은 키로 둔다. `main`에 push되면 `.github/workflows/site.yml`이 GitHub Pages에 배포한다.
+- 소개 사이트(`apps/site`)는 Astro로 빌드 때 정적 HTML을 만든다. Preact 컴포넌트는 `client:` 지시어 없이 서버에서만 그리고, 스타일은 Tailwind를 쓴다. 예외는 소개 페이지의 단계별 동작 데모(`src/components/demo/StepDemo.tsx`) 하나로, `client:visible`로 화면에 보일 때만 불러온다. 데모 팝업 문구는 사이트에 옮겨 적지 않고 빌드 때 확장의 `src/locales/*.yml`에서 읽는다(`src/popupText.ts`). 모든 페이지는 `/ko/...`, `/en/...` 아래(`src/pages/[lang]/`)에 두고, 언어 없는 주소(`/`, `/privacy`, `/terms`)는 브라우저 언어를 보고 옮겨 주는 페이지(`src/layouts/Redirect.astro`, JS가 꺼져 있으면 `ko`)로 둔다. 새 페이지를 만들면 언어 없는 주소도 같이 만든다. 문구는 `apps/site/src/i18n.ts`에 같은 키로 둔다. `main`에 push되면 `.github/workflows/site.yml`이 GitHub Pages에 배포한다.
 - 유효기간이 지난 보상은 목록, 대기열, 통계 어디에도 보여 주지 않는다 (`src/lib/expiry.ts`).
 - 화면 문구는 코드에 직접 쓰지 않고 `src/locales/en.yml`(기본 언어, 키 타입의 기준)과 `ko.yml`에 같은 키로 넣은 뒤 `i18n.t()`로 읽는다. 언어는 브라우저 언어를 따른다.
 - background·content script가 만든 문구(오류, 일시정지 이유)는 번역하지 않고 `msg()`로 만든 `LocalText`(키 + 치환 값)로 넘기고 저장한다. popup이 `tx()`로 번역해 보여 준다 (`src/lib/i18n.ts`). 사이트가 보낸 원문은 문자열 그대로 둔다.
 - Battle.net 주소는 `https://<지역>.checkout.battle.net/shop/<언어>/checkout/...`이다. 지역은 kr, us, eu, tw만 받는다(cn은 외부 접속 불가). 등록은 작업을 시작한 탭의 지역·언어로 하며, 결과를 화면 문구로 읽으므로 `page.ts`에 문구 표가 있는 언어(`ko`, `en`)에서만 시작할 수 있다.
 - Battle.net 등록 흐름은 `key-claim?keyCode=` → `preload/<base64>`(자동 POST)까지 버튼 없이 리다이렉트로 진행된다. 그다음 오류면 `key-lookup/<base64>` 결과 페이지, 유효한 코드면 `confirm-key-claim/<base64>` 확인 페이지로 간다. 확인 페이지의 "확인" 버튼(`form#submit-key-claim`)은 같은 주소로 csrftoken을 POST한다. 두 페이지 주소 모두 `kc|<조회마다 바뀌는 식별자>|<코드>`가 base64로 들어 있다.
 - 오류 배너(`.error-notification-banner-content`, 예: "이미 등록된 코드입니다.")는 실제 화면으로 확인했다. 유효한 코드의 확인 페이지와 "확인" 버튼도 실제 화면으로 확인했다. English(`en`) 페이지는 "You’ve already claimed this code."(이미 등록된 코드)와 "You already have access to this product."(이미 보유한 상품), "The code you entered cannot be claimed."(등록할 수 없는 코드), 처리 중("We are processing your claim now.")과 성공("Code successfully redeemed!") 화면을 확인했다. 등록할 수 없는 상품 문구는 아직 비어 있다. 성공·처리 중 화면은 언어와 상관없는 표시(`data-bnet-shop="payment.success…keyclaim…heading…"`, `.payment-pending-state-title`)로도 판별한다.
+- UI는 React가 아니라 Preact다. `preact`, `preact/hooks`에서 직접 가져오고 `preact/compat`은 쓰지 않는다. 자식 타입은 `ComponentChildren`, 아이콘은 `lucide-preact`를 쓴다. 두 앱의 Vite 설정에 `resolve.dedupe: ['preact']`가 있다. preact가 선택적 peer 때문에 워크스페이스마다 다른 사본으로 설치될 수 있어서, 이 설정이 없으면 번들에 두 벌이 들어가 훅이 깨진다.
 - CAPTCHA나 봇 탐지는 우회하지 않는다. 감지되면 일시정지하고 사용자에게 맡긴다.
 
 ## 커밋 규칙

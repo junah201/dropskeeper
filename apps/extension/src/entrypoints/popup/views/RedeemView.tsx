@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { i18n } from '#i18n';
 import { sendToBackground } from '@/lib/messages';
 import { msg, tx, type LocalText } from '@/lib/i18n';

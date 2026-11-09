@@ -1,4 +1,5 @@
-import { useId } from 'react';
+import type { ComponentChildren } from 'preact';
+import { useId } from 'preact/hooks';
 import { i18n } from '#i18n';
 import { sendToBackground } from '@/lib/messages';
 import type { Settings } from '@/lib/types';
@@ -56,7 +57,7 @@ function SettingRow({
   on: boolean;
   onChange: (next: boolean) => void;
   /** 설정이 화면에 어떻게 보이는지 바로 보여 주는 미리보기 */
-  children?: React.ReactNode;
+  children?: ComponentChildren;
 }) {
   const descId = useId();
   return (

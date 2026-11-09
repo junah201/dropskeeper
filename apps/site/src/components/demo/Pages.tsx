@@ -1,7 +1,8 @@
 // 데모에서 팝업 뒤에 보이는 사이트 화면: 브라우저 창, SOOP 드롭스 보관함, Battle.net 코드 등록 페이지.
 // 실제 사이트를 흉내 낸 그림일 뿐이고, 로고는 그리지 않는다.
-import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Bell, Check, Grip, LoaderCircle, Lock, Search, Video } from 'lucide-react';
+import type { ComponentChildren } from 'preact';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import { Bell, Check, Grip, LoaderCircle, Lock, Search, Video } from 'lucide-preact';
 import { sourceIcons } from '@dropskeeper/popup-ui';
 import type { Copy } from '../../i18n';
 import { N, rewards } from './data';
@@ -12,7 +13,7 @@ type DemoCopy = Copy['demo'];
 const cx = (...c: (string | false | undefined)[]) => c.filter(Boolean).join(' ');
 
 /** 브라우저 창. 오른쪽 위 확장 아이콘 아래에 팝업을 띄운다. */
-export function BrowserFrame({ url, dark, popup, children }: { url: string; dark?: boolean; popup: ReactNode; children: ReactNode }) {
+export function BrowserFrame({ url, dark, popup, children }: { url: string; dark?: boolean; popup: ComponentChildren; children: ComponentChildren }) {
   return (
     <div className={cx('relative rounded-xl border shadow-2xl', dark ? 'border-[#2a2c32] bg-bn-bg' : 'border-line bg-panel')}>
       <div className={cx('flex h-10 items-center gap-3 rounded-t-xl border-b px-3', dark ? 'border-[#2a2c32] bg-[#1f2125]' : 'border-line bg-mute-soft')}>
@@ -38,7 +39,7 @@ export function BrowserFrame({ url, dark, popup, children }: { url: string; dark
 }
 
 /** 넓은 데스크톱 화면을 그린 뒤, 들어갈 칸 폭에 맞춰 통째로 줄인다 */
-function FitWidth({ width, children }: { width: number; children: ReactNode }) {
+function FitWidth({ width, children }: { width: number; children: ComponentChildren }) {
   const box = useRef<HTMLDivElement>(null);
   const [s, setS] = useState(0.6);
   useEffect(() => {

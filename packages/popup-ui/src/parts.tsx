@@ -1,12 +1,13 @@
 // 팝업의 작은 화면 부품. 문구와 동작은 모두 props로 받고, 확장 API(browser, #i18n)는 쓰지 않는다.
 // 확장은 apps/extension/src/entrypoints/popup/ui.tsx에서 번역과 설정을 채워 쓴다.
-import { Fragment, useState, type ButtonHTMLAttributes, type ReactNode } from 'react';
-import { ArrowLeft, Settings as SettingsIcon } from 'lucide-react';
+import { Fragment, type ButtonHTMLAttributes, type ComponentChildren } from 'preact';
+import { useState } from 'preact/hooks';
+import { ArrowLeft, Settings as SettingsIcon } from 'lucide-preact';
 
 export type Step = 'collect' | 'redeem' | null;
 
 /** 헤더의 아이콘 버튼. 아이콘은 lucide 16px, 선 굵기 1.5로 맞춘다. */
-export function IconBtn({ label, onClick, children }: { label: string; onClick?: () => void; children: ReactNode }) {
+export function IconBtn({ label, onClick, children }: { label: string; onClick?: () => void; children: ComponentChildren }) {
   return (
     <button
       type="button"
@@ -28,8 +29,8 @@ export interface ShellProps {
   onSettings?: () => void;
   /** 주면 로고 대신 뒤로 가기와 제목을 보여 준다 (설정 화면) */
   back?: { title: string; label: string; onClick: () => void };
-  children: ReactNode;
-  footer?: ReactNode;
+  children: ComponentChildren;
+  footer?: ComponentChildren;
 }
 
 export function Shell({ step, stepLabels, logo, settingsLabel, onSettings, back, children, footer }: ShellProps) {
@@ -94,7 +95,7 @@ export function Btn({
   size = 'md',
   className = '',
   ...rest
-}: { children: ReactNode; kind?: BtnKind; full?: boolean; size?: 'sm' | 'md' } & ButtonHTMLAttributes<HTMLButtonElement>) {
+}: { children: ComponentChildren; kind?: BtnKind; full?: boolean; size?: 'sm' | 'md' } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       {...rest}
@@ -138,12 +139,12 @@ const toneClass: Record<Tone, string> = {
   accent: 'bg-accent-soft text-accent',
 };
 
-export function Tag({ tone, children }: { tone: Tone; children: ReactNode }) {
+export function Tag({ tone, children }: { tone: Tone; children: ComponentChildren }) {
   return <span className={`whitespace-nowrap rounded px-1.5 py-0.5 text-[12px] font-medium ${toneClass[tone]}`}>{children}</span>;
 }
 
 /** 기본 상태라 알약 없이 옅은 글자로만 적는 태그 (예: 미추출) */
-export function QuietTag({ children }: { children: ReactNode }) {
+export function QuietTag({ children }: { children: ComponentChildren }) {
   return <span className="whitespace-nowrap px-1.5 text-[12px] text-faint">{children}</span>;
 }
 
@@ -193,7 +194,7 @@ function ThumbImage({ src, size }: { src?: string; size: keyof typeof thumbSize 
   );
 }
 
-export function Notice({ tone, children }: { tone: Tone; children: ReactNode }) {
+export function Notice({ tone, children }: { tone: Tone; children: ComponentChildren }) {
   return <div className={`rounded-lg px-3 py-2 text-[13px] leading-relaxed ${toneClass[tone]}`}>{children}</div>;
 }
 
@@ -280,8 +281,8 @@ export function SelectAllBar({
   onToggle?: () => void;
   label: string;
   /** 줄 오른쪽 끝에 붙는 버튼 (예: 다시 불러오기) */
-  action?: ReactNode;
-  children?: ReactNode;
+  action?: ComponentChildren;
+  children?: ComponentChildren;
 }) {
   return (
     <div className="sticky top-0 z-10 flex h-10 items-center gap-2 border-b border-line bg-bg px-3 text-[13px]">
@@ -296,7 +297,7 @@ export function SelectAllBar({
 }
 
 /** 목록 줄 오른쪽 끝의 글자 버튼 (다시 불러오기, 복사, 삭제) */
-export function TextBtn({ tone = 'accent', children, ...rest }: { tone?: 'accent' | 'bad'; children: ReactNode } & ButtonHTMLAttributes<HTMLButtonElement>) {
+export function TextBtn({ tone = 'accent', children, ...rest }: { tone?: 'accent' | 'bad'; children: ComponentChildren } & ButtonHTMLAttributes<HTMLButtonElement>) {
   return (
     <button
       type="button"
@@ -311,7 +312,7 @@ export function TextBtn({ tone = 'accent', children, ...rest }: { tone?: 'accent
 /**
  * 켜고 끄는 필터. 상태 태그(Tag)와 구분되도록 테두리·체크 표시·24px 높이를 가진 버튼 모양으로 그린다.
  */
-export function FilterChip({ on, onClick, children }: { on: boolean; onClick?: () => void; children: ReactNode }) {
+export function FilterChip({ on, onClick, children }: { on: boolean; onClick?: () => void; children: ComponentChildren }) {
   return (
     <button
       type="button"
@@ -334,7 +335,7 @@ export function FilterChip({ on, onClick, children }: { on: boolean; onClick?: (
 }
 
 /** 필터 줄의 한 번 누르는 버튼 (예: 미획득만 선택) */
-export function ChipBtn({ onClick, children }: { onClick?: () => void; children: ReactNode }) {
+export function ChipBtn({ onClick, children }: { onClick?: () => void; children: ComponentChildren }) {
   return (
     <button
       type="button"
@@ -381,10 +382,10 @@ export function Switch({ on, onChange, label, describedBy }: { on: boolean; onCh
 }
 
 /**
- * 번역문의 `{name}` 자리에 React 요소를 끼운다. 문장 속 숫자만 굵기·글꼴을 달리 그릴 때 쓴다.
+ * 번역문의 `{name}` 자리에 Preact 요소를 끼운다. 문장 속 숫자만 굵기·글꼴을 달리 그릴 때 쓴다.
  * 예: <Rich text="{count}개 선택" values={{ count: <b>3</b> }} />
  */
-export function Rich({ text, values }: { text: string; values: Record<string, ReactNode> }) {
+export function Rich({ text, values }: { text: string; values: Record<string, ComponentChildren> }) {
   return (
     <>
       {text.split(/(\{\w+\})/).map((part, i) => {

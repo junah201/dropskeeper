@@ -1,6 +1,6 @@
-// 소개 페이지의 단계별 동작 데모. 사이트에서 유일하게 브라우저에서 도는 React 섬이다(client:visible).
+// 소개 페이지의 단계별 동작 데모. 사이트에서 유일하게 브라우저에서 도는 Preact 섬이다(client:visible).
 // 빌드 때도 첫 장면을 HTML로 그려 두므로, JS가 꺼져 있어도 세부 순서와 화면은 보인다.
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { Copy, Lang, Stage } from '../../i18n';
 import type { PopupText } from '../../popupText';
 import { rewards } from './data';

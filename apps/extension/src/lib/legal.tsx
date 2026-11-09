@@ -1,5 +1,4 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+import { render } from 'preact';
 import { LegalPage, type LegalDoc } from '@dropskeeper/legal';
 import { uiLang, type UiLang } from '@/lib/i18n';
 import '@dropskeeper/legal/fonts.css';
@@ -13,9 +12,5 @@ export function mountLegalPage(docs: Record<UiLang, LegalDoc>) {
   const doc = docs[lang];
   document.documentElement.lang = lang;
   document.title = `${doc.title} · DropsKeeper`;
-  createRoot(document.getElementById('root')!).render(
-    <StrictMode>
-      <LegalPage doc={doc} />
-    </StrictMode>,
-  );
+  render(<LegalPage doc={doc} />, document.getElementById('root')!);
 }

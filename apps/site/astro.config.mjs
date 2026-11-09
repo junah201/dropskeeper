@@ -1,13 +1,16 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
+import preact from '@astrojs/preact';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   site: 'https://dropskeeper.junah.dev',
-  integrations: [react()],
+  integrations: [preact()],
   vite: {
     plugins: [tailwindcss()],
+    // preact는 선택적 peer(preact-render-to-string) 때문에 패키지마다 다른 사본으로 설치될 수 있다(lucide-preact 등).
+    // 두 벌이 번들에 들어가면 훅이 깨지므로 하나로 모은다.
+    resolve: { dedupe: ['preact'] },
   },
   // 모든 페이지는 /ko/..., /en/... 아래에 있다. 언어 없는 주소(/privacy)는 브라우저 언어를 보고 옮겨 주는 페이지다(src/pages/*.astro).
   i18n: {

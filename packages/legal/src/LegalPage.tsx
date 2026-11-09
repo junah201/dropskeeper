@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ComponentChildren } from 'preact';
 
 /** 약관 본문 언어. 확장 화면 언어(UiLang)와 같다. */
 export type LegalLang = 'ko' | 'en';
@@ -7,8 +7,8 @@ export type LegalLang = 'ko' | 'en';
 export interface LegalDoc {
   title: string;
   effective: string;
-  lead: ReactNode;
-  body: ReactNode;
+  lead: ComponentChildren;
+  body: ComponentChildren;
   /** 맨 아래 다른 문서로 가는 링크. 확장과 사이트 모두 같은 폴더에 privacy.html, terms.html을 둔다. */
   other: { href: string; label: string };
 }

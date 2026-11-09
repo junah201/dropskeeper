@@ -15,15 +15,12 @@
     "@dropskeeper/legal": "workspace:*",
     "@dropskeeper/popup-ui": "workspace:*",
     "@wxt-dev/i18n": "^0.2.8",
-    "lucide-react": "^1.70.0",
-    "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "lucide-preact": "^1.70.0",
+    "preact": "^11.2.0"
   },
   "devDependencies": {
+    "@preact/preset-vite": "^2.10.6",
     "@tailwindcss/vite": "^4.3.5",
-    "@types/react": "^19.3.0",
-    "@types/react-dom": "^19.3.0",
-    "@wxt-dev/module-react": "^1.2.2",
     "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2",
     "wxt": "^0.21.5"

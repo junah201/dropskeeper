@@ -1,7 +1,7 @@
 import { sourceIdFromUrl } from '@/lib/sources/hosts';
 import { isBattlenetCheckout, isBattlenetLoginPage, isSupportedBattlenetPage } from '@/lib/redeem/battlenet/constants';
 import { jobItem, rewardsItem, settingsItem } from '@/lib/storage';
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'preact/hooks';
 import { defaultSettings, type RewardEntry, type RewardKey } from '@/lib/types';
 import { useActiveTab, useStored } from './hooks';
 import { PopupCtx, type PopupContext } from './context';

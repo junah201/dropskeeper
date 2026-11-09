@@ -47,7 +47,7 @@ src/
     soop.content.ts        SOOP 페이지에서 드롭스 API 호출
     chzzk.content.ts       네이버 게임 페이지에서 CHZZK 드롭스 API 호출
     battlenet.content.ts   Battle.net 등록 페이지 상태 읽기, 확인 버튼 클릭
-    popup/                 React + Tailwind 팝업
+    popup/                 Preact + Tailwind 팝업
   lib/
     sources/               드롭스 플랫폼 (SOOP, CHZZK)
     redeem/battlenet/      Battle.net 등록 페이지 처리
