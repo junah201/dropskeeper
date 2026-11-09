@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { LoaderCircle } from 'lucide-react';
 import { sendToBackground } from '@/lib/messages';
 import { sourceMetas } from '@/lib/sources/hosts';
 import { lastLoadedItem } from '@/lib/storage';
@@ -7,7 +8,7 @@ import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
 import { fmtDateTime, isExpired } from '@/lib/expiry';
 import { useStored } from '../hooks';
-import { Bar, Btn, Check, Notice, ExpiryLine, SelectAllBar, Shell, StatGrid, Tag, Thumb, mask } from '../ui';
+import { Bar, Btn, Check, CodeChip, Notice, ExpiryLine, SelectAllBar, Shell, StatGrid, Tag, Thumb } from '../ui';
 
 interface Props {
   sourceId: SourceId;
@@ -94,12 +95,12 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
     return (
       <Shell step="collect">
         <div className="flex h-full flex-col px-4 pb-4 pt-6">
-          <h2 className="text-[17px] font-bold leading-snug">
+          <h2 className="text-[16px] font-semibold leading-snug">
             {meta.name} 드롭스 인벤토리에서
             <br />
             오버워치 보상을 가져옵니다
           </h2>
-          <p className="mt-2 text-[13.5px] leading-relaxed text-sub">
+          <p className="mt-2 text-[13px] leading-relaxed text-sub">
             로그인된 계정으로 보상 목록을 불러와요. 코드는 다음 단계에서 고른 보상만 추출합니다.
           </p>
           {error && (
@@ -108,8 +109,16 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             </div>
           )}
           <div className="mt-auto">
-            <Btn full onClick={load} disabled={loading}>
-              {loading ? '불러오는 중…' : '보상 목록 불러오기'}
+            <Btn full onClick={load} disabled={loading} aria-busy={loading}>
+              {loading ? (
+                // inline-flex로 두면 글줄 기준선에 맞춰져 버튼 가운데보다 2px쯤 위로 뜬다. 블록 flex로 버튼 높이 가운데에 놓는다.
+                <span className="flex items-center justify-center gap-2">
+                  <LoaderCircle size={16} strokeWidth={2} className="animate-spin motion-reduce:animate-none" aria-hidden />
+                  불러오는 중
+                </span>
+              ) : (
+                '보상 목록 불러오기'
+              )}
             </Btn>
             <p className="mt-2 text-center text-[12px] text-faint">유효기간이 남은 오버워치 코드형 보상만 가져와요</p>
           </div>
@@ -125,7 +134,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
       footer={
         <div className="flex items-center gap-3">
           <span className="text-[13px] text-sub">
-            <b className="text-ink">{chosen.length}개</b> 선택
+            <span className="font-medium text-ink">{chosen.length}개</span> 선택
           </span>
           <div className="flex-1">
             <Btn full disabled={chosen.length === 0 || jobBusy} onClick={extract}>
@@ -140,7 +149,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
         <SelectAllBar all={all} some={chosen.length > 0} onToggle={toggleAll}>
           · {visible.length}개 표시 / 전체 {list.length}개
         </SelectAllBar>
-        <div className="flex flex-wrap items-center gap-1.5 px-3 py-2">
+        <div className="flex flex-wrap items-center gap-2 px-3 py-2">
           {meta.tracksClaimed && (
             <FilterChip on={hideClaimed} onClick={() => setHideClaimed((v) => !v)}>
               획득 완료 숨김
@@ -149,7 +158,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           {meta.tracksClaimed && !hideClaimed && unclaimed.length > 0 && (
             <button
               type="button"
-              className="inline-flex h-6 items-center rounded-md border border-line bg-panel px-2 text-[12.5px] font-semibold text-ink hover:bg-bg"
+              className="inline-flex h-6 items-center rounded-md border border-line bg-panel px-2 text-[12px] font-medium text-ink hover:bg-bg"
               onClick={selectUnclaimed}
             >
               미획득만 선택 ({unclaimed.length})
@@ -158,7 +167,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           <FilterChip on={hideExtracted} onClick={() => setHideExtracted((v) => !v)}>
             추출됨 숨김
           </FilterChip>
-          <button className="ml-auto text-[12.5px] font-semibold text-accent disabled:text-faint" onClick={load} disabled={loading}>
+          <button className="ml-auto text-[12px] font-medium text-accent underline-offset-2 hover:underline disabled:text-faint disabled:no-underline" onClick={load} disabled={loading}>
             {loading ? '불러오는 중…' : '다시 불러오기'}
           </button>
         </div>
@@ -168,7 +177,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           </div>
         )}
         {visible.length === 0 ? (
-          <p className="flex flex-1 items-center justify-center px-3 text-center text-[13.5px] text-faint">조건에 맞는 보상이 없어요.</p>
+          <p className="flex flex-1 items-center justify-center px-3 text-center text-[13px] text-faint">조건에 맞는 보상이 없어요</p>
         ) : (
           <ul className="border-y border-line bg-panel">
             {visible.map((r, i) => {
@@ -178,14 +187,14 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
                 <li
                   key={k}
                   onClick={r.code ? undefined : () => toggle(k)}
-                  className={`flex items-center gap-2 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''} ${
+                  className={`flex items-center gap-2 px-3 py-2 ${i ? 'border-t border-line' : ''} ${r.redeem.status === 'success' ? 'opacity-55' : ''} ${
                     r.code ? '' : 'cursor-pointer select-none hover:bg-bg'
                   }`}
                 >
                   {r.code ? <span className="w-4 shrink-0" /> : <Check on={selected.has(k)} label={r.name} />}
                   <Thumb src={r.imageUrl} size="lg" />
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-[13.5px] font-semibold">{r.name}</div>
+                    <div className="truncate text-[14px] font-medium">{r.name}</div>
                     {/* 만료일이 잘리지 않도록 캠페인 이름보다 앞에 둔다 */}
                     <ExpiryLine r={r} />
                   </div>
@@ -209,7 +218,8 @@ function RewardTag({ r }: { r: RewardEntry }) {
   if (r.code) return <Tag tone="mute">추출됨</Tag>;
   if (r.extractError) return <Tag tone="bad">추출 실패</Tag>;
   if (r.claimed) return <Tag tone="warn">획득 완료</Tag>;
-  return <Tag tone="accent">미추출</Tag>;
+  // 기본 상태라 알약 없이 옅은 글자로만 적는다
+  return <span className="whitespace-nowrap px-1.5 text-[12px] text-faint">미추출</span>;
 }
 
 /**
@@ -221,7 +231,7 @@ function FilterChip({ on, onClick, children }: { on: boolean; onClick: () => voi
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[12.5px] font-semibold transition-colors ${
+      className={`inline-flex h-6 items-center gap-1 rounded-md border px-2 text-[12px] font-medium transition-colors ${
         on ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-panel text-sub hover:border-check hover:text-ink'
       }`}
     >
@@ -268,9 +278,10 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
       <div className="flex h-full flex-col">
         <div className="px-4 pt-5">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-[15px] font-bold">{paused ? '코드 추출 일시정지' : '코드 추출 중'}</h2>
-            <span className="font-mono text-[14px] tabular-nums">
-              {job.index} / {job.queue.length}
+            <h2 className="text-[16px] font-semibold">{paused ? '코드 추출 일시정지' : '코드 추출 중'}</h2>
+            <span className="font-mono text-[18px] font-medium tabular-nums">
+              {job.index}
+              <span className="text-faint"> / {job.queue.length}</span>
             </span>
           </div>
           <div className="mt-3">
@@ -283,7 +294,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
           )}
         </div>
 
-        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-md border border-line bg-panel text-[13px]">
+        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-[10px] border border-line bg-panel text-[13px]">
           {job.queue.map((k, i) => {
             const r = rewards[k];
             if (!r) return null;
@@ -293,7 +304,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
               <li
                 key={k}
                 ref={isCurrent ? currentRef : undefined}
-                className={`flex items-center gap-2.5 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${isCurrent ? 'bg-accent-soft' : ''} ${
+                className={`flex items-center gap-3 px-3 py-2 ${i ? 'border-t border-line' : ''} ${isCurrent ? 'bg-accent-soft' : ''} ${
                   !done && !isCurrent ? 'opacity-50' : ''
                 }`}
               >
@@ -301,14 +312,14 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
                 <span className="min-w-0 flex-1 truncate">{r.name}</span>
                 {done ? (
                   r.code ? (
-                    <span className="shrink-0 font-mono text-ok">{mask(r.code)}</span>
+                    <CodeChip code={r.code} size="sm" />
                   ) : (
-                    <span className="shrink-0 font-semibold text-bad" title={r.extractError}>
+                    <span className="shrink-0 font-medium text-bad" title={r.extractError}>
                       실패
                     </span>
                   )
                 ) : isCurrent ? (
-                  <span className="shrink-0 font-semibold text-accent">요청 중…</span>
+                  <span className="shrink-0 font-medium text-accent">요청 중…</span>
                 ) : (
                   <span className="shrink-0 text-faint">대기</span>
                 )}
@@ -350,15 +361,15 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
       }
     >
       <div className="px-4 pb-4 pt-6">
-        <h2 className="text-[15px] font-bold">
+        <h2 className="text-[16px] font-semibold">
           {job.status === 'stopped' ? '추출을 중지했어요' : `코드 ${ok.length}개를 추출했어요`}
         </h2>
-        <p className="mt-1 text-[13.5px] text-sub">Battle.net 코드 등록 페이지에서 확장을 다시 열면 이어서 등록할 수 있어요.</p>
+        <p className="mt-1 text-[13px] text-sub">Battle.net 코드 등록 페이지에서 확장을 다시 열면 이어서 등록할 수 있어요.</p>
         <div className="mt-4">
           <StatGrid
             items={[
-              ['추출 성공', <span className="font-mono text-[18px] text-ok">{ok.length}</span>],
-              ['실패', <span className="font-mono text-[18px] text-bad">{fail.length}</span>],
+              { label: '추출 성공', value: ok.length, tone: 'ok' },
+              { label: '실패', value: fail.length, tone: 'bad' },
             ]}
           />
         </div>
@@ -366,15 +377,15 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
           <ul className="mt-3 grid gap-2">
             {/* 등록 결과 화면의 실패 목록과 같은 모양으로 그린다 */}
             {fail.map((r) => (
-              <li key={rewardKey(r)} className="rounded-md border border-line bg-panel px-3 py-2.5">
+              <li key={rewardKey(r)} className="rounded-[10px] border border-line bg-panel p-3">
                 <div className="flex items-center justify-between gap-2">
                   <Thumb src={r.imageUrl} />
-                  <div className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">{r.name}</div>
+                  <div className="min-w-0 flex-1 truncate text-[14px] font-medium">{r.name}</div>
                   <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
                     다시 시도
                   </Btn>
                 </div>
-                <div className="mt-2 break-all rounded bg-bad-soft px-2 py-1.5 text-[12.5px] text-bad">{r.extractError ?? '알 수 없는 오류'}</div>
+                <div className="mt-2 break-all rounded bg-bad-soft p-2 text-[12px] text-bad">{r.extractError ?? '알 수 없는 오류'}</div>
               </li>
             ))}
           </ul>

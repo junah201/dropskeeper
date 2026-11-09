@@ -24,6 +24,7 @@
   --color-warn: #a15c00;
   --color-warn-soft: #fdf1dc;
   --color-check: #b9c0cc;
+  --color-mute-soft: #eef0f3;
 
   --font-sans: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;

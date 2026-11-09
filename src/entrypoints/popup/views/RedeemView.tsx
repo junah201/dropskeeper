@@ -6,7 +6,7 @@ import type { Job, RewardEntry, RewardKey } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
 import { isExpired, parseDate } from '@/lib/expiry';
 import { useNow } from '../hooks';
-import { Bar, Btn, Check, ExpiryLine, Notice, SelectAllBar, Shell, Tag, Thumb, mask } from '../ui';
+import { Bar, Btn, Check, ExpiryLine, CodeChip, Counts, Notice, SelectAllBar, Shell, Tag, Thumb } from '../ui';
 
 interface Props {
   tabId: number;
@@ -77,8 +77,8 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
     return (
       <Shell step="redeem">
         <div className="flex h-full flex-col px-4 pb-4 pt-6">
-          <h2 className="text-[16px] font-bold">등록할 코드가 없어요</h2>
-          <p className="mt-1.5 text-[13.5px] leading-relaxed text-sub">드롭스 인벤토리에서 보상을 불러오고 코드를 추출하면 여기에 표시돼요.</p>
+          <h2 className="text-[16px] font-semibold">등록할 코드가 없어요</h2>
+          <p className="mt-2 text-[13px] leading-relaxed text-sub">드롭스 인벤토리에서 보상을 불러오고 코드를 추출하면 여기에 표시돼요.</p>
           <div className="mt-auto grid gap-2">
             {Object.values(sourceMetas).map((m) => (
               <Btn key={m.id} kind="ghost" full onClick={() => browser.tabs.create({ url: m.inventoryUrl })}>
@@ -97,7 +97,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
       footer={
         <div className="flex items-center gap-3">
           <span className="text-[13px] text-sub">
-            <b className="text-ink">{chosen.length}개</b> 선택
+            <span className="font-medium text-ink">{chosen.length}개</span> 선택
           </span>
           <div className="flex flex-1 gap-2">
             <Btn kind="ghost" disabled={chosen.length === 0 || jobBusy} onClick={() => dismiss(chosen.map(rewardKey))} title="선택한 코드를 목록에서 삭제">
@@ -117,7 +117,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
       </SelectAllBar>
       {(loginPage || error) && (
         <div className="border-b border-line px-3 py-2">
-          <Notice tone={loginPage ? 'warn' : 'bad'}>{loginPage ? 'Battle.net에 먼저 로그인해 주세요.' : error}</Notice>
+          <Notice tone={loginPage ? 'warn' : 'bad'}>{loginPage ? 'Battle.net에 먼저 로그인해 주세요' : error}</Notice>
         </div>
       )}
       {/* 위 전체 선택 줄이 아래 테두리를 가지므로 목록은 바로 붙이고 아래 테두리만 둔다 */}
@@ -130,19 +130,24 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
             <li
               key={k}
               onClick={() => toggle(k)}
-              className={`flex cursor-pointer select-none items-center gap-2.5 px-3 py-2.5 hover:bg-bg ${i ? 'border-t border-line' : ''}`}
+              className={`flex cursor-pointer select-none items-center gap-3 px-3 py-2 hover:bg-bg ${i ? 'border-t border-line' : ''}`}
             >
               <Check on={selected.has(k)} label={r.name} />
               <Thumb src={r.imageUrl} size="lg" source={r.sourceId} />
               <div className="min-w-0 flex-1">
-                <div className="truncate text-[13.5px] font-semibold">{r.name}</div>
-                <div className="font-mono text-[12.5px] tabular-nums text-sub">{mask(r.code!)}</div>
-                <ExpiryLine r={r} />
-                {failed && <div className="mt-0.5 text-[12px] text-bad">지난 시도: {reasonLabel[failReasonOf(r.redeem.reason)]}</div>}
+                <div className="truncate text-[14px] font-medium">{r.name}</div>
+                {/* 코드와 만료일을 한 줄에 두어 "무엇을, 언제까지"가 같이 읽히게 한다 */}
+                <div className="mt-1 flex items-center gap-2">
+                  <CodeChip code={r.code!} />
+                  <div className="min-w-0">
+                    <ExpiryLine r={r} />
+                  </div>
+                </div>
+                {failed && <div className="mt-1 text-[12px] text-bad">지난 시도: {reasonLabel[failReasonOf(r.redeem.reason)]}</div>}
               </div>
               <button
                 type="button"
-                className="shrink-0 text-[12px] font-semibold text-accent"
+                className="shrink-0 text-[12px] font-medium text-accent underline-offset-2 hover:underline"
                 onClick={(e) => {
                   e.stopPropagation(); // 복사 버튼은 선택을 바꾸지 않는다
                   void copy(r.code!).then(() => setCopied(k));
@@ -154,7 +159,7 @@ function Queue({ tabId, loginPage, rewards, jobBusy }: { tabId: number; loginPag
               {failed && (
                 <button
                   type="button"
-                  className="shrink-0 text-[12px] font-semibold text-bad"
+                  className="shrink-0 text-[12px] font-medium text-bad underline-offset-2 hover:underline"
                   onClick={(e) => {
                     e.stopPropagation();
                     void dismiss([k]);
@@ -212,18 +217,23 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
       <div className="flex h-full flex-col">
         <div className="px-4 pt-5">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-[15px] font-bold">{paused ? '등록 일시정지' : '등록 중'}</h2>
-            <span className="font-mono text-[14px] tabular-nums">
-              {job.index} / {job.queue.length}
+            <h2 className="text-[16px] font-semibold">{paused ? '등록 일시정지' : '등록 중'}</h2>
+            <span className="font-mono text-[18px] font-medium tabular-nums">
+              {job.index}
+              <span className="text-faint"> / {job.queue.length}</span>
             </span>
           </div>
           <div className="mt-3">
             <Bar value={job.index} total={job.queue.length} />
           </div>
-          <div className="mt-3 flex gap-1.5">
-            <Tag tone="ok">성공 {ok}</Tag>
-            <Tag tone="bad">실패 {fail}</Tag>
-            <Tag tone="mute">남음 {job.queue.length - job.index}</Tag>
+          <div className="mt-3">
+            <Counts
+              items={[
+                { label: '성공', value: ok, dot: 'bg-ok' },
+                { label: '실패', value: fail, dot: 'bg-bad' },
+                { label: '남음', value: job.queue.length - job.index, dot: 'bg-check' },
+              ]}
+            />
           </div>
           {paused && job.pauseReason && (
             <div className="mt-3">
@@ -232,7 +242,7 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
           )}
         </div>
 
-        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-md border border-line bg-panel text-[13px]">
+        <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-[10px] border border-line bg-panel text-[13px]">
           {job.queue.map((k, i) => {
             const r = rewards[k];
             if (!r) return null;
@@ -244,14 +254,18 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
               <li
                 key={k}
                 ref={isCurrent || isNext ? currentRef : undefined}
-                className={`flex items-center gap-2.5 px-3 py-1.5 ${i ? 'border-t border-line' : ''} ${isCurrent ? 'bg-accent-soft' : ''} ${
+                className={`flex items-center gap-3 px-3 py-2 ${i ? 'border-t border-line' : ''} ${isCurrent ? 'bg-accent-soft' : ''} ${
                   !done && !isCurrent && !isNext ? 'opacity-50' : ''
                 }`}
               >
                 <Thumb src={r.imageUrl} source={r.sourceId} />
                 <div className="min-w-0 flex-1">
                   <div className="truncate">{r.name}</div>
-                  {r.code && <div className="font-mono text-[12px] text-faint">{mask(r.code)}</div>}
+                  {r.code && (
+                    <div className="mt-1">
+                      <CodeChip code={r.code} size="sm" />
+                    </div>
+                  )}
                 </div>
                 <RunStatus r={r} done={done} isCurrent={isCurrent} isNext={isNext} waitSec={waiting ? waitSec : 0} />
               </li>
@@ -268,12 +282,12 @@ function Running({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
 
 /** 등록 중 목록 오른쪽의 상태 표시 */
 function RunStatus({ r, done, isCurrent, isNext, waitSec }: { r: RewardEntry; done: boolean; isCurrent: boolean; isNext: boolean; waitSec: number }) {
-  if (isCurrent) return <span className="shrink-0 font-semibold text-accent">등록 중…</span>;
+  if (isCurrent) return <span className="shrink-0 font-medium text-accent">등록 중…</span>;
   if (done) {
-    if (r.redeem.status === 'success') return <span className="shrink-0 font-semibold text-ok">등록됨</span>;
+    if (r.redeem.status === 'success') return <span className="shrink-0 font-medium text-ok">등록됨</span>;
     if (r.redeem.status === 'failed')
       return (
-        <span className="shrink-0 font-semibold text-bad">
+        <span className="shrink-0 font-medium text-bad">
           {reasonLabel[failReasonOf(r.redeem.reason)]}
         </span>
       );
@@ -324,7 +338,7 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
           </Notice>
         </div>
       )}
-      <div role="tablist" className="flex border-b border-line px-4 pt-3 text-[13.5px]">
+      <div role="tablist" className="flex border-b border-line px-4 pt-3 text-[14px]">
         {(
           [
             ['fail', '실패', fails.length],
@@ -336,27 +350,29 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
             role="tab"
             aria-selected={tab === id}
             onClick={() => setTab(id)}
-            className={`border-b-2 px-3 pb-2 font-semibold ${tab === id ? 'border-ink text-ink' : 'border-transparent text-faint'}`}
+            className={`border-b-2 px-3 pb-2 font-medium ${tab === id ? 'border-ink text-ink' : 'border-transparent text-faint'}`}
           >
-            {label} <span className="font-mono">{n}</span>
+            {label} <span className="font-mono tabular-nums">{n}</span>
           </button>
         ))}
       </div>
 
       {tab === 'fail' ? (
         fails.length === 0 ? (
-          <p className="flex flex-1 items-center justify-center px-4 text-center text-[13.5px] text-faint">실패한 코드가 없어요.</p>
+          <p className="flex flex-1 items-center justify-center px-4 text-center text-[13px] text-faint">실패한 코드가 없어요</p>
         ) : (
           <ul className="grid gap-2 px-4 py-3">
             {fails.map((r) => {
               const reason = failReasonOf(r.redeem.reason);
               return (
-                <li key={rewardKey(r)} className="rounded-md border border-line bg-panel px-3 py-2.5">
+                <li key={rewardKey(r)} className="rounded-[10px] border border-line bg-panel p-3">
                   <div className="flex items-start justify-between gap-2">
                     <Thumb src={r.imageUrl} source={r.sourceId} />
                     <div className="min-w-0 flex-1">
-                      <div className="truncate text-[13.5px] font-semibold">{r.name}</div>
-                      <div className="font-mono text-[12.5px] text-sub">{mask(r.code ?? '')}</div>
+                      <div className="truncate text-[14px] font-medium">{r.name}</div>
+                      <div className="mt-1">
+                        <CodeChip code={r.code ?? ''} />
+                      </div>
                     </div>
                     <div className="flex shrink-0 gap-1">
                       {isRetryable(reason) && (
@@ -369,8 +385,8 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
                       </Btn>
                     </div>
                   </div>
-                  <div className="mt-2 rounded bg-bad-soft px-2 py-1.5 text-[12.5px] text-bad">
-                    <b>{reasonLabel[reason]}</b> · {reasonHelp[reason]}
+                  <div className="mt-2 rounded bg-bad-soft p-2 text-[12px] text-bad">
+                    <span className="font-medium">{reasonLabel[reason]}</span> · {reasonHelp[reason]}
                     {/* 이유를 아는 실패는 설명으로 충분하니 원문은 알 수 없는 오류일 때만 보여 준다 */}
                     {reason === 'unknown' && r.redeem.message && (
                       <div className="mt-0.5 break-all font-mono opacity-80">원문: {r.redeem.message}</div>
@@ -382,13 +398,13 @@ function Results({ job, rewards }: { job: Job; rewards: Record<RewardKey, Reward
           </ul>
         )
       ) : oks.length === 0 ? (
-        <p className="flex flex-1 items-center justify-center px-4 text-center text-[13.5px] text-faint">성공한 코드가 없어요.</p>
+        <p className="flex flex-1 items-center justify-center px-4 text-center text-[13px] text-faint">성공한 코드가 없어요</p>
       ) : (
         <ul className="border-b border-line bg-panel">
           {oks.map((r, i) => (
-            <li key={rewardKey(r)} className={`flex items-center gap-2.5 px-4 py-2.5 ${i ? 'border-t border-line' : ''}`}>
+            <li key={rewardKey(r)} className={`flex items-center gap-3 px-4 py-2 ${i ? 'border-t border-line' : ''}`}>
               <Thumb src={r.imageUrl} source={r.sourceId} />
-              <span className="min-w-0 flex-1 truncate text-[13.5px] font-semibold">{r.name}</span>
+              <span className="min-w-0 flex-1 truncate text-[14px] font-medium">{r.name}</span>
               <Tag tone="ok">등록됨</Tag>
             </li>
           ))}

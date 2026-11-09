@@ -44,13 +44,13 @@ const DAY = 86_400_000;
 const kstDay = (ms: number) => Math.floor((ms + 9 * 3600_000) / DAY);
 
 /**
- * 목록 표시용 만료일. 14일 안으로 남으면 `D-5`(당일은 `D-day`)와 soon=true,
- * 그보다 멀면 `~ 2027.02.28`. 만료일이 없으면 빈 문자열.
+ * 목록 표시용 만료일. 남은 날짜와 상관없이 `D-5`(당일은 `D-day`)로 짧게 적는다.
+ * 날짜를 다 적으면 좁은 행에서 잘려 보이지 않기 때문이다.
+ * 14일 안으로 남으면 soon=true. 만료일이 없으면 빈 문자열.
  */
 export function fmtExpiry(s?: string, now = Date.now()): { text: string; soon: boolean } {
   const t = parseDate(s);
   if (t == null) return { text: '', soon: false };
   const days = kstDay(t) - kstDay(now);
-  if (days <= EXPIRY_SOON_DAYS) return { text: days <= 0 ? 'D-day' : `D-${days}`, soon: true };
-  return { text: `~ ${fmtDate(s)}`, soon: false };
+  return { text: days <= 0 ? 'D-day' : `D-${days}`, soon: days <= EXPIRY_SOON_DAYS };
 }

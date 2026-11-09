@@ -16,28 +16,31 @@ export function Home({ rewards, job }: { rewards: Record<RewardKey, RewardEntry>
     <Shell step={null}>
       <div className="flex h-full flex-col gap-4 px-4 pb-4 pt-5">
         <div>
-          <h1 className="text-[16px] font-bold leading-snug">드롭스 페이지나 Battle.net 등록 페이지에서 열어 주세요</h1>
-          <p className="mt-1.5 text-[13.5px] leading-relaxed text-sub">
+          <h1 className="text-[16px] font-semibold leading-snug">드롭스 페이지나 Battle.net 등록 페이지에서 열어 주세요</h1>
+          <p className="mt-2 text-[13px] leading-relaxed text-sub">
             드롭스 인벤토리에서 코드를 모으고, Battle.net 코드 등록 페이지에서 한 번에 등록합니다.
           </p>
         </div>
 
         {activeJob && (
           <Notice tone={activeJob.status === 'paused' ? 'warn' : 'accent'}>
-            {activeJob.kind === 'extract' ? '코드 추출' : '코드 등록'}이 {activeJob.status === 'paused' ? '일시정지되어' : '진행 중이에요'}{' '}
-            ({activeJob.index}/{activeJob.queue.length}).
-            <button className="ml-1 font-semibold underline" onClick={() => browser.tabs.update(activeJob.tabId, { active: true })}>
+            {activeJob.kind === 'extract' ? '코드 추출' : '코드 등록'}이 {activeJob.status === 'paused' ? '일시정지됐어요' : '진행 중이에요'}{' '}
+            <span className="font-mono tabular-nums">
+              {activeJob.index}/{activeJob.queue.length}
+            </span>
+            <button className="ml-2 font-medium underline underline-offset-2" onClick={() => browser.tabs.update(activeJob.tabId, { active: true })}>
               작업 탭으로 이동
             </button>
           </Notice>
         )}
 
+        {/* 다음에 할 일을 알려 주는 숫자는 등록 대기 하나라 그것만 포인트 색으로 칠한다 */}
         <StatGrid
           items={[
-            ['추출한 코드', `${withCode.length}개`],
-            ['등록 대기', `${withCode.filter((r) => r.redeem.status !== 'success').length}개`],
-            ['등록 성공', `${ok}개`],
-            ['등록 실패', `${failed}개`],
+            { label: '추출한 코드', value: withCode.length },
+            { label: '등록 대기', value: withCode.filter((r) => r.redeem.status !== 'success').length, tone: 'accent' },
+            { label: '등록 성공', value: ok },
+            { label: '등록 실패', value: failed, tone: 'bad' },
           ]}
         />
 
