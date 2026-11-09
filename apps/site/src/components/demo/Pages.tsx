@@ -38,17 +38,18 @@ export function BrowserFrame({ url, dark, popup, children }: { url: string; dark
   );
 }
 
-/** 넓은 데스크톱 화면을 그린 뒤, 들어갈 칸 폭에 맞춰 통째로 줄인다 */
-function FitWidth({ width, children }: { width: number; children: ComponentChildren }) {
+/** 넓은 데스크톱 화면을 그린 뒤, 들어갈 칸 폭에 맞춰 통째로 줄인다. scale을 주면 재지 않고 그 배율로 그린다. */
+function FitWidth({ width, scale, children }: { width: number; scale?: number; children: ComponentChildren }) {
   const box = useRef<HTMLDivElement>(null);
-  const [s, setS] = useState(0.6);
+  const [measured, setS] = useState(0.6);
+  const s = scale ?? measured;
   useEffect(() => {
     const el = box.current;
-    if (!el) return;
+    if (!el || scale != null) return;
     const ro = new ResizeObserver(() => setS(el.clientWidth / width));
     ro.observe(el);
     return () => ro.disconnect();
-  }, [width]);
+  }, [width, scale]);
   return (
     // 안쪽을 absolute로 띄워서, 줄이기 전 폭이 바깥 레이아웃을 밀어내지 않게 한다
     <div ref={box} className="relative h-full w-full">
@@ -65,11 +66,12 @@ const highlight = (s: string) => s.split(/<([^>]+)>/).map((p, i) => (i % 2 ? <sp
 /**
  * SOOP 드롭스 보관함. claimed: 앞에서부터 몇 개가 획득 완료인지(코드 추출이 진행되는 만큼 늘어난다).
  * focus: 지금 추출 중인 카드. 주면 그 카드 줄이 보이도록 페이지를 내린다.
+ * scale: 줄이는 배율을 정해 둔다(스토어 스크린샷처럼 브라우저에서 재지 않고 그릴 때).
  */
-export function SoopPage({ c, claimed, focus }: { c: DemoCopy; claimed: number; focus: number | null }) {
+export function SoopPage({ c, claimed, focus, scale }: { c: DemoCopy; claimed: number; focus: number | null; scale?: number }) {
   const offset = focus == null ? 0 : 330 + Math.floor(Math.min(focus, N - 1) / 4) * 290;
   return (
-    <FitWidth width={880}>
+    <FitWidth width={880} scale={scale}>
       <div className="bg-white text-[#1c1c1e] transition-transform duration-700 ease-in-out" style={{ transform: `translateY(${-offset}px)` }}>
         <div className="flex h-[62px] items-center px-10">
           <img src={sourceIcons.soop} alt="" className="h-7 w-7 rounded-md" />

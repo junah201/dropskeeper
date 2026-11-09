@@ -35,6 +35,13 @@ const ko = {
   lead: 'SOOP·CHZZK에서 받은 오버워치 드롭스 코드를 모아 Battle.net에 차례로 등록해요. 코드를 하나씩 복사해 붙여 넣지 않아도 돼요.',
   install: 'Chrome에 추가',
   stepChips: ['코드 추출', '등록'],
+  /** Chrome 웹 스토어 스크린샷 머리글 (store/ 페이지, 배포 빌드에는 없다) */
+  storeShots: [
+    { title: '받은 보상을 한 번에 불러와요', desc: 'SOOP·CHZZK 드롭스 인벤토리에서 팝업을 열면 유효기간이 남은 보상만 보여 줘요.' },
+    { title: '원하는 보상의 코드만 뽑아요', desc: '고른 보상의 코드를 받아 등록 대기열에 쌓아 둬요.' },
+    { title: 'Battle.net에 하나씩 대신 등록해요', desc: '등록하기를 한 번 누르면 같은 탭에서 차례로 등록해요. 팝업을 닫아도 계속돼요.' },
+    { title: '실패한 코드는 이유와 함께 남아요', desc: '이미 등록된 코드처럼 등록하지 못한 이유를 코드마다 알려 줘요.' },
+  ],
   privacy: '개인정보처리방침',
   terms: '서비스 이용약관',
   otherLang: 'English',
@@ -117,6 +124,12 @@ const en: Copy = {
   lead: 'Collect the Overwatch drop codes you earned on SOOP and CHZZK, and redeem them on Battle.net one by one. No more copying and pasting each code.',
   install: 'Add to Chrome',
   stepChips: ['Extract', 'Redeem'],
+  storeShots: [
+    { title: 'Load all your rewards at once', desc: 'Open the popup on your SOOP or CHZZK drops inventory to see every reward that hasn’t expired.' },
+    { title: 'Extract codes for the rewards you pick', desc: 'Codes for the rewards you choose go straight into the redeem queue.' },
+    { title: 'Redeemed on Battle.net, one by one', desc: 'Press Redeem once and codes go in on the same tab. It keeps going even if you close the popup.' },
+    { title: 'Failed codes stay, with the reason', desc: 'See why each code didn’t go through, such as one that was already claimed.' },
+  ],
   privacy: 'Privacy Policy',
   terms: 'Terms of Service',
   otherLang: '한국어',

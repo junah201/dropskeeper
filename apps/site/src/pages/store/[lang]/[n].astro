@@ -1,0 +1,32 @@
+---
+// Chrome 웹 스토어 스크린샷을 찍는 페이지. 개발 서버에서만 있고 배포 빌드에는 만들지 않는다.
+// 찍기: 저장소 루트에서 node apps/site/store/render.mjs
+import StoreShot, { SHOT_COUNT } from '../../../components/store/StoreShot';
+import { POPUP_KEYS } from '../../../components/demo/text';
+import { copy, langs, type Lang } from '../../../i18n';
+import { popupText } from '../../../popupText';
+import '../../../styles/global.css';
+
+export const getStaticPaths = () =>
+  import.meta.env.PROD ? [] : langs.flatMap((lang) => Array.from({ length: SHOT_COUNT }, (_, i) => ({ params: { lang, n: String(i + 1) } })));
+
+const lang = Astro.params.lang as Lang;
+const n = Number(Astro.params.n) - 1;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <title>store {lang} {n + 1}</title>
+    <style is:global>
+      html, body { margin: 0; width: 1280px; height: 800px; overflow: hidden; }
+      /* 개발 서버가 붙이는 Astro 도구 막대는 찍히지 않게 숨긴다 */
+      astro-dev-toolbar { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <StoreShot n={n} lang={lang} popup={popupText(lang, POPUP_KEYS)} c={copy[lang]} />
+  </body>
+</html>
