@@ -49,7 +49,7 @@ const popup = popupText(lang, POPUP_KEYS);
         </div>
       </section>
 
-      <section class="mx-auto max-w-6xl space-y-28 px-4 pb-28 sm:px-6">
+      <section class="mx-auto flex max-w-6xl flex-col gap-28 px-4 pb-28 sm:px-6">
         <StepDemo client:visible which="extract" lang={lang} {...t.extract} popup={popup} pages={t.demo} />
         <StepDemo client:visible which="redeem" lang={lang} {...t.redeem} popup={popup} pages={t.demo} />
       </section>
