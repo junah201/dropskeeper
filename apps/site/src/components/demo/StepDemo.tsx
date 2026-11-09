@@ -24,10 +24,14 @@ interface Props {
 
 const lines: Record<Props['which'], Timeline> = { extract: extractLine, redeem: redeemLine };
 
-/** 한 번에 흘려보내는 시간의 상한(ms). 타이머가 늦게 불려도 장면을 건너뛰지 않게 한다. */
-const MAX_STEP = 200;
+/** 타이머가 이보다 늦으면(ms) 밀린 시간을 따라잡지 않고 지금부터 다시 센다 */
+const MAX_LAG = 100;
 
-/** 화면에 보이고 탭이 앞에 있을 때만 도는 시계. 움직임 줄이기 설정이면 frozen 시점에 멈춘다. */
+/**
+ * 화면에 보이고 탭이 앞에 있을 때만 도는 시계. 움직임 줄이기 설정이면 frozen 시점에 멈춘다.
+ * 고정 간격으로 돌리지 않고 다음 장면 전환 시각에 타이머를 하나씩 건다. 화면이 바뀔 때만 다시 그리고,
+ * 타이머가 늦게 불려도 한 장면씩만 넘어가므로 장면을 건너뛰지 않는다.
+ */
 function usePlayer(line: Timeline) {
   const ref = useRef<HTMLDivElement>(null);
   const [t, setT] = useState(0);
@@ -35,6 +39,8 @@ function usePlayer(line: Timeline) {
   const [pageShown, setPageShown] = useState(true);
   const [reduced, setReduced] = useState(false);
   const visible = inView && pageShown;
+  // 지금 장면이 시작됐어야 할 시각. 다음 타이머를 여기서 재어 타이머 지연이 쌓이지 않게 한다.
+  const shownAt = useRef(0);
   useEffect(() => {
     const m = window.matchMedia('(prefers-reduced-motion: reduce)');
     const on = () => setReduced(m.matches);
@@ -59,16 +65,22 @@ function usePlayer(line: Timeline) {
       return;
     }
     if (!visible) return;
-    let last = performance.now();
-    const id = window.setInterval(() => {
-      const now = performance.now();
-      const dt = Math.min(now - last, MAX_STEP);
-      setT((p) => (p + dt) % line.total);
-      last = now;
-    }, 50);
-    return () => window.clearInterval(id);
-  }, [visible, reduced, line]);
-  return { ref, t, jump: (stage: number) => setT(line.stageStart[stage]) };
+    const now = performance.now();
+    // 멈췄다 다시 돌 때처럼 오래된 값이면 지금부터 센다
+    const from = Math.max(shownAt.current, now - MAX_LAG);
+    const next = line.next(t);
+    const due = from + next - t;
+    const id = window.setTimeout(() => {
+      shownAt.current = due;
+      setT(next % line.total);
+    }, due - now);
+    return () => window.clearTimeout(id);
+  }, [visible, reduced, line, t]);
+  const jump = (stage: number) => {
+    shownAt.current = performance.now();
+    setT(line.stageStart[stage]);
+  };
+  return { ref, t, jump };
 }
 
 /** 팝업 크기. 창 폭에 맞춰 줄인다. */
