@@ -24,22 +24,32 @@ interface Props {
 
 const lines: Record<Props['which'], Timeline> = { extract: extractLine, redeem: redeemLine };
 
-/** 화면에 보일 때만 도는 시계. 움직임 줄이기 설정이면 frozen 시점에 멈춘다. */
+/** 한 번에 흘려보내는 시간의 상한(ms). 타이머가 늦게 불려도 장면을 건너뛰지 않게 한다. */
+const MAX_STEP = 200;
+
+/** 화면에 보이고 탭이 앞에 있을 때만 도는 시계. 움직임 줄이기 설정이면 frozen 시점에 멈춘다. */
 function usePlayer(line: Timeline) {
   const ref = useRef<HTMLDivElement>(null);
   const [t, setT] = useState(0);
-  const [visible, setVisible] = useState(false);
+  const [inView, setInView] = useState(false);
+  const [pageShown, setPageShown] = useState(true);
   const [reduced, setReduced] = useState(false);
+  const visible = inView && pageShown;
   useEffect(() => {
     const m = window.matchMedia('(prefers-reduced-motion: reduce)');
     const on = () => setReduced(m.matches);
     on();
     m.addEventListener('change', on);
+    // IntersectionObserver는 탭이 숨는 것을 알려 주지 않으므로 따로 본다.
+    const onVis = () => setPageShown(document.visibilityState === 'visible');
+    onVis();
+    document.addEventListener('visibilitychange', onVis);
     const el = ref.current;
-    const io = el && new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.25 });
+    const io = el && new IntersectionObserver(([e]) => setInView(e.isIntersecting), { threshold: 0.25 });
     if (el && io) io.observe(el);
     return () => {
       m.removeEventListener('change', on);
+      document.removeEventListener('visibilitychange', onVis);
       io?.disconnect();
     };
   }, []);
@@ -52,7 +62,8 @@ function usePlayer(line: Timeline) {
     let last = performance.now();
     const id = window.setInterval(() => {
       const now = performance.now();
-      setT((p) => (p + now - last) % line.total);
+      const dt = Math.min(now - last, MAX_STEP);
+      setT((p) => (p + dt) % line.total);
       last = now;
     }, 50);
     return () => window.clearInterval(id);
