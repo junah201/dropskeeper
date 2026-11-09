@@ -9,7 +9,8 @@ export function Home({ rewards, job }: { rewards: Record<RewardKey, RewardEntry>
   const withCode = list.filter((r) => r.code);
   const ok = list.filter((r) => r.redeem.status === 'success').length;
   const failed = list.filter((r) => r.redeem.status === 'failed').length;
-  const open = (url: string) => browser.tabs.create({ url });
+  // 새 탭을 열면 팝업이 닫히므로 지금 탭에서 이동한다. 이동이 끝나면 팝업이 그 페이지 화면으로 바뀐다.
+  const open = (url: string) => browser.tabs.update({ url });
   const activeJob = job && (job.status === 'running' || job.status === 'paused') ? job : null;
 
   return (

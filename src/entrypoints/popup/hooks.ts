@@ -21,10 +21,21 @@ export interface ActiveTab {
   url?: string;
 }
 
+/** 팝업을 연 탭. 팝업이 떠 있는 동안 그 탭의 주소가 바뀌면 따라 바뀐다. */
 export function useActiveTab(): ActiveTab | undefined {
   const [tab, setTab] = useState<ActiveTab>();
   useEffect(() => {
-    browser.tabs.query({ active: true, currentWindow: true }).then(([t]) => setTab({ id: t?.id, url: t?.url }));
+    let tabId: number | undefined;
+    browser.tabs.query({ active: true, currentWindow: true }).then(([t]) => {
+      tabId = t?.id;
+      setTab({ id: t?.id, url: t?.url });
+    });
+    // host_permissions에 있는 사이트로 이동할 때만 changeInfo.url이 채워진다. 팝업 화면을 고를 때 필요한 것도 그 사이트뿐이다.
+    const onUpdated = (id: number, info: { url?: string }) => {
+      if (id === tabId && info.url) setTab({ id, url: info.url });
+    };
+    browser.tabs.onUpdated.addListener(onUpdated);
+    return () => browser.tabs.onUpdated.removeListener(onUpdated);
   }, []);
   return tab;
 }
