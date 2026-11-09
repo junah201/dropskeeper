@@ -1,6 +1,7 @@
 import { handleMessages, isSourceMessage, type SourceResponse } from '../messages';
 import type { DropSource } from './types';
 import { SourceError } from './types';
+import { errorText } from '../i18n';
 
 /** 플랫폼 content script의 본체. 각 플랫폼은 이 함수에 자기 구현만 넘기면 된다. */
 export function serveSource(source: DropSource) {
@@ -19,7 +20,7 @@ export function serveSource(source: DropSource) {
     } catch (e) {
       return {
         ok: false,
-        error: e instanceof Error ? e.message : String(e),
+        error: errorText(e),
         kind: e instanceof SourceError ? e.kind : undefined,
       };
     }

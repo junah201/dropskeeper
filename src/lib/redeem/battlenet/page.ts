@@ -19,6 +19,7 @@
  *     완료 화면의 "돌아가기", "다른 코드 등록"은 버튼이 아닌 <a> 링크다.
  */
 import type { FailReason } from '../../types';
+import { battlenetSite, pageLanguageOf, type BattlenetPageLanguage } from './constants';
 
 export type BnetPageState =
   | { kind: 'loading' }
@@ -27,26 +28,71 @@ export type BnetPageState =
   | { kind: 'error'; reason: FailReason; message: string }
   | { kind: 'unknown'; message: string };
 
-/** 확인 단계에서 누를 버튼 문구 (앞쪽일수록 우선) */
-const CONFIRM_TEXTS = ['코드 사용', '사용하기', '등록하기', '등록', '받기', '확인', '계속', 'Redeem', 'Claim', 'Continue', 'Confirm'];
-const NEGATIVE_TEXTS = ['취소', '닫기', '돌아가기', 'Cancel', 'Back'];
+/** 상점 언어별 화면 문구. 등록 결과를 이 문구로 판단한다. */
+interface PageTexts {
+  /** 확인 단계에서 누를 버튼 문구 (앞쪽일수록 우선) */
+  confirm: string[];
+  /** 확인 버튼으로 오인하면 안 되는 문구 */
+  negative: string[];
+  success: RegExp[];
+  /** "확인"을 누른 뒤 서버가 처리하는 동안 보이는 화면. 페이지가 스스로 새로고침하므로 결과가 나올 때까지 기다린다. */
+  processing: RegExp[];
+  /** 실제 화면으로 확인한 오류 제목만 적는다. 여기에 없는 오류는 unknown으로 두고 원문을 보여 준다. */
+  errors: [FailReason, RegExp][];
+}
 
-// 실제 화면 문구: purchase-details/key-claim/<코드> 페이지의 "코드가 등록되었습니다."
-const SUCCESS_PATTERNS = [/코드가\s*등록되었습니다/];
-// "확인"을 누른 뒤 서버가 처리하는 동안 보이는 화면: "잠시만 기다려주세요. 코드 등록을 처리 중입니다."
-// 페이지가 스스로 상태를 확인하고 새로고침하므로 결과가 나올 때까지 기다린다.
-const PROCESSING_PATTERNS = [/등록을\s*처리\s*중/];
-// 실제 화면으로 확인한 오류 제목만 적는다. 여기에 없는 오류는 unknown으로 두고 원문을 보여 준다.
-const ERROR_PATTERNS: [FailReason, RegExp][] = [
-  // "이미 등록된 코드입니다."
-  ['already_used', /이미\s*등록된\s*코드/],
-  // "이미 보유한 상품입니다."
-  ['already_owned', /이미\s*보유한\s*상품/],
-  // "입력한 키는 등록할 수 없습니다. … 점검 중일 수 있으니 다음에 시도해 주세요."
-  ['not_redeemable', /키는\s*등록할\s*수\s*없/],
-  // "해당 상품을 등록하실 수 없습니다."
-  ['product_unavailable', /상품을\s*등록하실\s*수\s*없/],
-];
+const PAGE_TEXTS: Record<BattlenetPageLanguage, PageTexts> = {
+  ko: {
+    confirm: ['코드 사용', '사용하기', '등록하기', '등록', '받기', '확인', '계속'],
+    negative: ['취소', '닫기', '돌아가기'],
+    // 실제 화면 문구: purchase-details/key-claim/<코드> 페이지의 "코드가 등록되었습니다."
+    success: [/코드가\s*등록되었습니다/],
+    // "잠시만 기다려주세요. 코드 등록을 처리 중입니다."
+    processing: [/등록을\s*처리\s*중/],
+    errors: [
+      // "이미 등록된 코드입니다."
+      ['already_used', /이미\s*등록된\s*코드/],
+      // "이미 보유한 상품입니다."
+      ['already_owned', /이미\s*보유한\s*상품/],
+      // "입력한 키는 등록할 수 없습니다. … 점검 중일 수 있으니 다음에 시도해 주세요."
+      ['not_redeemable', /키는\s*등록할\s*수\s*없/],
+      // "해당 상품을 등록하실 수 없습니다."
+      ['product_unavailable', /상품을\s*등록하실\s*수\s*없/],
+    ],
+  },
+  // English. 실제 화면으로 확인한 문구만 적는다. 모르는 오류 배너는 unknown(원문 표시)이 된다.
+  en: {
+    confirm: ['Redeem', 'Claim', 'Continue', 'Confirm'],
+    negative: ['Cancel', 'Close', 'Back'],
+    // purchase-details/key-claim/<코드> 페이지의 "Code successfully redeemed!"
+    success: [/code\s+successfully\s+redeemed/i],
+    // "Give us a moment. We are processing your claim now."
+    processing: [/processing\s+your\s+claim/i],
+    errors: [
+      // "You’ve already claimed this code." (아포스트로피가 ’라 그 앞은 맞추지 않는다)
+      ['already_used', /already\s+claimed\s+this\s+code/i],
+      // "You already have access to this product."
+      ['already_owned', /already\s+have\s+access\s+to\s+this\s+product/i],
+      // 제목은 "Oops!"이고 설명이 "The code you entered cannot be claimed. … may be undergoing maintenance."라 설명으로 맞춘다
+      ['not_redeemable', /code\s+you\s+entered\s+cannot\s+be\s+claimed/i],
+    ],
+  },
+};
+
+/** 지금 페이지 주소의 언어에 맞는 문구 표. 모르는 언어면 확인 버튼만 찾을 수 있도록 두 언어를 합친다. */
+function pageTexts(): PageTexts {
+  const site = battlenetSite(location.href);
+  const lang = site && pageLanguageOf(site);
+  if (lang) return PAGE_TEXTS[lang];
+  const all = Object.values(PAGE_TEXTS);
+  return {
+    confirm: all.flatMap((t) => t.confirm),
+    negative: all.flatMap((t) => t.negative),
+    success: all.flatMap((t) => t.success),
+    processing: all.flatMap((t) => t.processing),
+    errors: all.flatMap((t) => t.errors),
+  };
+}
 
 const visible = (el: Element): boolean => {
   const r = (el as HTMLElement).getBoundingClientRect?.();
@@ -87,15 +133,24 @@ function findConfirmButton(): HTMLElement | undefined {
   const submit = [...document.querySelectorAll<HTMLElement>(KEY_CLAIM_SUBMIT)].find((b) => visible(b) && !isDisabled(b));
   if (submit) return submit;
   const buttons = deepAll().filter((b) => isButtonLike(b) && visible(b) && !isDisabled(b)) as HTMLElement[];
-  for (const want of CONFIRM_TEXTS) {
+  const { confirm, negative } = pageTexts();
+  for (const want of confirm) {
     const hit = buttons.find((b) => {
       const t = labelOf(b);
-      return t.includes(want) && !NEGATIVE_TEXTS.some((n) => t.includes(n));
+      return t.includes(want) && !negative.some((n) => t.includes(n));
     });
     if (hit) return hit;
   }
   return undefined;
 }
+
+/**
+ * 언어와 상관없는 화면 표시 (en 페이지 HAR로 확인).
+ * 완료 화면의 제목에는 `data-bnet-shop="payment.success.dynamic.purchaseDetails.keyclaim…heading…"`가 붙고,
+ * 처리 중 화면의 "Give us a moment." 줄에는 `.payment-pending-state-title`이 붙는다. 문구 표보다 먼저 본다.
+ */
+const SUCCESS_HEADING = '[data-bnet-shop^="payment.success.dynamic.purchaseDetails.keyclaim"][data-bnet-shop*="heading"]';
+const PENDING_TITLE = '.payment-pending-state-title';
 
 const ERROR_BANNER = '.error-notification-banner-content';
 /** 배너 안쪽 구조가 바뀌어도 잡을 수 있도록 바깥 요소도 본다 */
@@ -109,7 +164,8 @@ function readErrorBanner(): { reason: FailReason; message: string } | undefined 
   const lines = [...el.querySelectorAll('p')].map(textOf).filter(Boolean);
   const title = lines[0] ?? textOf(el);
   const all = textOf(el);
-  const reason = ERROR_PATTERNS.find(([, re]) => re.test(title))?.[0] ?? ERROR_PATTERNS.find(([, re]) => re.test(all))?.[0] ?? 'unknown';
+  const { errors } = pageTexts();
+  const reason = errors.find(([, re]) => re.test(title))?.[0] ?? errors.find(([, re]) => re.test(all))?.[0] ?? 'unknown';
   // 이유를 모르는 오류는 사용자가 원문을 보고 판단하도록 배너 전체 문구를 남긴다
   return { reason, message: reason === 'unknown' ? all : title };
 }
@@ -126,14 +182,18 @@ export function inspectPage(): BnetPageState {
   const banner = readErrorBanner();
   if (banner) return { kind: 'error', ...banner };
 
+  const { errors, success, processing } = pageTexts();
   const texts = alertTexts();
   for (const t of texts) {
-    for (const [reason, re] of ERROR_PATTERNS) if (re.test(t)) return { kind: 'error', reason, message: t };
+    for (const [reason, re] of errors) if (re.test(t)) return { kind: 'error', reason, message: t };
   }
 
   // 완료 화면에서 다른 버튼을 누르지 않도록 성공 여부를 버튼보다 먼저 본다
-  for (const t of texts) if (SUCCESS_PATTERNS.some((re) => re.test(t))) return { kind: 'success', message: t };
-  if (texts.some((t) => PROCESSING_PATTERNS.some((re) => re.test(t)))) return { kind: 'loading' };
+  const heading = deepQueryAll(SUCCESS_HEADING).find((e) => visible(e) && textOf(e));
+  if (heading) return { kind: 'success', message: textOf(heading) };
+  if (deepQueryAll(PENDING_TITLE).some(visible)) return { kind: 'loading' };
+  for (const t of texts) if (success.some((re) => re.test(t))) return { kind: 'success', message: t };
+  if (texts.some((t) => processing.some((re) => re.test(t)))) return { kind: 'loading' };
 
   const btn = findConfirmButton();
   if (btn) return { kind: 'confirm', buttonText: labelOf(btn) };

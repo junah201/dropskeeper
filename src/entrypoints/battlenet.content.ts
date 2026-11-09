@@ -1,8 +1,9 @@
 import { handleMessages, isBnetMessage } from '@/lib/messages';
 import { clickConfirm, describePage, inspectPage } from '@/lib/redeem/battlenet/page';
+import { BATTLENET_CHECKOUT_MATCHES } from '@/lib/redeem/battlenet/constants';
 
 export default defineContentScript({
-  matches: ['https://kr.checkout.battle.net/*'],
+  matches: BATTLENET_CHECKOUT_MATCHES,
   main() {
     let lastLog = '';
     handleMessages(isBnetMessage, async (msg) => {

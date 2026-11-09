@@ -1,3 +1,6 @@
+import type { LocalText } from './i18n';
+import type { BattlenetSite } from './redeem/battlenet/constants';
+
 /** 드롭스를 받아오는 플랫폼. 새 플랫폼은 여기에 id를 추가하고 sources/에 구현을 넣는다. */
 export type SourceId = 'soop' | 'chzzk';
 
@@ -40,15 +43,15 @@ export type RedeemStatus = 'idle' | 'running' | 'success' | 'failed';
 export interface RedeemState {
   status: RedeemStatus;
   reason?: FailReason;
-  /** 사이트에 표시된 원문 메시지 */
-  message?: string;
+  /** 사이트에 표시된 원문 메시지, 또는 DropsKeeper가 남긴 설명 */
+  message?: LocalText;
   at?: number;
 }
 
 /** 저장소에 보관하는 보상 한 건 */
 export interface RewardEntry extends SourceReward {
   code?: string;
-  extractError?: string;
+  extractError?: LocalText;
   redeem: RedeemState;
   /**
    * 사용자가 목록에서 삭제한 보상. 다시 불러와도 되살아나지 않도록 지우지 않고 표시만 남긴다.
@@ -69,7 +72,9 @@ export interface Job {
   /** 다음에 처리할 queue 위치 */
   index: number;
   current?: RewardKey;
-  pauseReason?: string;
+  pauseReason?: LocalText;
+  /** 코드 등록 작업이 쓰는 Battle.net 상점 (작업을 시작한 탭의 지역·언어) */
+  site?: BattlenetSite;
   /** 다음 항목을 시작할 예정 시각 (등록 간격 표시용) */
   nextAt?: number;
   startedAt: number;

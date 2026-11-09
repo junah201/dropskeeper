@@ -25,8 +25,11 @@ pnpm compile   # 타입 검사
 - 저장소(`src/lib/storage.ts`) 쓰기는 background에서만 한다. popup은 `sendToBackground`로 요청한다. 쓰기 순서 보장이 실행 환경마다 따로 동작하기 때문이다.
 - React와 Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
 - 유효기간이 지난 보상은 목록, 대기열, 통계 어디에도 보여 주지 않는다 (`src/lib/expiry.ts`).
+- 화면 문구는 코드에 직접 쓰지 않고 `src/locales/en.yml`(기본 언어, 키 타입의 기준)과 `ko.yml`에 같은 키로 넣은 뒤 `i18n.t()`로 읽는다. 언어는 브라우저 언어를 따른다.
+- background·content script가 만든 문구(오류, 일시정지 이유)는 번역하지 않고 `msg()`로 만든 `LocalText`(키 + 치환 값)로 넘기고 저장한다. popup이 `tx()`로 번역해 보여 준다 (`src/lib/i18n.ts`). 사이트가 보낸 원문은 문자열 그대로 둔다.
+- Battle.net 주소는 `https://<지역>.checkout.battle.net/shop/<언어>/checkout/...`이다. 지역은 kr, us, eu, tw만 받는다(cn은 외부 접속 불가). 등록은 작업을 시작한 탭의 지역·언어로 하며, 결과를 화면 문구로 읽으므로 `page.ts`에 문구 표가 있는 언어(`ko`, `en`)에서만 시작할 수 있다.
 - Battle.net 등록 흐름은 `key-claim?keyCode=` → `preload/<base64>`(자동 POST)까지 버튼 없이 리다이렉트로 진행된다. 그다음 오류면 `key-lookup/<base64>` 결과 페이지, 유효한 코드면 `confirm-key-claim/<base64>` 확인 페이지로 간다. 확인 페이지의 "확인" 버튼(`form#submit-key-claim`)은 같은 주소로 csrftoken을 POST한다. 두 페이지 주소 모두 `kc|<조회마다 바뀌는 식별자>|<코드>`가 base64로 들어 있다.
-- 오류 배너(`.error-notification-banner-content`, 예: "이미 등록된 코드입니다.")는 실제 화면으로 확인했다. 유효한 코드의 확인 페이지와 "확인" 버튼도 실제 화면으로 확인했다. "확인"을 누른 뒤의 성공 문구 패턴(`src/lib/redeem/battlenet/page.ts`)은 아직 추정값이다.
+- 오류 배너(`.error-notification-banner-content`, 예: "이미 등록된 코드입니다.")는 실제 화면으로 확인했다. 유효한 코드의 확인 페이지와 "확인" 버튼도 실제 화면으로 확인했다. English(`en`) 페이지는 "You’ve already claimed this code."(이미 등록된 코드)와 "You already have access to this product."(이미 보유한 상품), "The code you entered cannot be claimed."(등록할 수 없는 코드), 처리 중("We are processing your claim now.")과 성공("Code successfully redeemed!") 화면을 확인했다. 등록할 수 없는 상품 문구는 아직 비어 있다. 성공·처리 중 화면은 언어와 상관없는 표시(`data-bnet-shop="payment.success…keyclaim…heading…"`, `.payment-pending-state-title`)로도 판별한다.
 - CAPTCHA나 봇 탐지는 우회하지 않는다. 감지되면 일시정지하고 사용자에게 맡긴다.
 
 ## 커밋 규칙

@@ -13,13 +13,15 @@ const ICONS = {
 
 export default defineConfig({
   srcDir: 'src',
-  modules: ['@wxt-dev/module-react'],
+  modules: ['@wxt-dev/module-react', '@wxt-dev/i18n/module'],
   vite: () => ({
     plugins: [tailwindcss()],
   }),
   manifest: {
-    name: 'DropsKeeper',
-    description: '스트리밍 드롭스 보상 코드를 모아 Battle.net에 차례로 등록합니다.',
+    // 문구는 src/locales/*.yml. 브라우저 언어가 ko도 en도 아니면 default_locale(en)을 쓴다.
+    default_locale: 'en',
+    name: '__MSG_extName__',
+    description: '__MSG_extDescription__',
     icons: ICONS,
     action: { default_icon: ICONS },
     permissions: ['storage'],

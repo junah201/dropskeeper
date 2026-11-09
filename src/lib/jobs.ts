@@ -4,6 +4,7 @@
  * 진행 상태는 모두 storage에 남겨 팝업이 닫혀도 이어서 볼 수 있게 한다.
  */
 import { sendToTab } from './messages';
+import { LocalError, errorText, msg, type LocalText } from './i18n';
 import { jobItem, patchJob, patchReward, rewardsItem } from './storage';
 import type { FailReason, Job, RewardEntry, RewardKey } from './types';
 import type { BnetPageState } from './redeem/battlenet/page';
@@ -12,6 +13,9 @@ import {
   REDEEM_DELAY_MAX,
   REDEEM_DELAY_MIN,
   RESULT_TIMEOUT,
+  battlenetSite,
+  pageLanguageOf,
+  type BattlenetSite,
   isBattlenetCheckout,
   isBattlenetLoginPage,
   isKeyFlowPage,
@@ -24,7 +28,8 @@ const MAX_CONSECUTIVE_UNKNOWN = 3;
 /** 코드 하나를 등록하면서 누를 수 있는 버튼 수 (무한 반복 방지) */
 const MAX_CLICKS = 3;
 
-class Pause extends Error {}
+/** 작업을 일시정지하고 이유를 보여 준다 */
+class Pause extends LocalError {}
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -43,7 +48,7 @@ function waitForTabComplete(tabId: number, timeout = 30000): Promise<Browser.tab
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       browser.tabs.onUpdated.removeListener(on);
-      reject(new Error('페이지가 열리지 않았어요.'));
+      reject(new Error('Tab did not finish loading'));
     }, timeout);
     const on = (id: number, info: Browser.tabs.OnUpdatedInfo, tab: Browser.tabs.Tab) => {
       if (id !== tabId || info.status !== 'complete') return;
@@ -59,7 +64,7 @@ async function tabUrl(tabId: number) {
   try {
     return (await browser.tabs.get(tabId)).url;
   } catch {
-    throw new Pause('작업하던 탭이 닫혔어요.');
+    throw new Pause(msg('msg.tabClosed'));
   }
 }
 
@@ -72,10 +77,10 @@ async function inspect(tabId: number): Promise<BnetPageState | undefined> {
   }
 }
 
-type Outcome = { ok: true; message?: string } | { ok: false; reason: FailReason; message?: string };
+type Outcome = { ok: true; message?: LocalText } | { ok: false; reason: FailReason; message?: LocalText };
 
-async function redeemOne(tabId: number, code: string): Promise<Outcome> {
-  await browser.tabs.update(tabId, { url: keyClaimUrl(code) });
+async function redeemOne(tabId: number, site: BattlenetSite, code: string): Promise<Outcome> {
+  await browser.tabs.update(tabId, { url: keyClaimUrl(site, code) });
   await waitForTabComplete(tabId).catch(() => undefined);
 
   // 등록은 여러 화면을 거친다: 입력(key-claim) → 오류면 결과(key-lookup), 유효하면 확인(confirm-key-claim)에서 "확인" 클릭.
@@ -86,7 +91,7 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
 
   while (Date.now() < deadline) {
     const url = await tabUrl(tabId);
-    if (isBattlenetLoginPage(url)) throw new Pause('Battle.net 로그인이 필요해요. 로그인한 뒤 재개를 눌러 주세요.');
+    if (isBattlenetLoginPage(url)) throw new Pause(msg('msg.battlenetLogin'));
 
     // 확인·결과 페이지 주소에는 코드가 들어 있다. 다른 코드의 화면이면 아직 이동 중이므로 읽지 않는다.
     const lookupCode = keyLookupCode(url);
@@ -118,22 +123,23 @@ async function redeemOne(tabId: number, code: string): Promise<Outcome> {
     ok: false,
     reason: 'unknown',
     message: clicked
-      ? '확인 버튼을 눌렀지만 결과를 확인하지 못했어요.'
+      ? msg('msg.resultUnconfirmed')
       : last?.kind === 'unknown'
-        ? `화면을 해석하지 못했어요: ${last.message}`
-        : '등록 화면을 찾지 못했어요.',
+        ? msg('msg.pageUnreadable', { text: last.message })
+        : msg('msg.redeemPageMissing'),
   };
 }
 
 async function processRedeem(job: Job, key: RewardKey, r: RewardEntry, unknownStreak: { n: number }) {
   if (!r.code) {
-    await patchReward(key, () => ({ redeem: { status: 'failed', reason: 'unknown', message: '추출된 코드가 없어요.', at: Date.now() } }));
+    await patchReward(key, () => ({ redeem: { status: 'failed', reason: 'unknown', message: msg('msg.noExtractedCode'), at: Date.now() } }));
     return;
   }
   await patchReward(key, () => ({ redeem: { status: 'running' } }));
   let out: Outcome;
   try {
-    out = await redeemOne(job.tabId, r.code);
+    // 예전 버전이 남긴 작업에는 상점 정보가 없다. 그때는 한국 상점만 지원했다.
+    out = await redeemOne(job.tabId, job.site ?? { region: 'kr', locale: 'ko' }, r.code);
   } catch (e) {
     await patchReward(key, () => ({ redeem: { status: 'idle' } }));
     throw e;
@@ -145,7 +151,7 @@ async function processRedeem(job: Job, key: RewardKey, r: RewardEntry, unknownSt
   }));
   unknownStreak.n = !out.ok && out.reason === 'unknown' ? unknownStreak.n + 1 : 0;
   if (unknownStreak.n >= MAX_CONSECUTIVE_UNKNOWN) {
-    throw new Pause(`알 수 없는 오류가 ${MAX_CONSECUTIVE_UNKNOWN}번 연속으로 나서 멈췄어요. 페이지 상태를 확인해 주세요.`);
+    throw new Pause(msg('msg.tooManyUnknown', { count: MAX_CONSECUTIVE_UNKNOWN }));
   }
 }
 
@@ -154,7 +160,7 @@ async function processExtract(job: Job, key: RewardKey, r: RewardEntry) {
   try {
     res = await sendToTab(job.tabId, { type: 'source/extract', reward: r });
   } catch {
-    throw new Pause('드롭스 페이지와 연결이 끊겼어요. 인벤토리 페이지를 다시 열어 주세요.');
+    throw new Pause(msg('msg.sourceDisconnected'));
   }
   if (res.ok) {
     await patchReward(key, () => ({ code: res.code, campaign: res.campaign ?? r.campaign, extractError: undefined }));
@@ -191,7 +197,7 @@ export async function runLoop() {
         }
       } catch (e) {
         if (e instanceof Pause) {
-          await patchJob(() => ({ status: 'paused', pauseReason: e.message, current: undefined }));
+          await patchJob(() => ({ status: 'paused', pauseReason: e.text, current: undefined }));
           return;
         }
         throw e;
@@ -206,7 +212,7 @@ export async function runLoop() {
       if (!(await wait(delay))) return;
     }
   } catch (e) {
-    await patchJob(() => ({ status: 'paused', pauseReason: e instanceof Error ? e.message : String(e), current: undefined }));
+    await patchJob(() => ({ status: 'paused', pauseReason: errorText(e), current: undefined }));
   } finally {
     looping = false;
   }
@@ -215,9 +221,15 @@ export async function runLoop() {
 export async function startJob(kind: Job['kind'], tabId: number, keys: RewardKey[]) {
   const cur = await jobItem.getValue();
   if (cur && (cur.status === 'running' || (cur.status === 'paused' && looping))) {
-    throw new Error('이미 진행 중인 작업이 있어요.');
+    throw new LocalError(msg('msg.jobAlreadyRunning'));
   }
-  await jobItem.setValue({ kind, status: 'running', tabId, queue: keys, index: 0, startedAt: Date.now() });
+  let site: BattlenetSite | undefined;
+  if (kind === 'redeem') {
+    // 등록은 작업을 시작한 탭의 상점(지역·언어)에서 한다. 결과를 화면 문구로 읽으므로 문구를 아는 언어만 받는다.
+    site = battlenetSite(await tabUrl(tabId).catch(() => undefined));
+    if (!site || !pageLanguageOf(site)) throw new LocalError(msg('msg.unsupportedBattlenetPage'));
+  }
+  await jobItem.setValue({ kind, status: 'running', tabId, queue: keys, index: 0, startedAt: Date.now(), site });
   void runLoop();
 }
 
@@ -225,6 +237,6 @@ export async function startJob(kind: Job['kind'], tabId: number, keys: RewardKey
 export async function recoverJob() {
   const j = await jobItem.getValue();
   if (j?.status === 'running' && !looping) {
-    await patchJob(() => ({ status: 'paused', pauseReason: '작업이 중간에 끊겼어요. 재개를 눌러 이어서 진행하세요.', current: undefined }));
+    await patchJob(() => ({ status: 'paused', pauseReason: msg('msg.jobInterrupted'), current: undefined }));
   }
 }

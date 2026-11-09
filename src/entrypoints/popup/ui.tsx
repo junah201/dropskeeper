@@ -1,6 +1,7 @@
-import { useState, type ReactNode } from 'react';
+import { Fragment, useState, type ReactNode } from 'react';
+import { i18n } from '#i18n';
 import type { RewardEntry, SourceId } from '@/lib/types';
-import { fmtDate, fmtExpiry } from '@/lib/expiry';
+import { expiryDays, fmtDate } from '@/lib/expiry';
 import { sourceMetas } from '@/lib/sources/hosts';
 import soopIcon from '@/assets/sources/soop.png';
 import chzzkIcon from '@/assets/sources/chzzk.png';
@@ -38,15 +39,15 @@ export function Shell({
 }) {
   const { openSettings, closeSettings } = usePopup();
   const steps = [
-    { id: 'collect', label: '수집' },
-    { id: 'redeem', label: '등록' },
+    { id: 'collect', label: i18n.t('step.collect') },
+    { id: 'redeem', label: i18n.t('step.redeem') },
   ] as const;
   return (
     <div className="flex h-full flex-col">
       <header className="flex h-12 items-center justify-between border-b border-line bg-panel px-4">
         {title ? (
           <div className="-ml-2 flex items-center gap-1">
-            <IconBtn label="뒤로" onClick={closeSettings}>
+            <IconBtn label={i18n.t('common.back')} onClick={closeSettings}>
               <ArrowLeft size={16} strokeWidth={1.5} />
             </IconBtn>
             <h1 className="text-[14px] font-semibold">{title}</h1>
@@ -71,7 +72,7 @@ export function Shell({
                   );
                 })}
               </ol>
-              <IconBtn label="설정" onClick={openSettings}>
+              <IconBtn label={i18n.t('common.settings')} onClick={openSettings}>
                 <SettingsIcon size={16} strokeWidth={1.5} />
               </IconBtn>
             </div>
@@ -274,14 +275,28 @@ export function CodeChip({ code, size = 'md' }: { code: string; size?: 'sm' | 'm
   );
 }
 
-export function SelectAllBar({ all, some, onToggle, children }: { all: boolean; some: boolean; onToggle: () => void; children?: ReactNode }) {
+export function SelectAllBar({
+  all,
+  some,
+  onToggle,
+  action,
+  children,
+}: {
+  all: boolean;
+  some: boolean;
+  onToggle: () => void;
+  /** 줄 오른쪽 끝에 붙는 버튼 (예: 다시 불러오기) */
+  action?: ReactNode;
+  children?: ReactNode;
+}) {
   return (
     <div className="sticky top-0 z-10 flex h-10 items-center gap-2 border-b border-line bg-bg px-3 text-[13px]">
-      <Check on={all} mixed={!all && some} onChange={onToggle} label="전체 선택" />
-      <button type="button" onClick={onToggle} className="font-medium">
-        전체 선택
+      <Check on={all} mixed={!all && some} onChange={onToggle} label={i18n.t('common.selectAll')} />
+      <button type="button" onClick={onToggle} className="shrink-0 font-medium">
+        {i18n.t('common.selectAll')}
       </button>
-      <span className="truncate text-faint">{children}</span>
+      <span className="min-w-0 truncate text-faint">{children}</span>
+      {action && <div className="ml-auto shrink-0">{action}</div>}
     </div>
   );
 }
@@ -291,18 +306,13 @@ export function SelectAllBar({ all, some, onToggle, children }: { all: boolean; 
  * 정확한 날짜와 잘린 캠페인 이름은 마우스를 올리면 보인다.
  */
 export function ExpiryLine({ r }: { r: RewardEntry }) {
-  const exp = fmtExpiry(r.expiresAt);
-  const tip = [exp.text && `${fmtDate(r.expiresAt)} 만료`, r.campaign].filter(Boolean).join(' · ');
+  const exp = expiryDays(r.expiresAt);
+  const text = exp && (exp.days === 0 ? i18n.t('expiry.today') : i18n.t('expiry.daysLeft', { days: exp.days }));
+  const tip = [exp && i18n.t('expiry.expiresOn', { date: fmtDate(r.expiresAt) }), r.campaign].filter(Boolean).join(' · ');
   return (
     <div className="truncate text-[12px] text-faint" title={tip || undefined}>
-      {exp.text && (
-        <span
-          className={`font-mono tabular-nums ${exp.soon ? 'font-medium text-warn' : ''}`}
-        >
-          {exp.text}
-        </span>
-      )}
-      {exp.text && r.campaign ? ' · ' : ''}
+      {text && <span className={`font-mono tabular-nums ${exp?.soon ? 'font-medium text-warn' : ''}`}>{text}</span>}
+      {text && r.campaign ? ' · ' : ''}
       {r.campaign}
     </div>
   );
@@ -326,5 +336,30 @@ export function Switch({ on, onChange, label, describedBy }: { on: boolean; onCh
         }`}
       />
     </button>
+  );
+}
+
+/**
+ * 번역문의 `{name}` 자리에 React 요소를 끼운다. 문장 속 숫자만 굵기·글꼴을 달리 그릴 때 쓴다.
+ * 자리를 남겨 두려면 번역할 때 같은 자리표시자를 값으로 넘긴다.
+ * 예: <Rich text={i18n.t('common.selected', { count: '{count}' })} values={{ count: <b>3</b> }} />
+ */
+export function Rich({ text, values }: { text: string; values: Record<string, ReactNode> }) {
+  return (
+    <>
+      {text.split(/(\{\w+\})/).map((part, i) => {
+        const name = /^\{(\w+)\}$/.exec(part)?.[1];
+        return <Fragment key={i}>{name && name in values ? values[name] : part}</Fragment>;
+      })}
+    </>
+  );
+}
+
+/** "3개 선택" 줄. 숫자만 진하게 그린다. */
+export function SelectedCount({ count }: { count: number }) {
+  return (
+    <span className="text-[13px] text-sub">
+      <Rich text={i18n.t('common.selected', { count: '{count}' })} values={{ count: <span className="font-medium text-ink">{count}</span> }} />
+    </span>
   );
 }

@@ -1,6 +1,9 @@
 import type { SourceReward } from "../types";
 import { earliestDate, isExpired } from "../expiry";
 import { SourceError, type DropSource } from "./types";
+import { msg } from "../i18n";
+
+const NAME = "SOOP";
 
 /** SOOP 드롭스 gameNo → 정규화된 게임. 지원하는 게임만 적는다. */
 const SUPPORTED_GAMES: Record<string, SourceReward["game"]> = {
@@ -62,22 +65,22 @@ async function post<T extends { result: number; message: string }>(
       body: JSON.stringify(body),
     });
   } catch {
-    throw new SourceError("SOOP 서버에 연결하지 못했어요.", "network");
+    throw new SourceError(msg("msg.serverUnreachable", { name: NAME }), "network");
   }
   if (res.status === 401 || res.status === 403) {
-    throw new SourceError("SOOP에 로그인되어 있지 않아요.", "login_required");
+    throw new SourceError(msg("msg.notLoggedIn", { name: NAME }), "login_required");
   }
-  if (!res.ok) throw new SourceError(`SOOP 응답 오류 (HTTP ${res.status})`);
+  if (!res.ok) throw new SourceError(msg("msg.httpError", { name: NAME, status: res.status }));
 
   let json: T;
   try {
     json = (await res.json()) as T;
   } catch {
     // 로그인 페이지 HTML 등이 돌아온 경우
-    throw new SourceError("SOOP에 로그인되어 있지 않아요.", "login_required");
+    throw new SourceError(msg("msg.notLoggedIn", { name: NAME }), "login_required");
   }
   if (json.result !== 1)
-    throw new SourceError(json.message || "SOOP 요청이 실패했어요.");
+    throw new SourceError(json.message || msg("msg.requestFailed", { name: NAME }));
   return json;
 }
 
@@ -102,7 +105,7 @@ function toReward(item: SoopListItem): SourceReward | undefined {
 
 export const soopSource: DropSource = {
   id: "soop",
-  name: "SOOP",
+  name: NAME,
 
   async listRewards() {
     const out: SourceReward[] = [];
@@ -110,9 +113,7 @@ export const soopSource: DropSource = {
     for (let page = 1; ; page++) {
       // 저장소는 이 목록에 없는 보상을 지우므로, 목록을 끝까지 받지 못하면 결과를 버린다
       if (page > MAX_PAGES)
-        throw new SourceError(
-          "보상이 너무 많아 목록을 끝까지 불러오지 못했어요.",
-        );
+        throw new SourceError(msg("msg.tooManyRewards"));
       if (page > 1) await sleep(LIST_PAGE_DELAY);
       const res = await post<SoopListResponse>("/api/get_drops_list.php", {
         pageNo: page,
@@ -140,7 +141,7 @@ export const soopSource: DropSource = {
       itemIdx: reward.extra.itemIdx,
     });
     const code = res.data?.itemCode?.trim();
-    if (!code) throw new SourceError("응답에 코드가 없어요.");
+    if (!code) throw new SourceError(msg("msg.noCodeInResponse"));
     return { code, campaign: res.data?.dropsName };
   },
 };

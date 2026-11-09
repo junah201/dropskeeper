@@ -1,6 +1,11 @@
 import type { SourceReward } from '../types';
 import { earliestDate, isExpired } from '../expiry';
 import { SourceError, type DropSource } from './types';
+import { msg } from '../i18n';
+
+const NAME = 'CHZZK';
+/** CHZZK는 네이버 계정으로 로그인한다 */
+const LOGIN_NAME = 'NAVER';
 
 const API = 'https://api.chzzk.naver.com/commercial';
 
@@ -46,23 +51,23 @@ async function get<T>(path: string): Promise<T> {
       headers: { Accept: 'application/json' },
     });
   } catch {
-    throw new SourceError('CHZZK 서버에 연결하지 못했어요.', 'network');
+    throw new SourceError(msg('msg.serverUnreachable', { name: NAME }), 'network');
   }
   if (res.status === 401 || res.status === 403) {
-    throw new SourceError('네이버에 로그인되어 있지 않아요.', 'login_required');
+    throw new SourceError(msg('msg.notLoggedIn', { name: LOGIN_NAME }), 'login_required');
   }
 
   let json: ChzzkResponse<T>;
   try {
     json = (await res.json()) as ChzzkResponse<T>;
   } catch {
-    throw new SourceError(`CHZZK 응답 오류 (HTTP ${res.status})`);
+    throw new SourceError(msg('msg.httpError', { name: NAME, status: res.status }));
   }
   if (json.code === 401 || json.code === 403) {
-    throw new SourceError('네이버에 로그인되어 있지 않아요.', 'login_required');
+    throw new SourceError(msg('msg.notLoggedIn', { name: LOGIN_NAME }), 'login_required');
   }
   if (!res.ok || json.code !== 200 || json.content == null) {
-    throw new SourceError(json.message || `CHZZK 요청이 실패했어요. (${json.code ?? res.status})`);
+    throw new SourceError(json.message || msg('msg.requestFailedCode', { name: NAME, code: json.code ?? res.status }));
   }
   return json.content;
 }
@@ -92,12 +97,12 @@ function toReward(item: ChzzkClaim): SourceReward | undefined {
 
 export const chzzkSource: DropSource = {
   id: 'chzzk',
-  name: 'CHZZK',
+  name: NAME,
 
   async listRewards() {
     // 페이지 나눔 없이 한 번에 전체 목록이 온다
     const content = await get<{ claimList?: ChzzkClaim[] }>('/v2/drops/rewards/claims');
-    if (!Array.isArray(content.claimList)) throw new SourceError('CHZZK 보상 목록 형식이 달라요.');
+    if (!Array.isArray(content.claimList)) throw new SourceError(msg('msg.unexpectedFormat', { name: NAME }));
     return content.claimList.map(toReward).filter((r): r is SourceReward => !!r && !isExpired(r));
   },
 
@@ -107,7 +112,7 @@ export const chzzkSource: DropSource = {
       `/v1/drops/rewards/${encodeURIComponent(reward.rewardId)}/coupon-code`,
     );
     const code = content.code?.trim();
-    if (!code) throw new SourceError('응답에 코드가 없어요.');
+    if (!code) throw new SourceError(msg('msg.noCodeInResponse'));
     return { code };
   },
 };

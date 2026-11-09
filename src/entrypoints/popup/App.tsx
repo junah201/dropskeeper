@@ -1,5 +1,5 @@
 import { sourceIdFromUrl } from '@/lib/sources/hosts';
-import { isBattlenetCheckout, isBattlenetLoginPage } from '@/lib/redeem/battlenet/constants';
+import { isBattlenetCheckout, isBattlenetLoginPage, isSupportedBattlenetPage } from '@/lib/redeem/battlenet/constants';
 import { jobItem, rewardsItem, settingsItem } from '@/lib/storage';
 import { useMemo, useState } from 'react';
 import { defaultSettings, type RewardEntry, type RewardKey } from '@/lib/types';
@@ -67,7 +67,16 @@ function MainView({
   if (sourceId && tab.id != null) return <SourceView sourceId={sourceId} tabId={tab.id} rewards={rewards} job={job} />;
 
   if ((isBattlenetCheckout(tab.url) || isBattlenetLoginPage(tab.url)) && tab.id != null) {
-    return <RedeemView tabId={tab.id} loginPage={isBattlenetLoginPage(tab.url)} rewards={rewards} job={job} />;
+    const loginPage = isBattlenetLoginPage(tab.url);
+    return (
+      <RedeemView
+        tabId={tab.id}
+        loginPage={loginPage}
+        unsupportedPage={!loginPage && !isSupportedBattlenetPage(tab.url)}
+        rewards={rewards}
+        job={job}
+      />
+    );
   }
 
   return <Home rewards={rewards} job={job} />;

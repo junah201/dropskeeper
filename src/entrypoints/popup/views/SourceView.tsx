@@ -1,14 +1,17 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { LoaderCircle } from 'lucide-react';
+import { i18n } from '#i18n';
 import { sendToBackground } from '@/lib/messages';
+import { msg, tx, type LocalText } from '@/lib/i18n';
 import { sourceMetas } from '@/lib/sources/hosts';
 import { lastLoadedItem } from '@/lib/storage';
-import { BATTLENET_KEY_CLAIM_URL } from '@/lib/redeem/battlenet/constants';
+import { defaultBattlenetSite, keyClaimPageUrl } from '@/lib/redeem/battlenet/constants';
+import { uiLang } from '@/lib/i18n';
 import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
 import { isDefined, rewardKey } from '@/lib/types';
 import { fmtDateTime, isExpired } from '@/lib/expiry';
 import { useStored } from '../hooks';
-import { Bar, Btn, Check, CodeChip, Notice, ExpiryLine, SelectAllBar, Shell, StatGrid, Tag, Thumb } from '../ui';
+import { Bar, Btn, Check, CodeChip, Notice, ExpiryLine, Rich, SelectAllBar, SelectedCount, Shell, StatGrid, Tag, Thumb } from '../ui';
 
 interface Props {
   sourceId: SourceId;
@@ -32,12 +35,12 @@ export function SourceView({ sourceId, tabId, rewards, job }: Props) {
 }
 
 /** 불러오기와 저장은 background가 맡는다. 실패하면 보여 줄 문구를 돌려준다. */
-async function loadRewards(sourceId: SourceId, tabId: number): Promise<string | null> {
+async function loadRewards(sourceId: SourceId, tabId: number): Promise<LocalText | null> {
   try {
     const res = await sendToBackground({ type: 'rewards/load', sourceId, tabId });
     return res.ok ? null : res.error;
   } catch {
-    return '확장 프로그램과 연결하지 못했어요. 팝업을 다시 열어 주세요.';
+    return msg('msg.popupDisconnected');
   }
 }
 
@@ -45,7 +48,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
   const meta = sourceMetas[sourceId];
   const lastLoaded = useStored(lastLoadedItem)?.[sourceId];
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<LocalText | null>(null);
   const [selected, setSelected] = useState<Set<RewardKey>>(new Set());
   const [hideExtracted, setHideExtracted] = useState(false);
   // 획득 완료된 보상은 대개 이미 등록한 코드라 기본으로 숨긴다
@@ -95,17 +98,12 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
     return (
       <Shell step="collect">
         <div className="flex h-full flex-col px-4 pb-4 pt-6">
-          <h2 className="text-[16px] font-semibold leading-snug">
-            {meta.name} 드롭스 인벤토리에서
-            <br />
-            오버워치 보상을 가져옵니다
-          </h2>
-          <p className="mt-2 text-[13px] leading-relaxed text-sub">
-            로그인된 계정으로 보상 목록을 불러와요. 코드는 다음 단계에서 고른 보상만 추출합니다.
-          </p>
+          {/* 줄바꿈은 번역문에 넣고 whitespace-pre-line으로 살린다 */}
+          <h2 className="whitespace-pre-line text-[16px] font-semibold leading-snug">{i18n.t('source.introTitle', { name: meta.name })}</h2>
+          <p className="mt-2 text-[13px] leading-relaxed text-sub">{i18n.t('source.introDescription')}</p>
           {error && (
             <div className="mt-4">
-              <Notice tone="bad">{error}</Notice>
+              <Notice tone="bad">{tx(error)}</Notice>
             </div>
           )}
           <div className="mt-auto">
@@ -114,13 +112,13 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
                 // inline-flex로 두면 글줄 기준선에 맞춰져 버튼 가운데보다 2px쯤 위로 뜬다. 블록 flex로 버튼 높이 가운데에 놓는다.
                 <span className="flex items-center justify-center gap-2">
                   <LoaderCircle size={16} strokeWidth={2} className="animate-spin motion-reduce:animate-none" aria-hidden />
-                  불러오는 중
+                  {i18n.t('source.loading')}
                 </span>
               ) : (
-                '보상 목록 불러오기'
+                i18n.t('source.load')
               )}
             </Btn>
-            <p className="mt-2 text-center text-[12px] text-faint">유효기간이 남은 오버워치 코드형 보상만 가져와요</p>
+            <p className="mt-2 text-center text-[12px] text-faint">{i18n.t('source.loadHint')}</p>
           </div>
         </div>
       </Shell>
@@ -133,12 +131,10 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
       step="collect"
       footer={
         <div className="flex items-center gap-3">
-          <span className="text-[13px] text-sub">
-            <span className="font-medium text-ink">{chosen.length}개</span> 선택
-          </span>
+          <SelectedCount count={chosen.length} />
           <div className="flex-1">
             <Btn full disabled={chosen.length === 0 || jobBusy} onClick={extract}>
-              코드 추출 ({chosen.length})
+              {i18n.t('source.extract', { count: chosen.length })}
             </Btn>
           </div>
         </div>
@@ -146,13 +142,22 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
     >
       {/* 내용이 짧아도 화면 높이를 채워, 빈 목록 문구는 가운데·마지막 불러오기는 맨 아래에 둔다 */}
       <div className="flex min-h-full flex-col">
-        <SelectAllBar all={all} some={chosen.length > 0} onToggle={toggleAll}>
-          · {visible.length}개 표시 / 전체 {list.length}개
+        <SelectAllBar
+          all={all}
+          some={chosen.length > 0}
+          onToggle={toggleAll}
+          action={
+            <button className="text-[12px] font-medium text-accent underline-offset-2 hover:underline disabled:text-faint disabled:no-underline" onClick={load} disabled={loading}>
+              {loading ? i18n.t('source.loadingShort') : i18n.t('source.reload')}
+            </button>
+          }
+        >
+          {i18n.t('source.shownOfTotal', { shown: visible.length, total: list.length })}
         </SelectAllBar>
         <div className="flex flex-wrap items-center gap-2 px-3 py-2">
           {meta.tracksClaimed && (
             <FilterChip on={hideClaimed} onClick={() => setHideClaimed((v) => !v)}>
-              획득 완료 숨김
+              {i18n.t('source.hideClaimed')}
             </FilterChip>
           )}
           {meta.tracksClaimed && !hideClaimed && unclaimed.length > 0 && (
@@ -161,23 +166,20 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
               className="inline-flex h-6 items-center rounded-md border border-line bg-panel px-2 text-[12px] font-medium text-ink hover:bg-bg"
               onClick={selectUnclaimed}
             >
-              미획득만 선택 ({unclaimed.length})
+              {i18n.t('source.selectUnclaimed', { count: unclaimed.length })}
             </button>
           )}
           <FilterChip on={hideExtracted} onClick={() => setHideExtracted((v) => !v)}>
-            추출됨 숨김
+            {i18n.t('source.hideExtracted')}
           </FilterChip>
-          <button className="ml-auto text-[12px] font-medium text-accent underline-offset-2 hover:underline disabled:text-faint disabled:no-underline" onClick={load} disabled={loading}>
-            {loading ? '불러오는 중…' : '다시 불러오기'}
-          </button>
         </div>
         {error && (
           <div className="px-3 pb-2">
-            <Notice tone="bad">{error}</Notice>
+            <Notice tone="bad">{tx(error)}</Notice>
           </div>
         )}
         {visible.length === 0 ? (
-          <p className="flex flex-1 items-center justify-center px-3 text-center text-[13px] text-faint">조건에 맞는 보상이 없어요</p>
+          <p className="flex flex-1 items-center justify-center px-3 text-center text-[13px] text-faint">{i18n.t('source.noMatch')}</p>
         ) : (
           <ul className="border-y border-line bg-panel">
             {visible.map((r, i) => {
@@ -204,7 +206,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             })}
           </ul>
         )}
-        {lastLoaded && <p className="mt-auto px-3 py-3 text-[12px] text-faint">마지막 불러오기 <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span></p>}
+        {lastLoaded && <p className="mt-auto px-3 py-3 text-[12px] text-faint"><Rich text={i18n.t('source.lastLoaded', { time: '{time}' })} values={{ time: <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span> }} /></p>}
       </div>
     </Shell>
   );
@@ -214,12 +216,12 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
 const isClaimedElsewhere = (r: RewardEntry) => !!r.claimed && !r.code;
 
 function RewardTag({ r }: { r: RewardEntry }) {
-  if (r.redeem.status === 'success') return <Tag tone="ok">등록됨</Tag>;
-  if (r.code) return <Tag tone="mute">추출됨</Tag>;
-  if (r.extractError) return <Tag tone="bad">추출 실패</Tag>;
-  if (r.claimed) return <Tag tone="warn">획득 완료</Tag>;
+  if (r.redeem.status === 'success') return <Tag tone="ok">{i18n.t('common.redeemed')}</Tag>;
+  if (r.code) return <Tag tone="mute">{i18n.t('source.tagExtracted')}</Tag>;
+  if (r.extractError) return <Tag tone="bad">{i18n.t('source.tagExtractFailed')}</Tag>;
+  if (r.claimed) return <Tag tone="warn">{i18n.t('source.tagClaimed')}</Tag>;
   // 기본 상태라 알약 없이 옅은 글자로만 적는다
-  return <span className="whitespace-nowrap px-1.5 text-[12px] text-faint">미추출</span>;
+  return <span className="whitespace-nowrap px-1.5 text-[12px] text-faint">{i18n.t('source.tagNotExtracted')}</span>;
 }
 
 /**
@@ -262,14 +264,14 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
       footer={
         <div className="grid grid-cols-2 gap-2">
           {paused ? (
-            <Btn onClick={() => sendToBackground({ type: 'job/resume' })}>재개</Btn>
+            <Btn onClick={() => sendToBackground({ type: 'job/resume' })}>{i18n.t('common.resume')}</Btn>
           ) : (
             <Btn kind="ghost" onClick={() => sendToBackground({ type: 'job/pause' })}>
-              일시정지
+              {i18n.t('common.pause')}
             </Btn>
           )}
           <Btn kind="danger" onClick={() => sendToBackground({ type: 'job/stop' })}>
-            중지
+            {i18n.t('common.stop')}
           </Btn>
         </div>
       }
@@ -278,7 +280,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
       <div className="flex h-full flex-col">
         <div className="px-4 pt-5">
           <div className="flex items-baseline justify-between">
-            <h2 className="text-[16px] font-semibold">{paused ? '코드 추출 일시정지' : '코드 추출 중'}</h2>
+            <h2 className="text-[16px] font-semibold">{paused ? i18n.t('extracting.paused') : i18n.t('extracting.running')}</h2>
             <span className="font-mono text-[18px] font-medium tabular-nums">
               {job.index}
               <span className="text-faint"> / {job.queue.length}</span>
@@ -289,7 +291,7 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
           </div>
           {paused && job.pauseReason && (
             <div className="mt-3">
-              <Notice tone="warn">{job.pauseReason}</Notice>
+              <Notice tone="warn">{tx(job.pauseReason)}</Notice>
             </div>
           )}
         </div>
@@ -314,20 +316,20 @@ function Extracting({ job, rewards }: { job: Job; rewards: Record<RewardKey, Rew
                   r.code ? (
                     <CodeChip code={r.code} size="sm" />
                   ) : (
-                    <span className="shrink-0 font-medium text-bad" title={r.extractError}>
-                      실패
+                    <span className="shrink-0 font-medium text-bad" title={r.extractError && tx(r.extractError)}>
+                      {i18n.t('common.failed')}
                     </span>
                   )
                 ) : isCurrent ? (
-                  <span className="shrink-0 font-medium text-accent">요청 중…</span>
+                  <span className="shrink-0 font-medium text-accent">{i18n.t('extracting.requesting')}</span>
                 ) : (
-                  <span className="shrink-0 text-faint">대기</span>
+                  <span className="shrink-0 text-faint">{i18n.t('common.waiting')}</span>
                 )}
               </li>
             );
           })}
         </ul>
-        <p className="px-4 py-3 text-[12px] text-faint">팝업을 닫아도 계속 진행돼요</p>
+        <p className="px-4 py-3 text-[12px] text-faint">{i18n.t('common.keepsRunning')}</p>
       </div>
     </Shell>
   );
@@ -348,28 +350,28 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
           {/* 추출한 코드가 없으면 다시 시도가 다음 할 일이라 주 버튼으로 둔다 */}
           {fail.length > 0 && (
             <Btn kind={ok.length > 0 ? 'ghost' : undefined} full onClick={() => retry(fail.map(rewardKey))}>
-              실패한 {fail.length}개 모두 다시 시도
+              {i18n.t('extractDone.retryAll', { count: fail.length })}
             </Btn>
           )}
-          <Btn kind={ok.length > 0 ? undefined : 'ghost'} full onClick={() => browser.tabs.create({ url: BATTLENET_KEY_CLAIM_URL })}>
-            Battle.net 등록 페이지 열기
+          <Btn kind={ok.length > 0 ? undefined : 'ghost'} full onClick={() => browser.tabs.create({ url: keyClaimPageUrl(defaultBattlenetSite(uiLang())) })}>
+            {i18n.t('common.openRedeemPage')}
           </Btn>
           <Btn kind="ghost" full onClick={() => sendToBackground({ type: 'job/clear' })}>
-            목록으로 돌아가기
+            {i18n.t('extractDone.backToList')}
           </Btn>
         </div>
       }
     >
       <div className="px-4 pb-4 pt-6">
         <h2 className="text-[16px] font-semibold">
-          {job.status === 'stopped' ? '추출을 중지했어요' : `코드 ${ok.length}개를 추출했어요`}
+          {job.status === 'stopped' ? i18n.t('extractDone.stopped') : i18n.t('extractDone.done', ok.length)}
         </h2>
-        <p className="mt-1 text-[13px] text-sub">Battle.net 코드 등록 페이지에서 확장을 다시 열면 이어서 등록할 수 있어요.</p>
+        <p className="mt-1 text-[13px] text-sub">{i18n.t('extractDone.description')}</p>
         <div className="mt-4">
           <StatGrid
             items={[
-              { label: '추출 성공', value: ok.length, tone: 'ok' },
-              { label: '실패', value: fail.length, tone: 'bad' },
+              { label: i18n.t('extractDone.statOk'), value: ok.length, tone: 'ok' },
+              { label: i18n.t('common.failed'), value: fail.length, tone: 'bad' },
             ]}
           />
         </div>
@@ -382,10 +384,10 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
                   <Thumb src={r.imageUrl} />
                   <div className="min-w-0 flex-1 truncate text-[14px] font-medium">{r.name}</div>
                   <Btn kind="ghost" size="sm" onClick={() => retry([rewardKey(r)])}>
-                    다시 시도
+                    {i18n.t('common.retry')}
                   </Btn>
                 </div>
-                <div className="mt-2 break-all rounded bg-bad-soft p-2 text-[12px] text-bad">{r.extractError ?? '알 수 없는 오류'}</div>
+                <div className="mt-2 break-all rounded bg-bad-soft p-2 text-[12px] text-bad">{r.extractError ? tx(r.extractError) : i18n.t('common.unknownError')}</div>
               </li>
             ))}
           </ul>

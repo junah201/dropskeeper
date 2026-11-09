@@ -1,0 +1,163 @@
+# 기본 언어(default_locale). 브라우저 언어가 ko도 en도 아니면 이 파일이 쓰인다.
+# 키 타입은 이 파일에서 만들어지므로 새 문구는 여기에 먼저 추가하고 ko.yml에도 같은 키를 넣는다.
+
+# 지금 쓰이는 번역 언어. <html lang>과 정렬에 쓴다.
+lang: en
+
+extName: DropsKeeper
+extDescription: Collects drop reward codes from streaming platforms and redeems them on Battle.net one by one.
+
+common:
+  back: Back
+  settings: Settings
+  selectAll: Select all
+  selected: '{count} selected'
+  delete: Delete
+  deleteFromList: Remove from list
+  retry: Retry
+  copy: Copy
+  copied: Copied
+  copyCode: Copy code
+  pause: Pause
+  resume: Resume
+  stop: Stop
+  waiting: Waiting
+  failed: Failed
+  succeeded: Succeeded
+  redeemed: Redeemed
+  keepsRunning: Keeps running even if you close the popup
+  openInventory: Open {name} drops inventory
+  openRedeemPage: Open Battle.net redeem page
+  unknownError: Unknown error
+
+step:
+  collect: Collect
+  redeem: Redeem
+
+expiry:
+  today: D-day
+  daysLeft: D-{days}
+  expiresOn: Expires {date}
+
+home:
+  title: Open this on a drops page or the Battle.net redeem page
+  description: Collect codes from your drops inventory, then redeem them all at once on the Battle.net redeem page.
+  extractRunning: Extracting codes
+  extractPaused: Code extraction paused
+  redeemRunning: Redeeming codes
+  redeemPaused: Redeeming paused
+  goToJobTab: Go to job tab
+  statExtracted: Codes extracted
+  statPending: Waiting to redeem
+  statRedeemed: Redeemed
+  statFailed: Failed to redeem
+
+source:
+  introTitle: "Import Overwatch rewards\nfrom your {name} drops inventory"
+  introDescription: Loads your reward list with the account you're signed in to. In the next step, codes are extracted only for the rewards you choose.
+  loading: Loading
+  loadingShort: Loading…
+  load: Load rewards
+  reload: Reload
+  loadHint: Only Overwatch code rewards that haven't expired are imported
+  extract: Extract codes ({count})
+  shownOfTotal: '· Showing {shown} of {total}'
+  hideClaimed: Hide claimed
+  selectUnclaimed: Select unclaimed ({count})
+  hideExtracted: Hide extracted
+  noMatch: No rewards match these filters
+  lastLoaded: Last loaded {time}
+  tagExtracted: Extracted
+  tagExtractFailed: Extract failed
+  tagClaimed: Claimed
+  tagNotExtracted: Not extracted
+
+extracting:
+  running: Extracting codes
+  paused: Extraction paused
+  requesting: Requesting…
+
+extractDone:
+  stopped: Extraction stopped
+  done:
+    1: Extracted 1 code
+    n: Extracted $1 codes
+  description: Open the extension again on the Battle.net redeem page to continue redeeming.
+  statOk: Extracted
+  retryAll: Retry all failed ({count})
+  backToList: Back to list
+
+redeem:
+  emptyTitle: No codes to redeem
+  emptyDescription: Load rewards from a drops inventory and extract codes, and they'll show up here.
+  deleteSelected: Remove selected codes from the list
+  start: Redeem ({count})
+  pendingCount: '· {count} waiting'
+  loginFirst: Sign in to Battle.net first
+  lastAttempt: 'Last attempt: {reason}'
+  pacingHint: 0.5–1s between codes · redeems one at a time in this tab
+  running: Redeeming
+  paused: Redeeming paused
+  remaining: Left
+  nextIn: 'Next code in {seconds}s · '
+  statusRunning: Redeeming…
+  statusSkipped: Skipped
+  statusIn: In {seconds}s
+  retryFailed: Retry failed ({count})
+  deleteHopeless: Remove non-retryable ({count})
+  backToQueue: Back to queue
+  stoppedNotice:
+    1: Redeeming stopped. 1 code was not tried.
+    n: Redeeming stopped. $1 codes were not tried.
+  noFailures: No failed codes
+  noSuccesses: No redeemed codes
+  rawMessage: 'Original: {text}'
+
+# Battle.net 등록 실패 이유. 이름과 도움말
+reason:
+  already_used:
+    label: Code already used
+    help: This code has already been redeemed. Trying again won't work.
+  already_owned:
+    label: Already owned
+    help: This account already owns this item.
+  not_redeemable:
+    label: Code can't be redeemed
+    help: Battle.net may be under maintenance. Try again later.
+  product_unavailable:
+    label: Item can't be redeemed
+    help: Battle.net didn't say why. Try redeeming it yourself.
+  unknown:
+    label: Unknown error
+    help: Check the original message below, then try again or redeem it yourself.
+
+settings:
+  maskCodes: Hide codes
+  maskCodesDescription: Hides the middle of codes in lists. The copy button always copies the full code.
+  privacy: Privacy Policy
+  terms: Terms of Service
+
+# background·content script가 만들어 popup에 넘기는 문구 (LocalText)
+msg:
+  popupDisconnected: Couldn't reach the extension. Reopen the popup.
+  pageDisconnected: Couldn't connect to the page. Refresh the inventory page and try again.
+  listFailed: Couldn't load the reward list.
+  jobAlreadyRunning: Another job is already running.
+  jobInterrupted: The job was interrupted. Press Resume to continue.
+  tabClosed: The tab used for this job was closed.
+  sourceDisconnected: Lost connection to the drops page. Reopen the inventory page.
+  battlenetLogin: Sign in to Battle.net, then press Resume.
+  tooManyUnknown: Stopped after {count} unknown errors in a row. Check the page.
+  noExtractedCode: No extracted code.
+  resultUnconfirmed: Pressed the confirm button but couldn't read the result.
+  pageUnreadable: "Couldn't read the page: {text}"
+  redeemPageMissing: Couldn't find the redeem page.
+  serverUnreachable: Couldn't connect to {name}.
+  notLoggedIn: You're not signed in to {name}.
+  httpError: '{name} responded with an error (HTTP {status})'
+  requestFailed: '{name} request failed.'
+  requestFailedCode: '{name} request failed. ({code})'
+  unexpectedFormat: The {name} reward list came back in an unexpected format.
+  noCodeInResponse: The response didn't include a code.
+  tooManyRewards: Too many rewards to load the full list.
+  unsupportedBattlenetPage: Open the Battle.net redeem page in Korean or English to redeem codes.

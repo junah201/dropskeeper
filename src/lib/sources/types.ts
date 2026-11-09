@@ -1,4 +1,5 @@
 import type { SourceId, SourceReward } from '../types';
+import { LocalError, type LocalText } from '../i18n';
 
 /**
  * 드롭스 플랫폼 하나를 나타내는 인터페이스.
@@ -35,11 +36,12 @@ export interface SourceMeta {
   tracksClaimed: boolean;
 }
 
-export class SourceError extends Error {
+/** 플랫폼 오류. 문구는 msg()로 만든 키이거나 플랫폼 API가 보낸 원문이다. */
+export class SourceError extends LocalError {
   constructor(
-    message: string,
+    text: LocalText,
     readonly kind: 'login_required' | 'api' | 'network' = 'api',
   ) {
-    super(message);
+    super(text);
   }
 }

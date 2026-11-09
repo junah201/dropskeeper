@@ -1,4 +1,5 @@
 import { useId } from 'react';
+import { i18n } from '#i18n';
 import { sendToBackground } from '@/lib/messages';
 import type { Settings } from '@/lib/types';
 import { usePopup } from '../context';
@@ -16,12 +17,12 @@ export function SettingsView() {
   const set = (patch: Partial<Settings>) => void sendToBackground({ type: 'settings/set', patch });
 
   return (
-    <Shell step={null} title="설정">
+    <Shell step={null} title={i18n.t('common.settings')}>
       <div className="flex h-full flex-col px-4 py-4">
         <section className="overflow-hidden rounded-[10px] border border-line bg-panel">
           <SettingRow
-            title="코드 가리기"
-            description="목록에 보이는 코드의 가운데를 가려요. 복사 버튼은 설정과 상관없이 전체 코드를 복사해요."
+            title={i18n.t('settings.maskCodes')}
+            description={i18n.t('settings.maskCodesDescription')}
             on={settings.maskCodes}
             onChange={(maskCodes) => set({ maskCodes })}
           >
@@ -31,11 +32,11 @@ export function SettingsView() {
 
         <div className="mt-auto flex justify-center gap-3 pt-6 text-[12px] text-faint">
           <button className="hover:text-sub hover:underline" onClick={() => openPage('/privacy.html')}>
-            개인정보처리방침
+            {i18n.t('settings.privacy')}
           </button>
           <span aria-hidden>·</span>
           <button className="hover:text-sub hover:underline" onClick={() => openPage('/terms.html')}>
-            서비스 이용약관
+            {i18n.t('settings.terms')}
           </button>
         </div>
       </div>

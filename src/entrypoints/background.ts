@@ -1,4 +1,5 @@
 import { handleMessages, isBackgroundMessage, sendToTab, type Result } from '@/lib/messages';
+import { msg as localText } from '@/lib/i18n';
 import { recoverJob, runLoop, startJob } from '@/lib/jobs';
 import { dismissRewards, jobItem, mergeRewards, patchJob, patchReward, patchSettings, rewardsItem } from '@/lib/storage';
 
@@ -14,9 +15,9 @@ export default defineBackground(() => {
         try {
           res = await sendToTab(msg.tabId, { type: 'source/list' });
         } catch {
-          return { ok: false, error: '페이지와 연결하지 못했어요. 인벤토리 페이지를 새로고침한 뒤 다시 시도하세요.' };
+          return { ok: false, error: localText('msg.pageDisconnected') };
         }
-        if (!res?.ok) return { ok: false, error: res?.error ?? '목록을 불러오지 못했어요.', kind: res?.kind };
+        if (!res?.ok) return { ok: false, error: res?.error ?? localText('msg.listFailed'), kind: res?.kind };
         await mergeRewards(msg.sourceId, res.rewards);
         return { ok: true };
       }

@@ -1,7 +1,8 @@
 import type { JobKind, RewardKey, Settings, SourceId, SourceReward } from './types';
 import type { BnetPageState } from './redeem/battlenet/page';
+import { errorText, type LocalText } from './i18n';
 
-export type Fail = { ok: false; error: string; kind?: string };
+export type Fail = { ok: false; error: LocalText; kind?: string };
 export type Ok<T> = { ok: true } & T;
 export type Result<T = {}> = Ok<T> | Fail;
 
@@ -63,7 +64,7 @@ export function handleMessages<M extends AnyMessage>(
   browser.runtime.onMessage.addListener((msg: unknown, sender, sendResponse) => {
     if (!accept(msg)) return false;
     handler(msg, sender).then(sendResponse, (e: unknown) =>
-      sendResponse({ ok: false, error: e instanceof Error ? e.message : String(e) } satisfies Fail),
+      sendResponse({ ok: false, error: errorText(e) } satisfies Fail),
     );
     return true;
   });
