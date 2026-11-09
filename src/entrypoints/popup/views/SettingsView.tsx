@@ -7,6 +7,9 @@ import { CodeChip, Shell, Switch } from '../ui';
 /** 미리보기에 쓰는 예시 코드. 실제 코드가 아니고, Battle.net 코드와 같은 4-4-5-4-4 형식만 맞췄다. */
 const SAMPLE_CODE = 'K7QX-M2PL-9RT4W-WN4D-H8ZC';
 
+/** 확장 안에 들어 있는 개인정보처리방침·이용약관 페이지를 새 탭으로 연다 */
+const openPage = (path: '/privacy.html' | '/terms.html') => browser.tabs.create({ url: browser.runtime.getURL(path) });
+
 export function SettingsView() {
   const { settings } = usePopup();
   // 저장은 background가 맡고, 바뀐 값은 저장소 감시로 다시 들어온다
@@ -14,7 +17,7 @@ export function SettingsView() {
 
   return (
     <Shell step={null} title="설정">
-      <div className="px-4 py-4">
+      <div className="flex h-full flex-col px-4 py-4">
         <section className="overflow-hidden rounded-[10px] border border-line bg-panel">
           <SettingRow
             title="코드 가리기"
@@ -25,6 +28,16 @@ export function SettingsView() {
             <CodeChip code={SAMPLE_CODE} />
           </SettingRow>
         </section>
+
+        <div className="mt-auto flex justify-center gap-3 pt-6 text-[12px] text-faint">
+          <button className="hover:text-sub hover:underline" onClick={() => openPage('/privacy.html')}>
+            개인정보처리방침
+          </button>
+          <span aria-hidden>·</span>
+          <button className="hover:text-sub hover:underline" onClick={() => openPage('/terms.html')}>
+            서비스 이용약관
+          </button>
+        </div>
       </div>
     </Shell>
   );

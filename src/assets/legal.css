@@ -1,0 +1,120 @@
+/* 개인정보처리방침·이용약관 페이지 공용 스타일. 팝업과 같은 색과 글꼴을 쓴다. */
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+
+:root {
+  --bg: #f6f7f9;
+  --panel: #ffffff;
+  --line: #e1e4ea;
+  --ink: #151a23;
+  --sub: #5d6676;
+  --faint: #8b93a1;
+  --accent: #2350d8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+
+main {
+  max-width: 720px;
+  margin: 40px auto;
+  padding: 40px 48px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+@media (max-width: 760px) {
+  main {
+    margin: 0;
+    padding: 28px 16px;
+    border: 0;
+    border-radius: 0;
+  }
+}
+
+h1 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.35;
+}
+
+.meta {
+  margin: 8px 0 32px;
+  color: var(--faint);
+  font-size: 14px;
+}
+
+h2 {
+  margin: 36px 0 8px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 18px;
+}
+
+p,
+ul,
+table {
+  margin: 8px 0;
+}
+
+ul {
+  padding-left: 20px;
+}
+
+li + li {
+  margin-top: 4px;
+}
+
+code {
+  padding: 1px 5px;
+  background: var(--bg);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th,
+td {
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  background: var(--bg);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+a {
+  color: var(--accent);
+}
+
+.lead {
+  color: var(--sub);
+}
+
+nav {
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
