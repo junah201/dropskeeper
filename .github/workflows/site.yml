@@ -8,6 +8,9 @@ on:
     paths:
       - apps/site/**
       - packages/legal/**
+      - packages/popup-ui/**
+      # 동작 데모가 확장 팝업 문구를 빌드 때 읽어 온다
+      - apps/extension/src/locales/**
       - pnpm-lock.yaml
       - .github/workflows/site.yml
   workflow_dispatch:
