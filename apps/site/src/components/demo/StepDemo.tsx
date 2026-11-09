@@ -87,7 +87,7 @@ export default function StepDemo({ which, kicker, title, desc, lang, stages, pop
     <div ref={ref} className={`grid grid-cols-1 items-center gap-10 lg:gap-14 ${which === 'redeem' ? 'lg:grid-cols-[1.35fr_1fr]' : 'lg:grid-cols-[1fr_1.35fr]'}`}>
       <div>
       <span className="font-mono text-[12px] font-medium text-accent">{kicker}</span>
-      <h2 className="mt-2 text-[30px] font-bold tracking-[-0.01em]">{title}</h2>
+      <h2 className="mt-2 text-balance text-[30px] font-bold tracking-[-0.01em]">{title}</h2>
       <p className="mt-3 max-w-md text-[15px] leading-relaxed text-sub">{desc}</p>
       <ol className="mt-6 max-w-md space-y-1">
         {stages.map((s, i) => {
