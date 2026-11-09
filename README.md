@@ -1,7 +1,17 @@
 # DropsKeeper
 
+**한국어** | [English](README.en.md)
+
 스트리밍 플랫폼 드롭스 보상 코드를 모아 Battle.net에 차례로 등록하는 Chrome 확장 프로그램입니다.
 지금은 SOOP·CHZZK 드롭스(오버워치)를 지원합니다.
+
+- [Chrome 웹 스토어에서 설치](https://chromewebstore.google.com/detail/coojibaldchcohkfcpjijepnifdgiema) (Brave 등 Chromium 브라우저에서도 설치할 수 있어요)
+- 소개 사이트: [dropskeeper.junah.dev](https://dropskeeper.junah.dev)
+
+| | |
+|---|---|
+| ![받은 보상을 한 번에 불러와요](apps/site/store/ko/1.png) | ![원하는 보상의 코드만 뽑아요](apps/site/store/ko/2.png) |
+| ![Battle.net에 하나씩 대신 등록해요](apps/site/store/ko/3.png) | ![실패한 코드는 이유와 함께 남아요](apps/site/store/ko/4.png) |
 
 ## 사용 흐름
 
@@ -70,8 +80,15 @@ host_permissions도 `sourceMetas`에서 자동으로 만들어집니다.
 
 ## 아직 검증하지 않은 부분
 
-Battle.net 확인 화면의 버튼 문구와 결과 메시지는 실제 화면으로 확인하지 않은 추정값입니다.
-`src/lib/redeem/battlenet/page.ts`의 패턴만 고치면 됩니다.
+Battle.net의 확인 화면, 오류 배너, 성공·처리 중 화면은 실제 화면으로 확인했습니다.
+"등록할 수 없는 상품" 오류 문구는 아직 확인하지 못해 비어 있습니다. 확인되면 `src/lib/redeem/battlenet/page.ts`의 문구 표에 넣으면 됩니다.
+
+## 스토어 스크린샷과 미리보기 그림
+
+- 스토어 스크린샷(1280×800): `apps/site/store/<언어>/<번호>.png`. 다시 찍기: `node apps/site/store/render.mjs`
+- 링크 공유 미리보기(1200×630): `apps/site/public/og/<언어>.png`. 다시 찍기: `node apps/site/og/render.mjs`
+
+둘 다 설치된 Chromium 계열 브라우저(Brave, Chrome, Edge)를 headless로 써서 찍습니다.
 
 ## 소개 사이트 배포
 
