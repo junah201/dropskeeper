@@ -12,7 +12,7 @@ const SUPPORTED_GAMES: Record<string, SourceReward["game"]> = {
 
 const PAGE_SIZE = 20;
 const MAX_PAGES = 50;
-/** 목록 페이지 요청 사이 간격 (ms).*/
+/** 목록 페이지 요청 사이 간격 (ms) */
 const LIST_PAGE_DELAY = 100;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));

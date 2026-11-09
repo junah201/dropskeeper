@@ -44,7 +44,7 @@ const DAY = 86_400_000;
 const kstDay = (ms: number) => Math.floor((ms + 9 * 3600_000) / DAY);
 
 /**
- * 만료까지 남은 날짜 수 (한국 시간 기준, 당일은 0). 14일 안으로 남으면 soon=true. 만료일이 없으면 undefined.
+ * 만료까지 남은 날짜 수 (한국 시간 기준, 당일은 0). EXPIRY_SOON_DAYS 안으로 남으면 soon=true. 만료일이 없으면 undefined.
  * 화면 문구(`D-5`, `D-day`)는 popup이 locales로 만든다.
  */
 export function expiryDays(s?: string, now = Date.now()): { days: number; soon: boolean } | undefined {

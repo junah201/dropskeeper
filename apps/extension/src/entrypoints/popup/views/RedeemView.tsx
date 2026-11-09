@@ -40,7 +40,7 @@ async function copy(text: string) {
   try {
     await navigator.clipboard.writeText(text);
   } catch {
-    /* 무시: 클립보드 권한이 없을 때 */
+    // 클립보드 권한이 없으면 복사만 건너뛴다
   }
 }
 

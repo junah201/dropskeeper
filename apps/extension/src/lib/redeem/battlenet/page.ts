@@ -11,9 +11,7 @@
  *     `<blz-alert severity="error">` 안 `.error-notification-banner-content`에 서버가 그려서 내려준다(일반 DOM).
  *     첫 번째 <p>가 제목("이미 등록된 코드입니다."), 두 번째 <p>가 설명이다.
  *   - 오류 페이지에도 빈 코드 입력 폼과 비활성 "코드 등록" 버튼이 함께 있다.
- *
  *   - 확인 페이지의 버튼은 `form#submit-key-claim` 안의 `<button>확인</button>`이고, 취소는 `<a>` 링크다.
- *
  *   - "확인"을 누르면 perform-key-claim → purchase-details/key-claim/<코드>("코드 등록을 처리 중입니다.")로 가고,
  *     페이지가 2초마다 purchase-status를 확인하다 끝나면 새로고침해 "코드가 등록되었습니다."를 보여 준다.
  *     완료 화면의 "돌아가기", "다른 코드 등록"은 버튼이 아닌 <a> 링크다.

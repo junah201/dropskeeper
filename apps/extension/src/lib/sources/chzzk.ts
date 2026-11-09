@@ -90,7 +90,7 @@ function toReward(item: ChzzkClaim): SourceReward | undefined {
     acquiredAt: item.createdDate,
     // 수령 기한(claimEndDate)과 코드 사용 기한(codeEndDate) 중 더 이른 쪽을 쓴다
     expiresAt: earliestDate(item.campaign?.claimEndDate, item.codeEndDate),
-    // CHZZK는 코드를 받아 갔는지 알려 주지 않는다
+    // claimed는 비워 둔다. CHZZK는 코드를 받아 갔는지 알려 주지 않는다 (tracksClaimed: false)
     extra: {},
   };
 }

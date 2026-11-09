@@ -6,13 +6,7 @@ import { LocalError, type LocalText } from '../i18n';
  *
  * 구현은 그 플랫폼 페이지에 주입된 content script 안에서 실행된다.
  * 같은 출처에서 요청하므로 로그인 쿠키가 자동으로 붙는다.
- *
- * 새 플랫폼을 추가하는 순서:
- *   1. types.ts의 SourceId에 id 추가
- *   2. sources/<id>.ts에 DropSource 구현
- *   3. sources/hosts.ts에 메타 정보 추가
- *   4. sources/index.ts 레지스트리에 등록
- *   5. entrypoints/<id>.content.ts 생성 (serveSource 한 줄)
+ * 새 플랫폼을 추가하는 순서는 README의 "새 드롭스 플랫폼 추가하기"에 있다.
  */
 export interface DropSource {
   id: SourceId;
