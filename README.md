@@ -35,6 +35,7 @@ apps/
   site/        소개 사이트 dropskeeper.junah.dev (Astro, GitHub Pages)
 packages/
   legal/       개인정보처리방침·이용약관 본문. 확장과 사이트가 같이 씀
+  popup-ui/    팝업 화면 부품(색, 버튼, 목록 행). 확장 팝업과 사이트의 동작 데모가 같이 씀
 ```
 
 확장(`apps/extension`) 안은 이렇습니다. 아래 경로는 모두 `apps/extension` 기준입니다.
@@ -62,6 +63,7 @@ src/
 3. `src/lib/sources/<id>.ts`에 `DropSource`(`listRewards`, `extractCode`) 구현
 4. `src/lib/sources/index.ts` 레지스트리에 등록
 5. `src/entrypoints/<id>.content.ts` 생성 (`serveSource(...)` 한 줄)
+6. 플랫폼 아이콘을 `packages/popup-ui/src/assets/<id>.png`에 넣고 `packages/popup-ui/src/icons.ts`의 `sourceIcons`에 추가
 
 팝업, 저장소, 등록 로직은 `SourceId` 기준으로 동작하므로 수정할 필요가 없습니다.
 host_permissions도 `sourceMetas`에서 자동으로 만들어집니다.
@@ -73,7 +75,7 @@ Battle.net 확인 화면의 버튼 문구와 결과 메시지는 실제 화면�
 
 ## 소개 사이트 배포
 
-`apps/site`나 `packages/legal`이 바뀐 채로 `main`에 push되면 `.github/workflows/site.yml`이 GitHub Pages에 배포합니다.
+`apps/site`, `packages/legal`, `packages/popup-ui`, 확장 문구(`apps/extension/src/locales`)가 바뀐 채로 `main`에 push되면 `.github/workflows/site.yml`이 GitHub Pages에 배포합니다.
 
 처음 한 번만 설정합니다.
 
