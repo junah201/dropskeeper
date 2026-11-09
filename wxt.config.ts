@@ -10,7 +10,7 @@ export default defineConfig({
     plugins: [tailwindcss()],
   }),
   manifest: {
-    name: 'dropkeeper',
+    name: 'DropsKeeper',
     description: '스트리밍 드롭스 보상 코드를 모아 Battle.net에 차례로 등록합니다.',
     permissions: ['storage'],
     host_permissions: [...sourceHostPermissions, ...BATTLENET_HOST_PERMISSIONS],

@@ -17,7 +17,7 @@ export function Shell({ step, children, footer }: { step: Step; children: ReactN
       <header className="flex items-center justify-between border-b border-line bg-panel px-4 py-3">
         <div className="flex items-center gap-2">
           <div className="grid h-6 w-6 place-items-center rounded-[5px] bg-ink text-[10px] font-bold text-white">dk</div>
-          <span className="text-[14px] font-semibold">dropkeeper</span>
+          <span className="text-[14px] font-semibold">DropsKeeper</span>
         </div>
         <ol className="flex items-center gap-1 font-mono text-[12px]">
           {steps.map((s, i) => {

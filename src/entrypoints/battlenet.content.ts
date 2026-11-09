@@ -13,13 +13,13 @@ export default defineContentScript({
           const key = JSON.stringify(state);
           if (key !== lastLog) {
             lastLog = key;
-            console.info('[dropkeeper] 화면 상태', state, describePage());
+            console.info('[DropsKeeper] 화면 상태', state, describePage());
           }
           return state;
         }
         case 'bnet/confirm': {
           const clicked = clickConfirm();
-          console.info('[dropkeeper] 확인 버튼', clicked ? '누름' : '찾지 못함');
+          console.info('[DropsKeeper] 확인 버튼', clicked ? '누름' : '찾지 못함');
           return { clicked };
         }
       }

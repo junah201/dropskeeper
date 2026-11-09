@@ -1,4 +1,4 @@
-# dropkeeper
+# DropsKeeper
 
 스트리밍 플랫폼 드롭스 보상 코드를 모아 Battle.net에 차례로 등록하는 Chrome 확장 프로그램입니다.
 지금은 SOOP·CHZZK 드롭스(오버워치)를 지원합니다.

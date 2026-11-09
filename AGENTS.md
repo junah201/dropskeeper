@@ -1,6 +1,6 @@
 # AGENTS.md
 
-dropkeeper 저장소에서 작업하는 사람과 AI 에이전트를 위한 안내입니다.
+DropsKeeper 저장소에서 작업하는 사람과 AI 에이전트를 위한 안내입니다.
 
 ## 프로젝트
 

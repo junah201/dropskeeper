@@ -201,7 +201,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
   );
 }
 
-/** 플랫폼에서는 획득 완료인데 dropkeeper에는 코드가 없는 보상 (다른 곳에서 받아 간 것) */
+/** 플랫폼에서는 획득 완료인데 DropsKeeper에는 코드가 없는 보상 (다른 곳에서 받아 간 것) */
 const isClaimedElsewhere = (r: RewardEntry) => !!r.claimed && !r.code;
 
 function RewardTag({ r }: { r: RewardEntry }) {

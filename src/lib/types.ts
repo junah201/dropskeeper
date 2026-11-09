@@ -20,7 +20,7 @@ export interface SourceReward {
   campaign?: string;
   acquiredAt?: string;
   expiresAt?: string;
-  /** 플랫폼에서 이미 코드를 받아 간(획득 완료) 보상. dropkeeper 밖에서 받은 것도 포함된다. */
+  /** 플랫폼에서 이미 코드를 받아 간(획득 완료) 보상. DropsKeeper 밖에서 받은 것도 포함된다. */
   claimed?: boolean;
   /** 코드 추출에 필요한 플랫폼별 추가 값 (SOOP은 itemIdx) */
   extra: Record<string, string>;
