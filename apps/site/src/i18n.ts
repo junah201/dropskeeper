@@ -10,6 +10,9 @@ export const fallbackLang: Lang = 'ko';
 /** 언어별 주소. path는 '' 또는 'privacy' 같은 페이지 이름 */
 export const href = (lang: Lang, path = '') => `/${lang}/${path}`;
 
+/** 언어별로 있는 페이지 이름. 사이트맵이 이 목록을 쓰므로 새 페이지를 만들면 여기에도 넣는다. */
+export const pages = ['', 'privacy', 'terms'] as const;
+
 /** [lang] 페이지의 getStaticPaths */
 export const langPaths = () => langs.map((lang) => ({ params: { lang } }));
 /**
