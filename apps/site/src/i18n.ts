@@ -60,10 +60,9 @@ const ko = {
     { title: '기간이 지난 보상은 빼요', desc: '유효기간이 지난 보상은 목록, 대기열, 통계 어디에도 나오지 않아요.' },
   ],
   notices: [
-    "DropsKeeper는 네이버 주식회사가 운영하는 서비스가 아닙니다. 'CHZZK' 및 '치지직'은 네이버 주식회사의 등록 상표입니다.",
-    "DropsKeeper는 주식회사 숲이 운영하는 서비스가 아닙니다. 'SOOP' 및 '숲'은 주식회사 숲의 상표입니다.",
-    "DropsKeeper는 Blizzard Entertainment, Inc.가 운영하는 서비스가 아닙니다. 'Battle.net' 및 '오버워치'는 Blizzard Entertainment, Inc.의 상표 또는 등록 상표입니다.",
-    '페이지에 나오는 보상 이미지의 권리는 각 권리자에게 있습니다.',
+    'DropsKeeper는 비공식 확장 프로그램으로, 네이버 주식회사, 주식회사 숲, Blizzard Entertainment, Inc.와 제휴하거나 승인받지 않았습니다.',
+    'CHZZK·치지직은 네이버 주식회사의 등록 상표, SOOP·숲은 주식회사 숲의 상표, Battle.net·오버워치는 Blizzard Entertainment, Inc.의 상표 또는 등록 상표입니다.',
+    '보상 이미지의 권리는 각 권리자에게 있습니다.',
   ],
   /** 동작 데모 안에 그리는 다른 사이트 화면 문구 */
   demo: {
@@ -138,10 +137,9 @@ const en: Copy = {
     { title: 'Skips expired rewards', desc: 'Expired rewards never show up in the list, the queue, or the stats.' },
   ],
   notices: [
-    "DropsKeeper is not operated by NAVER Corp. 'CHZZK' and '치지직' are registered trademarks of NAVER Corp.",
-    "DropsKeeper is not operated by SOOP Co., Ltd. 'SOOP' and '숲' are trademarks of SOOP Co., Ltd.",
-    "DropsKeeper is not operated by Blizzard Entertainment, Inc. 'Battle.net' and 'Overwatch' are trademarks or registered trademarks of Blizzard Entertainment, Inc.",
-    'Reward images shown on this page belong to their respective owners.',
+    'DropsKeeper is an unofficial extension, not affiliated with or endorsed by NAVER Corp., SOOP Co., Ltd., or Blizzard Entertainment, Inc.',
+    'CHZZK and 치지직 are registered trademarks of NAVER Corp. SOOP and 숲 are trademarks of SOOP Co., Ltd. Battle.net and Overwatch are trademarks or registered trademarks of Blizzard Entertainment, Inc.',
+    'Reward images belong to their respective owners.',
   ],
   demo: {
     soopName: 'Drops',
