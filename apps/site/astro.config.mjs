@@ -2,10 +2,12 @@
 import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
 import tailwindcss from '@tailwindcss/vite';
+import preloadFonts from './integrations/preload-fonts.mjs';
 
 export default defineConfig({
   site: 'https://dropskeeper.junah.dev',
-  integrations: [preact()],
+  // preloadFonts: 페이지 글자에 필요한 Pretendard 조각을 미리 받게 한다(integrations/preload-fonts.mjs)
+  integrations: [preact(), preloadFonts()],
   vite: {
     plugins: [tailwindcss()],
     // preact는 선택적 peer(preact-render-to-string) 때문에 패키지마다 다른 사본으로 설치될 수 있다(lucide-preact 등).
