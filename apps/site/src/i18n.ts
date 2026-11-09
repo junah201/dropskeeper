@@ -38,6 +38,11 @@ const ko = {
   privacy: '개인정보처리방침',
   terms: '서비스 이용약관',
   otherLang: 'English',
+  notFound: {
+    title: '페이지를 찾을 수 없어요',
+    desc: '주소가 바뀌었거나 없는 페이지예요.',
+    home: '소개 페이지로 가기',
+  },
   extract: {
     kicker: 'STEP 1',
     title: '드롭스 인벤토리에서 코드 추출',
@@ -115,6 +120,11 @@ const en: Copy = {
   privacy: 'Privacy Policy',
   terms: 'Terms of Service',
   otherLang: '한국어',
+  notFound: {
+    title: 'Page not found',
+    desc: 'The address may have changed, or the page does not exist.',
+    home: 'Go to the home page',
+  },
   extract: {
     kicker: 'STEP 1',
     title: 'Extract codes from your drops inventory',
