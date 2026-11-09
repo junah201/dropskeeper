@@ -9,5 +9,6 @@
     "site:dev": "pnpm --filter @dropskeeper/site dev",
     "site:build": "pnpm --filter @dropskeeper/site build",
     "compile": "pnpm -r compile"
-  }
+  },
+  "packageManager": "pnpm@12.14.0"
 }
