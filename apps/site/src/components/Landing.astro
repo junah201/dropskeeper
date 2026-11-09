@@ -1,7 +1,10 @@
 ---
-// 소개 페이지 뼈대. 내용과 디자인은 앞으로 채운다.
+// 소개 페이지. 단계별 동작 데모(StepDemo)만 브라우저에서 도는 React 섬이고, 나머지는 빌드 때 그린 HTML이다.
 import Base from '../layouts/Base.astro';
-import { copy, href, type Lang } from '../i18n';
+import StepDemo from './demo/StepDemo';
+import { POPUP_KEYS } from './demo/text';
+import { copy, href, installUrl, type Lang } from '../i18n';
+import { popupText } from '../popupText';
 import '../styles/global.css';
 
 interface Props {
@@ -11,28 +14,71 @@ interface Props {
 const { lang } = Astro.props;
 const t = copy[lang];
 const other: Lang = lang === 'ko' ? 'en' : 'ko';
-
+// 데모 팝업에는 확장과 같은 문구를 쓴다
+const popup = popupText(lang, POPUP_KEYS);
 ---
 
 <Base lang={lang} title="DropsKeeper" description={t.description}>
   <div class="min-h-screen bg-bg font-sans text-ink">
-    <header class="mx-auto flex max-w-4xl items-center justify-between px-4 py-5">
-      <a href={href(lang)} class="flex items-center gap-2 font-semibold">
-        <img src="/favicon.svg" alt="" width="24" height="24" />
+    <header class="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
+      <a href={href(lang)} class="flex items-center gap-2 text-[15px] font-semibold">
+        <img src="/favicon.svg" alt="" width="26" height="26" />
         DropsKeeper
       </a>
-      <a href={href(other)} class="text-sm text-sub hover:text-ink">{t.otherLang}</a>
+      <a href={href(other)} class="text-[13px] text-sub hover:text-ink">{t.otherLang}</a>
     </header>
 
-    <main class="mx-auto max-w-4xl px-4 py-20">
-      <h1 class="text-4xl leading-tight font-bold">{t.headline}</h1>
-      <p class="mt-4 max-w-2xl text-lg text-sub">{t.lead}</p>
-      <p class="mt-10 text-sm text-faint">{t.platforms}: SOOP, CHZZK → Battle.net</p>
+    <main>
+      <section class="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 lg:pt-20">
+        <h1 class="max-w-3xl text-[40px] font-extrabold leading-[1.15] tracking-[-0.02em] sm:text-[54px]">
+          {t.headline[0]}<br />{t.headline[1]}
+        </h1>
+        <p class="mt-5 max-w-xl text-[17px] leading-relaxed text-sub">{t.lead}</p>
+        <div class="mt-8 flex flex-wrap items-center gap-3">
+          {
+            installUrl && (
+              <a href={installUrl} class="inline-flex h-11 items-center rounded-lg bg-accent px-5 text-[15px] font-semibold text-white transition-colors hover:bg-accent-hover">
+                {t.install}
+              </a>
+            )
+          }
+          <span class="flex items-center gap-2 text-[14px] text-sub">
+            <span class="rounded-md bg-panel px-2 py-1 font-mono text-[12px] ring-1 ring-line">{t.stepChips[0]}</span>
+            <span aria-hidden="true">→</span>
+            <span class="rounded-md bg-panel px-2 py-1 font-mono text-[12px] ring-1 ring-line">{t.stepChips[1]}</span>
+          </span>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-6xl space-y-28 px-4 pb-28 sm:px-6">
+        <StepDemo client:visible which="extract" lang={lang} {...t.extract} popup={popup} pages={t.demo} />
+        <StepDemo client:visible which="redeem" lang={lang} {...t.redeem} popup={popup} pages={t.demo} />
+      </section>
+
+      <section class="border-t border-line bg-panel">
+        <div class="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+          {
+            t.facts.map((f) => (
+              <div>
+                <h3 class="text-[15px] font-semibold">{f.title}</h3>
+                <p class="mt-1.5 text-[13px] leading-relaxed text-sub">{f.desc}</p>
+              </div>
+            ))
+          }
+        </div>
+      </section>
     </main>
 
-    <footer class="mx-auto flex max-w-4xl gap-4 border-t border-line px-4 py-6 text-sm text-sub">
-      <a href={href(lang, 'privacy')} class="hover:text-ink">{t.privacy}</a>
-      <a href={href(lang, 'terms')} class="hover:text-ink">{t.terms}</a>
+    <footer class="border-t border-line text-sub">
+      <div class="mx-auto max-w-6xl px-4 py-6 text-[13px] sm:px-6">
+        <div class="flex flex-wrap gap-x-5 gap-y-2">
+          <a href={href(lang, 'privacy')} class="hover:text-ink">{t.privacy}</a>
+          <a href={href(lang, 'terms')} class="hover:text-ink">{t.terms}</a>
+        </div>
+        <div class="mt-4 space-y-1 text-[12px] leading-relaxed text-faint">
+          {t.notices.map((n) => <p>{n}</p>)}
+        </div>
+      </div>
     </footer>
   </div>
 </Base>

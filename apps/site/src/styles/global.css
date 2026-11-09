@@ -1,19 +1,39 @@
 @import 'tailwindcss';
-@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+/* 색과 글꼴(Pretendard, IBM Plex Mono)은 확장 팝업과 같은 popup-ui 패키지에서 가져온다 */
+@import '@dropskeeper/popup-ui/theme.css';
 
-/* 팝업·약관 페이지와 같은 색 */
+/* 동작 데모에 그리는 다른 사이트 화면 색. Battle.net 등록 페이지는 원래 어두운 화면이다. */
 @theme {
-  --color-bg: #f6f7f9;
-  --color-panel: #ffffff;
-  --color-line: #e1e4ea;
-  --color-ink: #151a23;
-  --color-sub: #5d6676;
-  --color-faint: #8b93a1;
-  --color-accent: #2350d8;
-  --font-sans: 'Pretendard Variable', Pretendard, 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --color-bn-bg: #15161a;
+  --color-bn-raise: #1e2025;
+  --color-bn-line: #363940;
+  --color-bn-field: #101114;
+  --color-bn-ink: #f1f2f4;
+  --color-bn-sub: #a9adb6;
+  --color-bn-faint: #6f747e;
+  --color-bn-blue: #0b4a8f;
+  --color-bn-blue-hi: #1667c2;
+  --color-bn-link: #3d97ff;
+  --color-bn-gray: #3a3c41;
+  --color-bn-red: #e2231a;
+  --color-soop: #0a6cff;
 }
 
 body {
   word-break: keep-all;
   -webkit-font-smoothing: antialiased;
+}
+
+@keyframes demo-rise { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes demo-pop { 0% { transform: scale(.6); opacity: 0; } 60% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes demo-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes demo-spin { to { transform: rotate(360deg); } }
+
+.demo-rise { animation: demo-rise .35s ease-out both; }
+.demo-pop { animation: demo-pop .4s cubic-bezier(.2,.8,.3,1.2) both; }
+.demo-fade { animation: demo-fade .35s ease-out both; }
+.demo-spin { animation: demo-spin .9s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .demo-rise, .demo-pop, .demo-fade, .demo-spin { animation: none; }
 }
