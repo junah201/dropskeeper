@@ -5,7 +5,7 @@
 lang: en
 
 extName: DropsKeeper
-extDescription: Collects drop reward codes from streaming platforms and redeems them on Battle.net one by one.
+extDescription: Collects the drop reward codes you earn watching SOOP and CHZZK streams and redeems them on Battle.net for you, one by one.
 
 common:
   back: Back
