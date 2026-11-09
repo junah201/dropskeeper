@@ -54,7 +54,7 @@ export function Shell({
         ) : (
           <>
             <div className="flex items-center gap-2">
-              <div className="grid h-6 w-6 place-items-center rounded-md bg-ink font-mono text-[12px] font-medium text-white">dk</div>
+              <img src="/icon.svg" alt="" width={24} height={24} className="h-6 w-6" />
               <span className="text-[14px] font-semibold">DropsKeeper</span>
             </div>
             <div className="-mr-2 flex items-center gap-2">
