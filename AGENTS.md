@@ -23,7 +23,8 @@ pnpm compile   # 타입 검사
 - **플랫폼 코드는 `src/lib/sources/<플랫폼>.ts`에만 둔다.** 팝업, 저장소, 작업 실행기는 `SourceId`만 보고 동작해야 한다. 새 플랫폼을 추가하는 순서는 README에 있다.
 - 플랫폼 API는 해당 사이트 탭의 content script에서 호출한다. 그래야 로그인 쿠키가 1st-party로 붙는다. 쿠키 값을 직접 읽거나 저장하지 않는다.
 - 저장소(`src/lib/storage.ts`) 쓰기는 background에서만 한다. popup은 `sendToBackground`로 요청한다. 쓰기 순서 보장이 실행 환경마다 따로 동작하기 때문이다.
-- React와 Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
+- React는 확장 페이지(팝업, 개인정보처리방침·이용약관)에서만, Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
+- 개인정보처리방침·이용약관 본문은 `src/legal/`에 언어별 JSX로 둔다. 한국어와 영어 본문은 같은 내용을 담아야 하므로 한쪽을 고치면 다른 쪽도 고친다.
 - 유효기간이 지난 보상은 목록, 대기열, 통계 어디에도 보여 주지 않는다 (`src/lib/expiry.ts`).
 - 화면 문구는 코드에 직접 쓰지 않고 `src/locales/en.yml`(기본 언어, 키 타입의 기준)과 `ko.yml`에 같은 키로 넣은 뒤 `i18n.t()`로 읽는다. 언어는 브라우저 언어를 따른다.
 - background·content script가 만든 문구(오류, 일시정지 이유)는 번역하지 않고 `msg()`로 만든 `LocalText`(키 + 치환 값)로 넘기고 저장한다. popup이 `tx()`로 번역해 보여 준다 (`src/lib/i18n.ts`). 사이트가 보낸 원문은 문자열 그대로 둔다.
