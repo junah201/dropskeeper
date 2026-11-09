@@ -298,7 +298,7 @@ export function SelectAllBar({
   children?: ComponentChildren;
 }) {
   return (
-    <div className="sticky top-0 z-10 flex h-10 items-center gap-2 border-b border-line bg-bg px-3 text-[13px]">
+    <div className="sticky top-0 z-10 flex h-10 items-center gap-2 border-b border-line bg-bg px-4 text-[13px]">
       <Check on={all} mixed={!all && some} onChange={onToggle} label={label} />
       <button type="button" onClick={onToggle} className="shrink-0 font-medium">
         {label}

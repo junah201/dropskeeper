@@ -60,7 +60,7 @@ export function RewardRow({
     // 행 어디를 눌러도 선택된다. 체크박스 클릭도 이 onClick으로 전달된다.
     <li
       onClick={selectable ? onClick : undefined}
-      className={`flex items-center gap-2 px-3 py-2 ${first ? '' : 'border-t border-line'} ${dim ? 'opacity-55' : ''} ${
+      className={`flex items-center gap-2 px-4 py-2 ${first ? '' : 'border-t border-line'} ${dim ? 'opacity-55' : ''} ${
         selectable ? 'cursor-pointer select-none hover:bg-bg' : ''
       }`}
     >
@@ -97,7 +97,7 @@ export function ProgressHeader({ title, index, total, children }: { title: strin
 
 /** 진행 화면의 전체 대기열 목록. 남은 높이를 채우고 안에서 스크롤된다. */
 export function ProgressList({ children }: { children: ComponentChildren }) {
-  return <ul className="mx-3 mt-4 min-h-0 flex-1 overflow-y-auto rounded-[10px] border border-line bg-panel text-[13px]">{children}</ul>;
+  return <ul className="mx-4 mt-4 min-h-0 flex-1 overflow-y-auto rounded-[10px] border border-line bg-panel text-[13px]">{children}</ul>;
 }
 
 /** 진행 목록의 한 줄. current는 강조, dim은 아직 차례가 아닌 줄 */
@@ -191,7 +191,7 @@ export function QueueRow({
 }) {
   return (
     // 행 어디를 눌러도 선택된다. 체크박스 클릭도 이 onClick으로 전달된다.
-    <li onClick={onClick} className={`flex cursor-pointer select-none items-center gap-3 px-3 py-2 hover:bg-bg ${first ? '' : 'border-t border-line'}`}>
+    <li onClick={onClick} className={`flex cursor-pointer select-none items-center gap-3 px-4 py-2 hover:bg-bg ${first ? '' : 'border-t border-line'}`}>
       <Check on={checked} label={name} />
       <Thumb src={thumb} size="lg" badge={badge} />
       <div className="min-w-0 flex-1">

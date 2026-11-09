@@ -96,7 +96,7 @@ export function DemoPopup({ scene, t }: { scene: Scene; t: T }) {
             <SelectAllBar all={n === N} some={n > 0} label={t('common.selectAll')} action={<TextBtn>{t('source.reload')}</TextBtn>}>
               {t('source.shownOfTotal', { shown: N, total: N })}
             </SelectAllBar>
-            <div className="flex flex-wrap items-center gap-2 px-3 py-2">
+            <div className="flex flex-wrap items-center gap-2 px-4 py-2">
               <FilterChip on>{t('source.hideClaimed')}</FilterChip>
               <FilterChip on={false}>{t('source.hideExtracted')}</FilterChip>
             </div>
@@ -209,7 +209,7 @@ export function DemoPopup({ scene, t }: { scene: Scene; t: T }) {
               />
             ))}
           </ul>
-          <p className="px-3 py-3 text-[12px] text-faint">{t('redeem.pacingHint')}</p>
+          <p className="px-4 py-3 text-[12px] text-faint">{t('redeem.pacingHint')}</p>
         </Frame>
       );
     // RedeemView C2

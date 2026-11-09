@@ -134,7 +134,7 @@ function Queue({
         {i18n.t('redeem.pendingCount', { count: list.length })}
       </SelectAllBar>
       {(loginPage || unsupportedPage || error) && (
-        <div className="border-b border-line px-3 py-2">
+        <div className="border-b border-line px-4 py-2">
           {loginPage ? (
             <Notice tone="warn">{i18n.t('redeem.loginFirst')}</Notice>
           ) : unsupportedPage ? (
@@ -190,7 +190,7 @@ function Queue({
           );
         })}
       </ul>
-      <p className="px-3 py-3 text-[12px] text-faint">{i18n.t('redeem.pacingHint')}</p>
+      <p className="px-4 py-3 text-[12px] text-faint">{i18n.t('redeem.pacingHint')}</p>
     </Shell>
   );
 }

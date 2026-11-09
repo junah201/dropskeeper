@@ -147,7 +147,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
         >
           {i18n.t('source.shownOfTotal', { shown: visible.length, total: list.length })}
         </SelectAllBar>
-        <div className="flex flex-wrap items-center gap-2 px-3 py-2">
+        <div className="flex flex-wrap items-center gap-2 px-4 py-2">
           {meta.tracksClaimed && (
             <FilterChip on={hideClaimed} onClick={() => setHideClaimed((v) => !v)}>
               {i18n.t('source.hideClaimed')}
@@ -161,12 +161,12 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
           </FilterChip>
         </div>
         {error && (
-          <div className="px-3 pb-2">
+          <div className="px-4 pb-2">
             <Notice tone="bad">{tx(error)}</Notice>
           </div>
         )}
         {visible.length === 0 ? (
-          <p className="flex flex-1 items-center justify-center px-3 text-center text-[13px] text-faint">{i18n.t('source.noMatch')}</p>
+          <p className="flex flex-1 items-center justify-center px-4 text-center text-[13px] text-faint">{i18n.t('source.noMatch')}</p>
         ) : (
           <ul className="border-y border-line bg-panel">
             {visible.map((r, i) => {
@@ -188,7 +188,7 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
             })}
           </ul>
         )}
-        {lastLoaded && <p className="mt-auto px-3 py-3 text-[12px] text-faint"><Rich text={i18n.t('source.lastLoaded', { time: '{time}' })} values={{ time: <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span> }} /></p>}
+        {lastLoaded && <p className="mt-auto px-4 py-3 text-[12px] text-faint"><Rich text={i18n.t('source.lastLoaded', { time: '{time}' })} values={{ time: <span className="font-mono tabular-nums">{fmtDateTime(lastLoaded)}</span> }} /></p>}
       </div>
     </Shell>
   );
