@@ -16,14 +16,28 @@
 
 ```bash
 pnpm install
-pnpm dev      # 개발 모드 (Chrome이 열리고 변경 시 자동 리로드)
-pnpm build    # .output/chrome-mv3 에 빌드
-pnpm compile  # 타입 검사
+pnpm dev          # 개발 모드 (Chrome이 열리고 변경 시 자동 리로드)
+pnpm build        # apps/extension/.output/chrome-mv3 에 빌드
+pnpm compile      # 타입 검사
+pnpm site:dev     # 소개 사이트 개발 서버
+pnpm site:build   # 소개 사이트를 apps/site/dist 에 빌드
 ```
 
-직접 설치: `chrome://extensions` → 개발자 모드 → **압축해제된 확장 프로그램을 로드합니다** → `.output/chrome-mv3` 선택
+직접 설치: `chrome://extensions` → 개발자 모드 → **압축해제된 확장 프로그램을 로드합니다** → `apps/extension/.output/chrome-mv3` 선택
 
 ## 구조
+
+pnpm 모노레포입니다.
+
+```
+apps/
+  extension/   확장 프로그램 (WXT)
+  site/        소개 사이트 dropskeeper.junah.dev (Astro, GitHub Pages)
+packages/
+  legal/       개인정보처리방침·이용약관 본문. 확장과 사이트가 같이 씀
+```
+
+확장(`apps/extension`) 안은 이렇습니다. 아래 경로는 모두 `apps/extension` 기준입니다.
 
 ```
 src/
@@ -56,3 +70,13 @@ host_permissions도 `sourceMetas`에서 자동으로 만들어집니다.
 
 Battle.net 확인 화면의 버튼 문구와 결과 메시지는 실제 화면으로 확인하지 않은 추정값입니다.
 `src/lib/redeem/battlenet/page.ts`의 패턴만 고치면 됩니다.
+
+## 소개 사이트 배포
+
+`apps/site`나 `packages/legal`이 바뀐 채로 `main`에 push되면 `.github/workflows/site.yml`이 GitHub Pages에 배포합니다.
+
+처음 한 번만 설정합니다.
+
+1. DNS에 `dropskeeper.junah.dev` → `junah201.github.io` CNAME 레코드 추가
+2. 저장소 Settings → Pages → Source를 **GitHub Actions**로 선택
+3. 같은 화면의 Custom domain에 `dropskeeper.junah.dev`를 넣고 **Enforce HTTPS** 켜기

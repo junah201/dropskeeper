@@ -7,15 +7,27 @@ DropsKeeper 저장소에서 작업하는 사람과 AI 에이전트를 위한 안
 스트리밍 플랫폼 드롭스 보상 코드를 모아 Battle.net에 차례로 등록하는 Chrome(MV3) 확장 프로그램입니다.
 지금은 SOOP과 CHZZK 드롭스(오버워치)를 지원합니다.
 
-- 스택: WXT, TypeScript, React, Tailwind CSS v4, pnpm
+- 스택: WXT, TypeScript, React, Tailwind CSS v4, pnpm 워크스페이스. 소개 사이트는 Astro
 - 백엔드 없음. 상태는 모두 `chrome.storage.local`에 저장
 - 사용자의 메인 브라우저는 Brave(Chromium)
 
+pnpm 모노레포다.
+
+| 경로 | 패키지 | 내용 |
+|---|---|---|
+| `apps/extension` | `@dropskeeper/extension` | 확장 프로그램 (WXT) |
+| `apps/site` | `@dropskeeper/site` | 소개 사이트 `dropskeeper.junah.dev` (Astro, GitHub Pages) |
+| `packages/legal` | `@dropskeeper/legal` | 개인정보처리방침·이용약관 본문과 스타일. 확장과 사이트가 같이 쓴다 |
+
+아래 코드 원칙의 `src/...` 경로는 따로 말이 없으면 `apps/extension/src/...`다.
+
 ```bash
 pnpm install
-pnpm dev       # 개발 모드
-pnpm build     # .output/chrome-mv3
-pnpm compile   # 타입 검사
+pnpm dev          # 확장 개발 모드
+pnpm build        # 확장 빌드 → apps/extension/.output/chrome-mv3
+pnpm compile      # 전체 타입 검사
+pnpm site:dev     # 소개 사이트 개발 서버
+pnpm site:build   # 소개 사이트 빌드 → apps/site/dist
 ```
 
 ## 코드 원칙
@@ -23,8 +35,9 @@ pnpm compile   # 타입 검사
 - **플랫폼 코드는 `src/lib/sources/<플랫폼>.ts`에만 둔다.** 팝업, 저장소, 작업 실행기는 `SourceId`만 보고 동작해야 한다. 새 플랫폼을 추가하는 순서는 README에 있다.
 - 플랫폼 API는 해당 사이트 탭의 content script에서 호출한다. 그래야 로그인 쿠키가 1st-party로 붙는다. 쿠키 값을 직접 읽거나 저장하지 않는다.
 - 저장소(`src/lib/storage.ts`) 쓰기는 background에서만 한다. popup은 `sendToBackground`로 요청한다. 쓰기 순서 보장이 실행 환경마다 따로 동작하기 때문이다.
-- React는 확장 페이지(팝업, 개인정보처리방침·이용약관)에서만, Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
-- 개인정보처리방침·이용약관 본문은 `src/legal/`에 언어별 JSX로 둔다. 한국어와 영어 본문은 같은 내용을 담아야 하므로 한쪽을 고치면 다른 쪽도 고친다.
+- 확장에서 React는 확장 페이지(팝업, 개인정보처리방침·이용약관)에서만, Tailwind는 팝업에서만 쓴다. content script는 순수 TypeScript로 작성한다.
+- 개인정보처리방침·이용약관 본문은 `packages/legal/src/`에 언어별 JSX로 둔다. 한국어와 영어 본문은 같은 내용을 담아야 하므로 한쪽을 고치면 다른 쪽도 고친다. 확장과 사이트 모두 두 문서를 같은 폴더의 `privacy.html`, `terms.html`로 내보내므로 본문 안 링크는 `./terms.html`처럼 상대 경로로 쓴다. 이 패키지는 확장 API(`browser`, `#i18n`)를 쓰지 않는다.
+- 소개 사이트(`apps/site`)는 Astro로 빌드 때 정적 HTML을 만든다. React 컴포넌트는 `client:` 지시어 없이 서버에서만 그리고, 스타일은 Tailwind를 쓴다. 모든 페이지는 `/ko/...`, `/en/...` 아래(`src/pages/[lang]/`)에 두고, 언어 없는 주소(`/`, `/privacy`, `/terms`)는 브라우저 언어를 보고 옮겨 주는 페이지(`src/layouts/Redirect.astro`, JS가 꺼져 있으면 `ko`)로 둔다. 새 페이지를 만들면 언어 없는 주소도 같이 만든다. 문구는 `apps/site/src/i18n.ts`에 같은 키로 둔다. `main`에 push되면 `.github/workflows/site.yml`이 GitHub Pages에 배포한다.
 - 유효기간이 지난 보상은 목록, 대기열, 통계 어디에도 보여 주지 않는다 (`src/lib/expiry.ts`).
 - 화면 문구는 코드에 직접 쓰지 않고 `src/locales/en.yml`(기본 언어, 키 타입의 기준)과 `ko.yml`에 같은 키로 넣은 뒤 `i18n.t()`로 읽는다. 언어는 브라우저 언어를 따른다.
 - background·content script가 만든 문구(오류, 일시정지 이유)는 번역하지 않고 `msg()`로 만든 `LocalText`(키 + 치환 값)로 넘기고 저장한다. popup이 `tx()`로 번역해 보여 준다 (`src/lib/i18n.ts`). 사이트가 보낸 원문은 문자열 그대로 둔다.
