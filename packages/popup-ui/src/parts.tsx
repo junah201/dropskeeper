@@ -60,7 +60,7 @@ export function Shell({ step, stepLabels, logo, settingsLabel, onSettings, back,
                   return (
                     <li key={s.id} className="flex items-center gap-1">
                       {i > 0 && <span className="text-check">→</span>}
-                      <span className={`rounded px-1.5 py-0.5 ${on ? 'bg-accent-soft font-medium text-accent' : 'text-faint'}`}>
+                      <span className={`rounded px-1.5 py-0.5 ${on ? 'ticket bg-accent-soft font-medium text-accent [--notch:3px]' : 'text-faint'}`}>
                         {i + 1} {s.label}
                       </span>
                     </li>

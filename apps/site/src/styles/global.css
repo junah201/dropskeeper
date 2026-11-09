@@ -24,19 +24,9 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* 티켓 모양. 파비콘처럼 양옆 가운데가 둥글게 파인다.
+/* 티켓 모양. 파비콘처럼 양옆 가운데가 둥글게 파인다. 채운 배지(.ticket)는 popup-ui theme.css에 있다.
    components 층에 두어 Tailwind 유틸리티(예: [--notch:14px])로 값을 바꿀 수 있게 한다. */
 @layer components {
-  /* .ticket: 채운 배지. 양옆을 마스크로 도려낸다. */
-  .ticket {
-    --notch: 4px;
-    --ticket-mask:
-      radial-gradient(circle var(--notch) at 0 50%, #0000 98%, #000) left / 50.5% 100% no-repeat,
-      radial-gradient(circle var(--notch) at 100% 50%, #0000 98%, #000) right / 50.5% 100% no-repeat;
-    -webkit-mask: var(--ticket-mask);
-    mask: var(--ticket-mask);
-  }
-
   /* .ticket-notch: 테두리가 있는 상자. 바탕색 반원에 테두리를 그려 파인 자리를 만든다.
      --notch-y로 높이를 옮기면 구분선 양끝에도 쓸 수 있다. 바탕은 페이지 바탕(bg) 위라고 본다. */
   .ticket-notch {
