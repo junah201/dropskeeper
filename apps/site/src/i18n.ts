@@ -25,6 +25,8 @@ export interface Stage {
 }
 
 const ko = {
+  /** 소개 페이지 <title>. 링크 공유 미리보기 제목으로도 쓴다 */
+  title: 'DropsKeeper · 드롭스 보상 코드를 Battle.net에 한 번에 등록',
   description: '스트리밍 플랫폼 드롭스 보상 코드를 모아 Battle.net에 차례로 등록하는 브라우저 확장 프로그램',
   headline: ['드롭스 보상 코드,', '한 번에 등록하세요'],
   lead: 'SOOP·CHZZK에서 받은 오버워치 드롭스 코드를 모아 Battle.net에 차례로 등록해요. 코드를 하나씩 복사해 붙여 넣지 않아도 돼요.',
@@ -101,6 +103,7 @@ const ko = {
 export type Copy = typeof ko;
 
 const en: Copy = {
+  title: 'DropsKeeper · Redeem drop reward codes on Battle.net in one go',
   description: 'A browser extension that collects drop reward codes from streaming platforms and redeems them on Battle.net one by one',
   headline: ['Drop reward codes,', 'redeemed in one go'],
   lead: 'Collect the Overwatch drop codes you earned on SOOP and CHZZK, and redeem them on Battle.net one by one. No more copying and pasting each code.',
