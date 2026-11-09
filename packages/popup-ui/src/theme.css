@@ -12,7 +12,6 @@
 /* 이 패키지의 컴포넌트에 쓴 클래스도 Tailwind가 찾게 한다 */
 @source './';
 
-/* 흰 패널, 연한 회색 바탕, 파랑 포인트 */
 @theme {
   --color-bg: #f6f7f9;
   --color-panel: #ffffff;

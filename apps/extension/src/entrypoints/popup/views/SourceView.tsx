@@ -202,7 +202,6 @@ function RewardTag({ r }: { r: RewardEntry }) {
   if (r.code) return <Tag tone="mute">{i18n.t('source.tagExtracted')}</Tag>;
   if (r.extractError) return <Tag tone="bad">{i18n.t('source.tagExtractFailed')}</Tag>;
   if (r.claimed) return <Tag tone="warn">{i18n.t('source.tagClaimed')}</Tag>;
-  // 기본 상태라 알약 없이 옅은 글자로만 적는다
   return <QuietTag>{i18n.t('source.tagNotExtracted')}</QuietTag>;
 }
 
@@ -325,7 +324,6 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
         </div>
         {fail.length > 0 && (
           <ul className="mt-3 grid gap-2">
-            {/* 등록 결과 화면의 실패 목록과 같은 모양으로 그린다 */}
             {fail.map((r) => (
               <FailCard
                 key={rewardKey(r)}

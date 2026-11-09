@@ -9,7 +9,6 @@ import { i18n, type GeneratedI18nStructure } from '#i18n';
 
 type Structure = GeneratedI18nStructure;
 
-/** 확장 화면 언어 */
 export type UiLang = 'ko' | 'en';
 
 /**
@@ -35,7 +34,6 @@ export type LocalText = string | { key: MessageKey; subs?: Subs };
 /** 키와 치환 값을 타입 검사해 LocalText를 만든다 */
 export const msg = <K extends MessageKey>(key: K, ...[subs]: SubsOf<K>): LocalText => (subs ? { key, subs } : { key });
 
-/** LocalText를 지금 언어의 문장으로 바꾼다 */
 export function tx(text: LocalText): string {
   if (typeof text === 'string') return text;
   // 키와 치환 값의 짝은 msg()에서 이미 검사했다
@@ -50,6 +48,5 @@ export class LocalError extends Error {
   }
 }
 
-/** 잡은 오류를 LocalText로 바꾼다 */
 export const errorText = (e: unknown): LocalText =>
   e instanceof LocalError ? e.text : e instanceof Error ? e.message : String(e);

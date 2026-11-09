@@ -80,7 +80,6 @@ export interface Job {
   startedAt: number;
 }
 
-/** 사용자 설정 */
 export interface Settings {
   /** 화면에 보이는 코드 가운데를 ••••로 가린다. 복사는 설정과 상관없이 전체 코드로 한다. */
   maskCodes: boolean;

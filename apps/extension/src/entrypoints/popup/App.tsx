@@ -13,7 +13,6 @@ import { SettingsView } from './views/SettingsView';
 export default function App() {
   const tab = useActiveTab();
   const stored = useStored(rewardsItem);
-  // 사용자가 삭제한 보상은 어느 화면에도 보여 주지 않는다
   const rewards = useMemo(
     () =>
       stored &&

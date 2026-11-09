@@ -25,7 +25,6 @@ export default defineBackground(() => {
         await dismissRewards(msg.keys);
         return { ok: true };
       case 'job/start': {
-        // 삭제한 보상은 작업에 넣지 않는다
         const all = await rewardsItem.getValue();
         await startJob(msg.kind, msg.tabId, msg.keys.filter((k) => !all[k]?.dismissed));
         return { ok: true };

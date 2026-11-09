@@ -9,7 +9,6 @@ import { CodeChip, Shell, Switch } from '../ui';
 /** 미리보기에 쓰는 예시 코드. 실제 코드가 아니고, Battle.net 코드와 같은 4-4-5-4-4 형식만 맞췄다. */
 const SAMPLE_CODE = 'K7QX-M2PL-9RT4W-WN4D-H8ZC';
 
-/** 확장 안에 들어 있는 개인정보처리방침·이용약관 페이지를 새 탭으로 연다 */
 const openPage = (path: '/privacy.html' | '/terms.html') => browser.tabs.create({ url: browser.runtime.getURL(path) });
 
 export function SettingsView() {

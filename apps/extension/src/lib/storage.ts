@@ -8,7 +8,6 @@ export const rewardsItem = storage.defineItem<Record<RewardKey, RewardEntry>>('l
 
 export const jobItem = storage.defineItem<Job | null>('local:job', { fallback: null });
 
-/** 플랫폼별 마지막 불러오기 시각 */
 export const lastLoadedItem = storage.defineItem<Partial<Record<SourceId, number>>>('local:lastLoaded', {
   fallback: {},
 });

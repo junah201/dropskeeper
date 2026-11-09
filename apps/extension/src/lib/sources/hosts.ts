@@ -21,7 +21,6 @@ export const sourceMetas: Record<SourceId, SourceMeta> = {
 
 export const sourceHostPermissions = Object.values(sourceMetas).flatMap((m) => m.matches);
 
-/** 탭 주소로 어느 플랫폼 페이지인지 알아낸다 */
 export function sourceIdFromUrl(url: string | undefined): SourceId | undefined {
   if (!url) return undefined;
   return Object.values(sourceMetas).find((m) => m.matches.some((p) => matchPattern(p, url)))?.id;
