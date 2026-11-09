@@ -1,0 +1,23 @@
+---
+// 사이트 바닥글. 약관 링크와 상표 고지.
+import { copy, href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang];
+---
+
+<footer class="border-t border-line leading-normal text-sub">
+  <div class="mx-auto max-w-6xl px-4 py-6 text-[13px] sm:px-6">
+    <div class="flex flex-wrap gap-x-5 gap-y-2">
+      <a href={href(lang, 'privacy')} class="text-sub no-underline hover:text-ink">{t.privacy}</a>
+      <a href={href(lang, 'terms')} class="text-sub no-underline hover:text-ink">{t.terms}</a>
+    </div>
+    <div class="mt-4 space-y-1 text-[12px] leading-relaxed text-faint">
+      {t.notices.map((n) => <p class="m-0">{n}</p>)}
+    </div>
+  </div>
+</footer>

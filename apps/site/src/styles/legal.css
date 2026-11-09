@@ -1,0 +1,10 @@
+/*
+ * 약관 페이지 스타일. 본문은 확장과 같은 legal.css를 쓰고, 머리글·바닥글만 Tailwind로 그린다.
+ * Tailwind 기본 초기화(preflight)는 본문의 목록 점과 링크 밑줄을 지우므로 넣지 않는다.
+ * legal.css는 utilities보다 낮은 층에 두어, 머리글·바닥글의 클래스가 a, p 같은 태그 스타일을 이기게 한다.
+ */
+@layer theme, base, legal, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@import '@dropskeeper/popup-ui/theme.css';
+@import '@dropskeeper/legal/legal.css' layer(legal);

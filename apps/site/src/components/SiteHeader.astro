@@ -1,0 +1,22 @@
+---
+// 사이트 머리글. 로고(홈 링크)와 같은 페이지의 다른 언어로 가는 링크.
+import { copy, href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  /** 지금 페이지 이름. 언어 전환 링크가 같은 페이지의 다른 언어로 간다. */
+  page?: string;
+}
+
+const { lang, page = '' } = Astro.props;
+const t = copy[lang];
+const other: Lang = lang === 'ko' ? 'en' : 'ko';
+---
+
+<header class="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 leading-normal sm:px-6">
+  <a href={href(lang)} class="flex items-center gap-2 text-[15px] font-semibold text-ink no-underline">
+    <img src="/favicon.svg" alt="" width="26" height="26" />
+    DropsKeeper
+  </a>
+  <a href={href(other, page)} class="text-[13px] text-sub no-underline hover:text-ink">{t.otherLang}</a>
+</header>

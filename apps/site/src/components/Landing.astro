@@ -1,9 +1,11 @@
 ---
 // 소개 페이지. 단계별 동작 데모(StepDemo)만 브라우저에서 도는 React 섬이고, 나머지는 빌드 때 그린 HTML이다.
 import Base from '../layouts/Base.astro';
+import SiteHeader from './SiteHeader.astro';
+import SiteFooter from './SiteFooter.astro';
 import StepDemo from './demo/StepDemo';
 import { POPUP_KEYS } from './demo/text';
-import { copy, href, installUrl, type Lang } from '../i18n';
+import { copy, installUrl, type Lang } from '../i18n';
 import { popupText } from '../popupText';
 import '../styles/global.css';
 
@@ -13,19 +15,12 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = copy[lang];
-const other: Lang = lang === 'ko' ? 'en' : 'ko';
 const popup = popupText(lang, POPUP_KEYS);
 ---
 
 <Base lang={lang} title="DropsKeeper" description={t.description}>
   <div class="min-h-screen bg-bg font-sans text-ink">
-    <header class="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
-      <a href={href(lang)} class="flex items-center gap-2 text-[15px] font-semibold">
-        <img src="/favicon.svg" alt="" width="26" height="26" />
-        DropsKeeper
-      </a>
-      <a href={href(other)} class="text-[13px] text-sub hover:text-ink">{t.otherLang}</a>
-    </header>
+    <SiteHeader lang={lang} />
 
     <main>
       <section class="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6 lg:pt-20">
@@ -68,16 +63,6 @@ const popup = popupText(lang, POPUP_KEYS);
       </section>
     </main>
 
-    <footer class="border-t border-line text-sub">
-      <div class="mx-auto max-w-6xl px-4 py-6 text-[13px] sm:px-6">
-        <div class="flex flex-wrap gap-x-5 gap-y-2">
-          <a href={href(lang, 'privacy')} class="hover:text-ink">{t.privacy}</a>
-          <a href={href(lang, 'terms')} class="hover:text-ink">{t.terms}</a>
-        </div>
-        <div class="mt-4 space-y-1 text-[12px] leading-relaxed text-faint">
-          {t.notices.map((n) => <p>{n}</p>)}
-        </div>
-      </div>
-    </footer>
+    <SiteFooter lang={lang} />
   </div>
 </Base>

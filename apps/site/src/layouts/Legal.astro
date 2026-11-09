@@ -1,19 +1,26 @@
 ---
 // 약관 페이지. 본문과 스타일은 확장과 같은 packages/legal을 쓰고, 빌드할 때 HTML로 그린다(브라우저 JS 없음).
+// 머리글과 바닥글은 소개 페이지와 같다.
 import { LegalPage, type LegalDoc } from '@dropskeeper/legal';
-import '@dropskeeper/legal/legal.css';
 import Base from './Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
 import type { Lang } from '../i18n';
+import '../styles/legal.css';
 
 interface Props {
   lang: Lang;
+  /** 페이지 이름('privacy', 'terms'). 언어 전환 링크에 쓴다. */
+  page: string;
   docs: Record<Lang, LegalDoc>;
 }
 
-const { lang, docs } = Astro.props;
+const { lang, page, docs } = Astro.props;
 const doc = docs[lang];
 ---
 
 <Base lang={lang} title={`${doc.title} · DropsKeeper`}>
+  <SiteHeader lang={lang} page={page} />
   <LegalPage doc={doc} />
+  <SiteFooter lang={lang} />
 </Base>
