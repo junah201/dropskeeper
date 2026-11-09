@@ -1,0 +1,150 @@
+<!doctype html>
+<!--
+  링크 공유 미리보기 그림(og:image) 원본. 1200×630으로 찍어 public/og/<언어>.png로 둔다.
+  다시 만들려면 저장소 루트에서: node apps/site/og/render.mjs
+  보상 이름·그림은 사이트 데모(src/components/demo/data.ts)의 실제 SOOP 보상이고 코드는 가짜 값이다.
+  두 플랫폼을 함께 지원한다는 걸 보이려고 아래 두 줄의 배지만 CHZZK로 단다.
+  색은 packages/popup-ui/src/theme.css, 문구는 src/i18n.ts의 headline과 확장 locales의 상태 문구를 따른다.
+-->
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      @font-face {
+        font-family: 'Pretendard Variable';
+        src: url('../../../packages/popup-ui/node_modules/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2');
+        font-weight: 45 920;
+      }
+      @font-face {
+        font-family: 'IBM Plex Mono';
+        src: url('../../../packages/popup-ui/node_modules/@fontsource/ibm-plex-mono/files/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+        font-weight: 500;
+      }
+      :root {
+        --bg: #f6f7f9;
+        --panel: #ffffff;
+        --line: #e1e4ea;
+        --ink: #151a23;
+        --sub: #5d6676;
+        --faint: #8b93a1;
+        --accent: #2350d8;
+        --accent-soft: #e8eefc;
+        --ok: #13795b;
+        --ok-soft: #e3f4ec;
+        --mute-soft: #eef0f3;
+      }
+      * { box-sizing: border-box; margin: 0; }
+      html, body { width: 1200px; height: 630px; overflow: hidden; }
+      body {
+        background: var(--bg);
+        color: var(--ink);
+        font-family: 'Pretendard Variable', sans-serif;
+        display: grid;
+        grid-template-columns: 1fr 440px;
+        gap: 56px;
+        padding: 72px 80px;
+      }
+      .mono { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+
+      .left { display: flex; flex-direction: column; }
+      .brand { display: flex; align-items: center; gap: 14px; font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+      .brand svg { width: 48px; height: 48px; }
+      h1 { margin-top: 56px; font-size: 64px; font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; white-space: nowrap; }
+      html[lang='en'] h1 { font-size: 56px; }
+      .route { margin-top: 28px; display: flex; align-items: center; gap: 12px; font-size: 24px; font-weight: 600; color: var(--sub); }
+      .route img { width: 32px; height: 32px; border-radius: 8px; }
+      .route .arrow { color: var(--faint); font-weight: 400; }
+      .domain { margin-top: auto; font-size: 20px; color: var(--faint); }
+
+      .panel {
+        align-self: center;
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        box-shadow: 0 24px 48px -24px rgb(21 26 35 / 0.18);
+        padding: 24px 28px 0; overflow: hidden;
+      }
+      .panel-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 19px; font-weight: 700; }
+      .panel-head .count { font-size: 17px; color: var(--sub); }
+      .bar { margin: 16px 0 18px; height: 6px; border-radius: 3px; background: var(--mute-soft); overflow: hidden; }
+      .bar span { display: block; width: 60%; height: 100%; background: var(--accent); }
+      /* 팝업 등록 화면의 ProgressRow(두 줄)와 Thumb(오른쪽 아래 플랫폼 배지)를 크게 옮긴 것 */
+      .rows { margin: 0 -28px; }
+      .row { display: flex; align-items: center; gap: 16px; padding: 13px 28px; border-top: 1px solid var(--line); }
+      .row:first-child { border-top: 0; }
+      .row.current { background: var(--accent-soft); }
+      .row.dim { opacity: 0.5; }
+      .thumb { position: relative; flex-shrink: 0; }
+      .thumb .img { display: block; width: 46px; height: 46px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); object-fit: cover; }
+      .thumb .badge { position: absolute; right: -5px; bottom: -5px; width: 22px; height: 22px; border-radius: 6px; box-shadow: 0 0 0 3px var(--panel); }
+      .row.current .thumb .badge { box-shadow: 0 0 0 3px var(--accent-soft); }
+      .body { flex: 1; min-width: 0; }
+      .name { font-size: 17px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .code { display: inline-flex; margin-top: 6px; height: 26px; align-items: center; padding: 0 9px; border: 1px solid var(--line); border-radius: 5px; background: var(--bg); font-size: 14px; }
+      .code .dots { color: #b9c0cc; }
+      .chip { font-size: 15px; font-weight: 600; padding: 5px 11px; border-radius: 7px; }
+      .chip.ok { color: var(--ok); background: var(--ok-soft); }
+      .chip.run { color: var(--accent); background: var(--accent-soft); }
+      .chip.wait { color: var(--sub); background: var(--mute-soft); }
+    </style>
+  </head>
+  <body>
+    <div class="left">
+      <div class="brand">
+        <svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#151a23"/><defs><mask id="m"><rect width="32" height="32" fill="#fff"/><circle cx="3.5" cy="16" r="2.8" fill="#000"/><circle cx="28.5" cy="16" r="2.8" fill="#000"/></mask></defs><rect x="3.5" y="8" width="25" height="16" rx="2.6" fill="#fff" mask="url(#m)"/><path fill="#2350d8" d="M14.7 10.6h2.6v5.6h3.4L16 21.4l-4.7-5.2h3.4Z"/></svg>
+        DropsKeeper
+      </div>
+      <h1 data-t="headline"></h1>
+      <div class="route">
+        <img src="../../../packages/popup-ui/src/assets/soop.png" alt="" />
+        <img src="../../../packages/popup-ui/src/assets/chzzk.png" alt="" />
+        <span>SOOP · CHZZK</span>
+        <span class="arrow">→</span>
+        <span>Battle.net</span>
+      </div>
+      <div class="domain mono">dropskeeper.junah.dev</div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head"><span data-t="queue"></span><span class="count mono">3/5</span></div>
+      <div class="bar"><span></span></div>
+      <div class="rows">
+        <div class="row">
+          <span class="thumb"><img class="img" src="../src/assets/rewards/socal-sunset-2026-spray.webp" alt="" /><img class="badge" src="../../../packages/popup-ui/src/assets/soop.png" alt="" /></span>
+          <div class="body"><div class="name">SoCal Sunset 2026 Spray</div><span class="code mono">H6NM-<span class="dots">••••</span>-BVGX</span></div>
+          <span class="chip ok" data-t="redeemed"></span>
+        </div>
+        <div class="row">
+          <span class="thumb"><img class="img" src="../src/assets/rewards/esports-loot-box.webp" alt="" /><img class="badge" src="../../../packages/popup-ui/src/assets/soop.png" alt="" /></span>
+          <div class="body"><div class="name">Esports Loot Box</div><span class="code mono">JDT5-<span class="dots">••••</span>-BJX8</span></div>
+          <span class="chip ok" data-t="redeemed"></span>
+        </div>
+        <div class="row">
+          <span class="thumb"><img class="img" src="../src/assets/rewards/owwc-anaheim-2026-night-icon.webp" alt="" /><img class="badge" src="../../../packages/popup-ui/src/assets/soop.png" alt="" /></span>
+          <div class="body"><div class="name">OWWC Anaheim 2026 Night Icon</div><span class="code mono">H9Q5-<span class="dots">••••</span>-FMHG</span></div>
+          <span class="chip ok" data-t="redeemed"></span>
+        </div>
+        <div class="row current">
+          <span class="thumb"><img class="img" src="../src/assets/rewards/sun-tea-icon.webp" alt="" /><img class="badge" src="../../../packages/popup-ui/src/assets/chzzk.png" alt="" /></span>
+          <div class="body"><div class="name">Sun Tea Icon</div><span class="code mono">CBQS-<span class="dots">••••</span>-XJW6</span></div>
+          <span class="chip run" data-t="running"></span>
+        </div>
+        <div class="row dim">
+          <span class="thumb"><img class="img" src="../src/assets/rewards/purrfect-evening-spray.webp" alt="" /><img class="badge" src="../../../packages/popup-ui/src/assets/chzzk.png" alt="" /></span>
+          <div class="body"><div class="name">Purrfect Evening Spray</div><span class="code mono">645L-<span class="dots">••••</span>-KSNW</span></div>
+          <span class="chip wait" data-t="waiting"></span>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const text = {
+        ko: { headline: '드롭스 보상 코드,<br />한 번에 등록하세요', queue: 'Battle.net 등록', redeemed: '등록됨', running: '등록 중…', waiting: '대기' },
+        en: { headline: 'Drop reward codes,<br />redeemed in one go', queue: 'Redeeming on Battle.net', redeemed: 'Redeemed', running: 'Redeeming…', waiting: 'Waiting' },
+      };
+      const lang = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ko';
+      document.documentElement.lang = lang;
+      for (const el of document.querySelectorAll('[data-t]')) el.innerHTML = text[lang][el.dataset.t];
+    </script>
+  </body>
+</html>
