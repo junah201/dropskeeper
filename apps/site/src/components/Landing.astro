@@ -49,8 +49,9 @@ const popup = popupText(lang, POPUP_KEYS);
         <StepDemo client:visible which="redeem" lang={lang} {...t.redeem} popup={popup} pages={t.demo} />
       </section>
 
-      <section class="border-t border-line bg-panel">
-        <div class="mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
+      <!-- 티켓 절취선처럼 점선에 양끝을 파낸다 -->
+      <section class="overflow-clip border-t border-dashed border-line bg-panel">
+        <div class="ticket-notch mx-auto grid max-w-6xl gap-8 px-4 py-16 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 [--notch-y:-1px] [--notch:12px]">
           {
             t.facts.map((f) => (
               <div>

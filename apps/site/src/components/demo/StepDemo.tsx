@@ -109,7 +109,7 @@ export default function StepDemo({ which, kicker, title, desc, lang, stages, pop
     // 설명과 화면을 좌우로 둔다. 2단계는 화면을 왼쪽에 두어 지그재그로 읽힌다.
     <div ref={ref} className={`grid grid-cols-1 items-center gap-10 lg:gap-14 ${which === 'redeem' ? 'lg:grid-cols-[1.35fr_1fr]' : 'lg:grid-cols-[1fr_1.35fr]'}`}>
       <div>
-      <span className="font-mono text-[12px] font-medium text-accent">{kicker}</span>
+      <span className="ticket inline-block rounded-[3px] bg-accent-soft px-3 py-1 font-mono text-[12px] font-semibold leading-none text-accent">{kicker}</span>
       <h2 className="mt-2 text-balance text-[30px] font-bold tracking-[-0.01em]">{title}</h2>
       <p className="mt-3 max-w-md text-[15px] leading-relaxed text-sub">{desc}</p>
       <ol className="mt-6 max-w-md space-y-1">
@@ -121,7 +121,7 @@ export default function StepDemo({ which, kicker, title, desc, lang, stages, pop
                 type="button"
                 onClick={() => jump(i)}
                 aria-current={on ? 'step' : undefined}
-                className={`flex w-full gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${on ? 'bg-panel shadow-sm ring-1 ring-line' : 'hover:bg-panel/70'}`}
+                className={`flex w-full gap-3 rounded-lg px-3 py-2.5 text-left transition-colors ${on ? 'ticket-notch bg-panel shadow-sm ring-1 ring-line' : 'hover:bg-panel/70'}`}
               >
                 <span
                   className={`mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full font-mono text-[11px] transition-colors ${
