@@ -6,7 +6,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./legal.css": "./src/legal.css"
+    "./legal.css": "./src/legal.css",
+    "./fonts.css": "./src/fonts.css"
   },
   "scripts": {
     "compile": "tsc --noEmit"

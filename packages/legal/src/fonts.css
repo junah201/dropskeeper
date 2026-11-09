@@ -1,0 +1,2 @@
+/* 약관 페이지 글꼴. popup-ui theme.css를 같이 쓰지 않는 곳(확장)에서만 legal.css와 함께 불러온다. */
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';

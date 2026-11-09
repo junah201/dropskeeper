@@ -1,5 +1,7 @@
-/* 개인정보처리방침·이용약관 페이지 공용 스타일. 확장과 소개 사이트가 같이 쓰며, 팝업과 같은 색과 글꼴을 쓴다. */
-@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
+/*
+ * 개인정보처리방침·이용약관 페이지 공용 스타일. 확장과 소개 사이트가 같이 쓰며, 팝업과 같은 색과 글꼴을 쓴다.
+ * 글꼴(Pretendard)은 여기서 불러오지 않는다. 확장은 fonts.css를, 사이트는 이미 Pretendard를 불러오는 popup-ui theme.css를 같이 쓴다.
+ */
 
 :root {
   --bg: #f6f7f9;

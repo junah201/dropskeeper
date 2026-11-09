@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { LegalPage, type LegalDoc } from '@dropskeeper/legal';
 import { uiLang, type UiLang } from '@/lib/i18n';
+import '@dropskeeper/legal/fonts.css';
 import '@dropskeeper/legal/legal.css';
 
 /**

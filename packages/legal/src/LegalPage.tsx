@@ -15,7 +15,7 @@ export interface LegalDoc {
 
 /**
  * 약관 페이지 본문. 확장은 브라우저 언어로 골라 그리고, 사이트는 빌드할 때 언어별 HTML로 만든다.
- * 스타일은 `@dropskeeper/legal/legal.css`.
+ * 스타일은 `@dropskeeper/legal/legal.css`, 글꼴은 `@dropskeeper/legal/fonts.css`(popup-ui theme.css를 쓰지 않을 때).
  */
 export function LegalPage({ doc }: { doc: LegalDoc }) {
   return (
