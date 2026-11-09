@@ -1,0 +1,31 @@
+---
+// 언어 없는 주소(/, /privacy, /terms)를 /ko/..., /en/...로 옮긴다.
+// GitHub Pages는 서버 리다이렉트가 없어서, 브라우저 언어를 JS로 보고 옮기고 JS가 꺼져 있으면 기본 언어로 옮긴다.
+import { fallbackLang, href } from '../i18n';
+
+interface Props {
+  /** '' 또는 'privacy' 같은 페이지 이름 */
+  path: string;
+}
+
+const { path } = Astro.props;
+const fallback = href(fallbackLang, path);
+---
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="noindex" />
+    <title>DropsKeeper</title>
+    <script is:inline define:vars={{ path }}>
+      const lang = (navigator.languages || [navigator.language]).some((l) => /^ko\b/i.test(l)) ? 'ko' : 'en';
+      location.replace(`/${lang}/${path}${location.search}${location.hash}`);
+    </script>
+    <meta http-equiv="refresh" content={`0; url=${fallback}`} />
+    <link rel="canonical" href={new URL(fallback, Astro.site)} />
+  </head>
+  <body>
+    <a href={fallback}>DropsKeeper</a>
+  </body>
+</html>

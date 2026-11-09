@@ -1,0 +1,38 @@
+---
+// 소개 페이지 뼈대. 내용과 디자인은 앞으로 채운다.
+import Base from '../layouts/Base.astro';
+import { copy, href, type Lang } from '../i18n';
+import '../styles/global.css';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = copy[lang];
+const other: Lang = lang === 'ko' ? 'en' : 'ko';
+
+---
+
+<Base lang={lang} title="DropsKeeper" description={t.description}>
+  <div class="min-h-screen bg-bg font-sans text-ink">
+    <header class="mx-auto flex max-w-4xl items-center justify-between px-4 py-5">
+      <a href={href(lang)} class="flex items-center gap-2 font-semibold">
+        <img src="/favicon.svg" alt="" width="24" height="24" />
+        DropsKeeper
+      </a>
+      <a href={href(other)} class="text-sm text-sub hover:text-ink">{t.otherLang}</a>
+    </header>
+
+    <main class="mx-auto max-w-4xl px-4 py-20">
+      <h1 class="text-4xl leading-tight font-bold">{t.headline}</h1>
+      <p class="mt-4 max-w-2xl text-lg text-sub">{t.lead}</p>
+      <p class="mt-10 text-sm text-faint">{t.platforms}: SOOP, CHZZK → Battle.net</p>
+    </main>
+
+    <footer class="mx-auto flex max-w-4xl gap-4 border-t border-line px-4 py-6 text-sm text-sub">
+      <a href={href(lang, 'privacy')} class="hover:text-ink">{t.privacy}</a>
+      <a href={href(lang, 'terms')} class="hover:text-ink">{t.terms}</a>
+    </footer>
+  </div>
+</Base>

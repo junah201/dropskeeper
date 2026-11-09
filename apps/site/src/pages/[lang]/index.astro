@@ -1,0 +1,9 @@
+---
+import Landing from '../../components/Landing.astro';
+import { langPaths, type Lang } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Lang;
+---
+
+<Landing lang={lang} />

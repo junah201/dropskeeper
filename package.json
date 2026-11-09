@@ -6,6 +6,8 @@
     "dev": "pnpm --filter @dropskeeper/extension dev",
     "build": "pnpm --filter @dropskeeper/extension build",
     "zip": "pnpm --filter @dropskeeper/extension zip",
+    "site:dev": "pnpm --filter @dropskeeper/site dev",
+    "site:build": "pnpm --filter @dropskeeper/site build",
     "compile": "pnpm -r compile"
   }
 }

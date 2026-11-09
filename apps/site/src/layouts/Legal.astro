@@ -1,0 +1,19 @@
+---
+// 약관 페이지. 본문과 스타일은 확장과 같은 packages/legal을 쓰고, 빌드할 때 HTML로 그린다(브라우저 JS 없음).
+import { LegalPage, type LegalDoc } from '@dropskeeper/legal';
+import '@dropskeeper/legal/legal.css';
+import Base from './Base.astro';
+import type { Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  docs: Record<Lang, LegalDoc>;
+}
+
+const { lang, docs } = Astro.props;
+const doc = docs[lang];
+---
+
+<Base lang={lang} title={`${doc.title} · DropsKeeper`}>
+  <LegalPage doc={doc} />
+</Base>

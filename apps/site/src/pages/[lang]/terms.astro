@@ -1,0 +1,10 @@
+---
+import { terms } from '@dropskeeper/legal';
+import Legal from '../../layouts/Legal.astro';
+import { langPaths, type Lang } from '../../i18n';
+
+export const getStaticPaths = langPaths;
+const lang = Astro.params.lang as Lang;
+---
+
+<Legal lang={lang} docs={terms} />
