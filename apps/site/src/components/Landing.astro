@@ -14,7 +14,6 @@ interface Props {
 const { lang } = Astro.props;
 const t = copy[lang];
 const other: Lang = lang === 'ko' ? 'en' : 'ko';
-// 데모 팝업에는 확장과 같은 문구를 쓴다
 const popup = popupText(lang, POPUP_KEYS);
 ---
 

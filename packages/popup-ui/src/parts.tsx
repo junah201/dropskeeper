@@ -22,9 +22,7 @@ export function IconBtn({ label, onClick, children }: { label: string; onClick?:
 
 export interface ShellProps {
   step: Step;
-  /** 헤더의 단계 표시 문구 */
   stepLabels: { collect: string; redeem: string };
-  /** 로고 이미지 주소 */
   logo: string;
   settingsLabel: string;
   onSettings?: () => void;
@@ -280,7 +278,6 @@ export function SelectAllBar({
   all: boolean;
   some: boolean;
   onToggle?: () => void;
-  /** "전체 선택" 문구 */
   label: string;
   /** 줄 오른쪽 끝에 붙는 버튼 (예: 다시 불러오기) */
   action?: ReactNode;
@@ -363,7 +360,6 @@ export function ExpiryLine({ text, soon, campaign, tip }: { text?: string; soon?
   );
 }
 
-/** 켜고 끄는 스위치 */
 export function Switch({ on, onChange, label, describedBy }: { on: boolean; onChange: (next: boolean) => void; label: string; describedBy?: string }) {
   return (
     <button

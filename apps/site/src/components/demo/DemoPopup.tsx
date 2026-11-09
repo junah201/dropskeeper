@@ -1,6 +1,5 @@
-// 데모용 확장 팝업. 확장과 같은 @dropskeeper/popup-ui 부품과 확장 문구로,
-// apps/extension/src/entrypoints/popup/views의 화면 구성을 그대로 따라 짠다.
-// 화면 구성을 바꾸면 views 쪽과 같이 맞춘다.
+// 데모용 확장 팝업. 확장과 같은 popup-ui 부품과 문구로 apps/extension/src/entrypoints/popup/views의 화면을 따라 짠다.
+// views의 화면 구성을 바꾸면 여기도 같이 맞춘다.
 import {
   Btn,
   BusyLabel,
