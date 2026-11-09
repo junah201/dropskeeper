@@ -142,7 +142,6 @@ export default function StepDemo({ which, kicker, title, desc, lang, stages, pop
             {which === 'extract' ? <SoopPage c={pages} claimed={extracting ?? 0} focus={extracting} /> : <BattlenetPage c={pages} state={f.bn} />}
           </div>
         </BrowserFrame>
-        <p className="mt-3 text-right font-mono text-[12px] text-faint">{pages.sample}</p>
       </div>
     </div>
   );

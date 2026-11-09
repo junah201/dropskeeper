@@ -95,7 +95,6 @@ const ko = {
     bnSuccess: '코드 등록 완료!',
     bnUsed: '이미 등록된 코드입니다.',
     bnUsedDesc: '코드는 한 번만 등록할 수 있습니다.',
-    sample: '예시 화면 · 코드는 가짜 값이에요',
   },
 };
 
@@ -171,7 +170,6 @@ const en: Copy = {
     bnSuccess: 'Code successfully redeemed!',
     bnUsed: 'You’ve already claimed this code.',
     bnUsedDesc: 'A code can only be redeemed once.',
-    sample: 'Sample screens · codes are not real',
   },
 };
 
