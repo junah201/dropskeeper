@@ -1,6 +1,6 @@
 import { handleMessages, isBackgroundMessage, sendToTab, type Result } from '@/lib/messages';
 import { recoverJob, runLoop, startJob } from '@/lib/jobs';
-import { dismissRewards, jobItem, mergeRewards, patchJob, patchReward, rewardsItem } from '@/lib/storage';
+import { dismissRewards, jobItem, mergeRewards, patchJob, patchReward, patchSettings, rewardsItem } from '@/lib/storage';
 
 export default defineBackground(() => {
   void recoverJob();
@@ -46,6 +46,9 @@ export default defineBackground(() => {
       }
       case 'job/clear':
         await jobItem.setValue(null);
+        return { ok: true };
+      case 'settings/set':
+        await patchSettings(msg.patch);
         return { ok: true };
     }
   });

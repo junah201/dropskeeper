@@ -1,5 +1,5 @@
-import type { Job, RewardEntry, RewardKey, SourceId, SourceReward } from './types';
-import { rewardKey } from './types';
+import type { Job, RewardEntry, RewardKey, Settings, SourceId, SourceReward } from './types';
+import { defaultSettings, rewardKey } from './types';
 import { isExpired } from './expiry';
 
 export const rewardsItem = storage.defineItem<Record<RewardKey, RewardEntry>>('local:rewards', {
@@ -12,6 +12,8 @@ export const jobItem = storage.defineItem<Job | null>('local:job', { fallback: n
 export const lastLoadedItem = storage.defineItem<Partial<Record<SourceId, number>>>('local:lastLoaded', {
   fallback: {},
 });
+
+export const settingsItem = storage.defineItem<Settings>('local:settings', { fallback: defaultSettings });
 
 // 여러 곳에서 동시에 고쳐도 덮어쓰지 않도록 쓰기를 한 줄로 세운다.
 // 이 줄은 실행 환경(popup, background)마다 따로 생기므로, 아래 쓰기 함수는 background에서만 호출한다.
@@ -80,5 +82,12 @@ export function patchJob(patch: (j: Job) => Partial<Job> | null) {
     const next = p === null ? null : { ...j, ...p };
     await jobItem.setValue(next);
     return next;
+  });
+}
+
+/** 설정 일부를 바꾼다. 예전 버전에서 저장한 설정에 없는 항목은 기본값으로 채운다. */
+export function patchSettings(patch: Partial<Settings>) {
+  return serial(async () => {
+    await settingsItem.setValue({ ...defaultSettings, ...(await settingsItem.getValue()), ...patch });
   });
 }

@@ -1,4 +1,4 @@
-import type { JobKind, RewardKey, SourceId, SourceReward } from './types';
+import type { JobKind, RewardKey, Settings, SourceId, SourceReward } from './types';
 import type { BnetPageState } from './redeem/battlenet/page';
 
 export type Fail = { ok: false; error: string; kind?: string };
@@ -34,7 +34,8 @@ export type BackgroundMessage =
   | { type: 'job/pause' }
   | { type: 'job/resume' }
   | { type: 'job/stop' }
-  | { type: 'job/clear' };
+  | { type: 'job/clear' }
+  | { type: 'settings/set'; patch: Partial<Settings> };
 
 type AnyMessage = SourceMessage | BnetMessage | BackgroundMessage;
 type ResponseOf<M extends AnyMessage> = M['type'] extends keyof SourceResponse
@@ -73,4 +74,4 @@ const hasType = (msg: unknown, prefix: string): boolean =>
 
 export const isSourceMessage = (m: unknown): m is SourceMessage => hasType(m, 'source/');
 export const isBnetMessage = (m: unknown): m is BnetMessage => hasType(m, 'bnet/');
-export const isBackgroundMessage = (m: unknown): m is BackgroundMessage => hasType(m, 'job/') || hasType(m, 'rewards/');
+export const isBackgroundMessage = (m: unknown): m is BackgroundMessage => hasType(m, 'job/') || hasType(m, 'rewards/') || hasType(m, 'settings/');

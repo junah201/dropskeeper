@@ -4,10 +4,39 @@ import { fmtDate, fmtExpiry } from '@/lib/expiry';
 import { sourceMetas } from '@/lib/sources/hosts';
 import soopIcon from '@/assets/sources/soop.png';
 import chzzkIcon from '@/assets/sources/chzzk.png';
+import { ArrowLeft, Settings as SettingsIcon } from 'lucide-react';
+import { usePopup } from './context';
 
 export type Step = 'collect' | 'redeem' | null;
 
-export function Shell({ step, children, footer }: { step: Step; children: ReactNode; footer?: ReactNode }) {
+/** 헤더의 아이콘 버튼. 아이콘은 lucide 16px, 선 굵기 1.5로 맞춘다. */
+function IconBtn({ label, onClick, children }: { label: string; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      title={label}
+      onClick={onClick}
+      className="grid h-8 w-8 place-items-center rounded-lg text-sub transition-colors hover:bg-bg hover:text-ink"
+    >
+      {children}
+    </button>
+  );
+}
+
+export function Shell({
+  step,
+  children,
+  footer,
+  title,
+}: {
+  step: Step;
+  children: ReactNode;
+  footer?: ReactNode;
+  /** 주면 로고 대신 뒤로 가기와 제목을 보여 준다 (설정 화면) */
+  title?: string;
+}) {
+  const { openSettings, closeSettings } = usePopup();
   const steps = [
     { id: 'collect', label: '수집' },
     { id: 'redeem', label: '등록' },
@@ -15,23 +44,39 @@ export function Shell({ step, children, footer }: { step: Step; children: ReactN
   return (
     <div className="flex h-full flex-col">
       <header className="flex h-12 items-center justify-between border-b border-line bg-panel px-4">
-        <div className="flex items-center gap-2">
-          <div className="grid h-6 w-6 place-items-center rounded-md bg-ink font-mono text-[12px] font-medium text-white">dk</div>
-          <span className="text-[14px] font-semibold">DropsKeeper</span>
-        </div>
-        <ol className="flex items-center gap-1 font-mono text-[12px]">
-          {steps.map((s, i) => {
-            const on = s.id === step;
-            return (
-              <li key={s.id} className="flex items-center gap-1">
-                {i > 0 && <span className="text-check">→</span>}
-                <span className={`rounded px-1.5 py-0.5 ${on ? 'bg-accent-soft font-medium text-accent' : 'text-faint'}`}>
-                  {i + 1} {s.label}
-                </span>
-              </li>
-            );
-          })}
-        </ol>
+        {title ? (
+          <div className="-ml-2 flex items-center gap-1">
+            <IconBtn label="뒤로" onClick={closeSettings}>
+              <ArrowLeft size={16} strokeWidth={1.5} />
+            </IconBtn>
+            <h1 className="text-[14px] font-semibold">{title}</h1>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <div className="grid h-6 w-6 place-items-center rounded-md bg-ink font-mono text-[12px] font-medium text-white">dk</div>
+              <span className="text-[14px] font-semibold">DropsKeeper</span>
+            </div>
+            <div className="-mr-2 flex items-center gap-2">
+              <ol className="flex items-center gap-1 font-mono text-[12px]">
+                {steps.map((s, i) => {
+                  const on = s.id === step;
+                  return (
+                    <li key={s.id} className="flex items-center gap-1">
+                      {i > 0 && <span className="text-check">→</span>}
+                      <span className={`rounded px-1.5 py-0.5 ${on ? 'bg-accent-soft font-medium text-accent' : 'text-faint'}`}>
+                        {i + 1} {s.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ol>
+              <IconBtn label="설정" onClick={openSettings}>
+                <SettingsIcon size={16} strokeWidth={1.5} />
+              </IconBtn>
+            </div>
+          </>
+        )}
       </header>
       <main className="min-h-0 flex-1 overflow-y-auto">{children}</main>
       {footer && <footer className="border-t border-line bg-panel px-4 py-3">{footer}</footer>}
@@ -204,8 +249,9 @@ export const mask = (code: string) => {
  * 보이는 앞뒤 글자는 진하게, 가린 자리는 옅게 그려서 코드의 생김새를 읽을 수 있게 한다.
  */
 export function CodeChip({ code, size = 'md' }: { code: string; size?: 'sm' | 'md' }) {
+  const { settings } = usePopup();
   // 가운데 조각이 여럿이어도 •••• 한 덩어리로 줄인다. 조각마다 점을 다 찍으면 칩이 길어져 이름과 만료일이 잘린다.
-  const parts = mask(code)
+  const parts = (settings.maskCodes ? mask(code) : code)
     .replace(/•[•-]*•/, '••••')
     .split(/(•+)/)
     .filter(Boolean);
@@ -259,5 +305,26 @@ export function ExpiryLine({ r }: { r: RewardEntry }) {
       {exp.text && r.campaign ? ' · ' : ''}
       {r.campaign}
     </div>
+  );
+}
+
+/** 켜고 끄는 스위치 */
+export function Switch({ on, onChange, label, describedBy }: { on: boolean; onChange: (next: boolean) => void; label: string; describedBy?: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
+      aria-describedby={describedBy}
+      onClick={() => onChange(!on)}
+      className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${on ? 'bg-accent' : 'bg-check'}`}
+    >
+      <span
+        className={`absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-150 ease-out ${
+          on ? 'translate-x-4' : 'translate-x-0'
+        }`}
+      />
+    </button>
   );
 }
