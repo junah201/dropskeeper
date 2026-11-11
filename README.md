@@ -5,7 +5,7 @@
 스트리밍 플랫폼 드롭스 보상 코드를 모아 Battle.net에 차례로 등록하는 Chrome 확장 프로그램입니다.
 지금은 SOOP·CHZZK 드롭스(오버워치)를 지원합니다.
 
-- [Chrome 웹 스토어에서 설치](https://chromewebstore.google.com/detail/coojibaldchcohkfcpjijepnifdgiema) (Brave 등 Chromium 브라우저에서도 설치할 수 있어요)
+- [Chrome 웹 스토어에서 설치](https://chromewebstore.google.com/detail/dropskeeper/coojibaldchcohkfcpjijepnifdgiema) (Brave 등 Chromium 브라우저에서도 설치할 수 있어요)
 - 소개 사이트: [dropskeeper.junah.dev](https://dropskeeper.junah.dev)
 
 | | |

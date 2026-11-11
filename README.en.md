@@ -5,7 +5,7 @@
 A Chrome extension that collects drop reward codes from streaming platforms and redeems them on Battle.net one by one.
 It currently supports SOOP and CHZZK drops (Overwatch).
 
-- [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/coojibaldchcohkfcpjijepnifdgiema) (also works in Brave and other Chromium browsers)
+- [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/dropskeeper/coojibaldchcohkfcpjijepnifdgiema) (also works in Brave and other Chromium browsers)
 - Website: [dropskeeper.junah.dev](https://dropskeeper.junah.dev/en/)
 
 | | |

@@ -16,7 +16,7 @@ export const pages = ['', 'privacy', 'terms'] as const;
 /** [lang] 페이지의 getStaticPaths */
 export const langPaths = () => langs.map((lang) => ({ params: { lang } }));
 /** 확장 설치 주소(Chrome 웹 스토어, 항목 ID로 연다). 비우면 설치 버튼을 그리지 않는다. */
-export const installUrl: string | null = 'https://chromewebstore.google.com/detail/coojibaldchcohkfcpjijepnifdgiema';
+export const installUrl: string | null = 'https://chromewebstore.google.com/detail/dropskeeper/coojibaldchcohkfcpjijepnifdgiema';
 
 /** 세부 순서 한 칸 (동작 데모 옆 목록) */
 export interface Stage {
