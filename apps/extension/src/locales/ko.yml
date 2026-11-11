@@ -114,6 +114,9 @@ reason:
   already_owned:
     label: 이미 보유한 상품
     help: 이 계정에 이미 있는 상품이에요.
+  expired:
+    label: 만료된 코드
+    help: 기한이 지나 더 이상 등록할 수 없는 코드예요.
   not_redeemable:
     label: 등록할 수 없는 코드
     help: 점검 중일 수 있어요. 나중에 다시 시도해 보세요.

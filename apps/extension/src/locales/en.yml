@@ -121,6 +121,9 @@ reason:
   already_owned:
     label: Already owned
     help: This account already owns this item.
+  expired:
+    label: Code expired
+    help: This code has expired and can't be redeemed anymore.
   not_redeemable:
     label: Code can't be redeemed
     help: Battle.net may be under maintenance. Try again later.

@@ -52,6 +52,8 @@ const PAGE_TEXTS: Record<BattlenetPageLanguage, PageTexts> = {
       ['already_used', /이미\s*등록된\s*코드/],
       // "이미 보유한 상품입니다."
       ['already_owned', /이미\s*보유한\s*상품/],
+      // "만료된 키입니다." (설명 없이 제목만 있다)
+      ['expired', /만료된\s*키/],
       // "입력한 키는 등록할 수 없습니다. … 점검 중일 수 있으니 다음에 시도해 주세요."
       ['not_redeemable', /키는\s*등록할\s*수\s*없/],
       // "해당 상품을 등록하실 수 없습니다."
@@ -71,6 +73,8 @@ const PAGE_TEXTS: Record<BattlenetPageLanguage, PageTexts> = {
       ['already_used', /already\s+claimed\s+this\s+code/i],
       // "You already have access to this product."
       ['already_owned', /already\s+have\s+access\s+to\s+this\s+product/i],
+      // "This key has expired." (설명 없이 제목만 있다)
+      ['expired', /key\s+has\s+expired/i],
       // 제목은 "Oops!"이고 설명이 "The code you entered cannot be claimed. … may be undergoing maintenance."라 설명으로 맞춘다
       ['not_redeemable', /code\s+you\s+entered\s+cannot\s+be\s+claimed/i],
     ],
