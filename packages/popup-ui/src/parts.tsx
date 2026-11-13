@@ -221,6 +221,26 @@ export function Notice({ tone, children }: { tone: Tone; children: ComponentChil
   return <div className={`rounded-lg px-3 py-2 text-[13px] leading-relaxed ${toneClass[tone]}`}>{children}</div>;
 }
 
+/** 다음에 할 일을 번호를 붙여 보여 주는 상자. hint는 단계 아래 작은 글씨로 붙는다. */
+export function NextSteps({ title, steps, hint }: { title: string; steps: ComponentChildren[]; hint?: ComponentChildren }) {
+  return (
+    <section className="rounded-[10px] border border-accent/30 bg-accent-soft px-4 py-3">
+      <h3 className="text-[13px] font-semibold text-accent">{title}</h3>
+      <ol className="mt-2 grid gap-1.5">
+        {steps.map((s, i) => (
+          <li key={i} className="flex gap-2 text-[13px] leading-snug text-ink">
+            <span className="mt-px grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-accent font-mono text-[11px] font-semibold text-white">
+              {i + 1}
+            </span>
+            <span>{s}</span>
+          </li>
+        ))}
+      </ol>
+      {hint && <p className="mt-2 text-[12px] leading-relaxed text-sub">{hint}</p>}
+    </section>
+  );
+}
+
 const figureTone = { accent: 'text-accent', ok: 'text-ok', bad: 'text-bad' } as const;
 
 /**

@@ -8,7 +8,7 @@ extDescription: 방송을 보며 받은 SOOP·CHZZK 드롭스 보상 코드를 �
 common:
   back: 뒤로
   settings: 설정
-  openSite: 사이트 열기
+  openSite: 소개 사이트 열기
   selectAll: 전체 선택
   selected: '{count}개 선택'
   delete: 삭제
@@ -78,9 +78,14 @@ extracting:
 
 extractDone:
   stopped: 추출을 중지했어요
-  done: 코드 $1개를 추출했어요
-  description: Battle.net 코드 등록 페이지에서 확장을 다시 열면 이어서 등록할 수 있어요.
-  statOk: 추출 성공
+  done: 코드 $1개를 DropsKeeper에 저장했어요
+  description: 아직 Battle.net에는 등록되지 않았어요. 코드를 붙여 넣을 필요 없이 DropsKeeper가 대신 등록해요.
+  nextTitle: 이어서 등록하기
+  step1: 아래 버튼을 눌러 Battle.net 코드 등록 페이지를 열어요
+  step2: 페이지 오른쪽 위 안내에서 "지금 등록하기"를 눌러요
+  stepHint: 안내가 안 보이면 브라우저 툴바의 DropsKeeper 아이콘을 눌러 등록해도 돼요.
+  goRedeem: Battle.net에서 등록하러 가기
+  statOk: 저장한 코드
   retryAll: 실패한 {count}개 모두 다시 시도
   backToList: 목록으로 돌아가기
 
@@ -128,9 +133,28 @@ reason:
     label: 알 수 없는 오류
     help: 아래 원문을 확인하고 다시 시도하거나 직접 등록해 보세요.
 
+card:
+  details: DropsKeeper 열기
+  close: 닫기
+  starting: 시작하는 중…
+  extractFound: 추출할 코드가 $1개 있어요
+  extractFoundDescription: 코드는 DropsKeeper에 저장되고, {name}에서는 받은 보상으로 표시돼요.
+  extractStart: 지금 추출하기
+  extracting: 코드 추출 중 {done}/{total}
+  extractingDescription: 끝날 때까지 이 탭을 열어 두세요.
+  extractDoneDescription: 아직 Battle.net에는 등록되지 않았어요. 등록 페이지로 가서 이어서 등록하세요.
+  extractSomeFailed: '{count}개는 추출하지 못했어요. DropsKeeper를 열어 다시 시도하세요.'
+  extractNone: 코드를 추출하지 못했어요
+  extractNoneDescription: DropsKeeper를 열어 이유를 확인하고 다시 시도하세요.
+  redeemFound: 등록할 코드가 $1개 있어요
+  redeemDescription: 이 탭에서 하나씩 대신 등록해요. 진행 상황은 DropsKeeper를 열어 확인하세요.
+  redeemStart: 지금 등록하기
+
 settings:
   maskCodes: 코드 가리기
   maskCodesDescription: 목록에 보이는 코드의 가운데를 가려요. 복사 버튼은 설정과 상관없이 전체 코드를 복사해요.
+  pageHints: 페이지에 안내 띄우기
+  pageHintsDescription: 드롭스 인벤토리에서는 추출할 코드를, Battle.net 등록 페이지에서는 등록할 코드를 오른쪽 위에 알려 줘요. 인벤토리를 열면 보상 목록을 자동으로 확인해요.
   site: 소개 사이트
   privacy: 개인정보처리방침
   terms: 서비스 이용약관
@@ -146,6 +170,9 @@ msg:
   battlenetLogin: Battle.net 로그인이 필요해요. 로그인한 뒤 재개를 눌러 주세요.
   tooManyUnknown: 알 수 없는 오류가 {count}번 연속으로 나서 멈췄어요. 페이지 상태를 확인해 주세요.
   noExtractedCode: 추출된 코드가 없어요.
+  noPendingCodes: 등록할 코드가 없어요. 드롭스 인벤토리에서 먼저 코드를 추출하세요.
+  noExtractableCodes: 추출할 코드가 없어요. 이미 모두 추출했거나 기한이 지났어요.
+  popupOpenFailed: DropsKeeper를 열지 못했어요. 브라우저 툴바의 DropsKeeper 아이콘을 직접 눌러 주세요.
   resultUnconfirmed: 확인 버튼을 눌렀지만 결과를 확인하지 못했어요.
   pageUnreadable: '화면을 해석하지 못했어요: {text}'
   redeemPageMissing: 등록 화면을 찾지 못했어요.

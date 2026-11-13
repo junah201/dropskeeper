@@ -25,18 +25,26 @@ export type BnetResponse = {
 };
 
 /**
- * popup → background.
+ * popup·페이지 안내 카드 → background.
  * 저장소 쓰기는 모두 background에서 하도록 popup은 이 메시지로 요청만 보낸다.
  */
 export type BackgroundMessage =
   | { type: 'rewards/load'; sourceId: SourceId; tabId: number }
+  /** 드롭스 페이지 안내에서 보낸다. 보낸 탭에서 목록을 불러온다. */
+  | { type: 'rewards/loadHere'; sourceId: SourceId }
   | { type: 'rewards/dismiss'; keys: RewardKey[] }
   | { type: 'job/start'; kind: JobKind; tabId: number; keys: RewardKey[] }
+  /** Battle.net 페이지 안내에서 보낸다. 보낸 탭에서 등록 대기 코드를 모두 등록한다. */
+  | { type: 'job/redeemPending' }
+  /** 드롭스 페이지 안내에서 보낸다. 보낸 탭에서 추출할 코드(extractCandidates)를 모두 추출한다. */
+  | { type: 'job/extractPending'; sourceId: SourceId }
   | { type: 'job/pause' }
   | { type: 'job/resume' }
   | { type: 'job/stop' }
   | { type: 'job/clear' }
-  | { type: 'settings/set'; patch: Partial<Settings> };
+  | { type: 'settings/set'; patch: Partial<Settings> }
+  /** 페이지 안내 카드의 "자세히 보기". 툴바 아이콘 아래에 확장 팝업을 연다. */
+  | { type: 'ui/openPopup' };
 
 type AnyMessage = SourceMessage | BnetMessage | BackgroundMessage;
 type ResponseOf<M extends AnyMessage> = M['type'] extends keyof SourceResponse
@@ -75,4 +83,4 @@ const hasType = (msg: unknown, prefix: string): boolean =>
 
 export const isSourceMessage = (m: unknown): m is SourceMessage => hasType(m, 'source/');
 export const isBnetMessage = (m: unknown): m is BnetMessage => hasType(m, 'bnet/');
-export const isBackgroundMessage = (m: unknown): m is BackgroundMessage => hasType(m, 'job/') || hasType(m, 'rewards/') || hasType(m, 'settings/');
+export const isBackgroundMessage = (m: unknown): m is BackgroundMessage => hasType(m, 'job/') || hasType(m, 'rewards/') || hasType(m, 'settings/') || hasType(m, 'ui/');

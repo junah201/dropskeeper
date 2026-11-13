@@ -4,7 +4,7 @@ import type { LegalDoc, LegalLang } from './LegalPage';
 export const privacy: Record<LegalLang, LegalDoc> = {
   ko: {
     title: '개인정보처리방침',
-    effective: '시행일: 2026년 11월 9일',
+    effective: '시행일: 2026년 11월 14일',
     lead: (
       <>
         DropsKeeper(이하 "확장 프로그램")는 스트리밍 플랫폼 드롭스 보상 코드를 모아 Battle.net에 등록하도록 돕는 브라우저 확장 프로그램입니다.
@@ -49,7 +49,7 @@ export const privacy: Record<LegalLang, LegalDoc> = {
             </tr>
             <tr>
               <td>설정</td>
-              <td>코드 가리기 같은 화면 설정</td>
+              <td>코드 가리기, 페이지 안내 표시 같은 화면 설정</td>
             </tr>
           </tbody>
         </table>
@@ -71,6 +71,11 @@ export const privacy: Record<LegalLang, LegalDoc> = {
             <strong>Battle.net</strong> (<code>kr·us·eu·tw.checkout.battle.net</code>, <code>account.battle.net</code>): 코드 등록과 결과 확인
           </li>
         </ul>
+        <p>
+          SOOP·CHZZK 드롭스 인벤토리 페이지를 열거나 그 페이지에서 팝업을 열면, 추출할 코드가 있는지 알려 드리기 위해 보상 목록을 자동으로
+          조회합니다. 최근 10분 안에 조회한 적이 있으면 다시 조회하지 않습니다. 코드 추출과 등록은 이용자가 버튼을 누를 때만 시작합니다. 설정에서
+          "페이지에 안내 띄우기"를 끄면 인벤토리 페이지를 열어도 보상 목록을 자동으로 조회하지 않습니다.
+        </p>
         <p>
           또한 팝업에 보상 이미지를 표시하기 위해 각 플랫폼이 제공한 이미지 주소를 불러옵니다. 이 과정에서 각 사이트가 받는 정보는 이용자가 그 사이트를
           직접 방문할 때와 같으며, 각 사이트의 개인정보처리방침이 적용됩니다. 위 사이트 외의 다른 곳으로는 어떠한 정보도 보내지 않습니다.
@@ -124,7 +129,7 @@ export const privacy: Record<LegalLang, LegalDoc> = {
 
   en: {
     title: 'Privacy Policy',
-    effective: 'Effective date: November 9, 2026',
+    effective: 'Effective date: November 14, 2026',
     lead: (
       <>
         DropsKeeper (the "Extension") is a browser extension that helps you collect drop reward codes from streaming platforms and redeem them on
@@ -172,7 +177,7 @@ export const privacy: Record<LegalLang, LegalDoc> = {
             </tr>
             <tr>
               <td>Settings</td>
-              <td>Display settings such as hiding codes</td>
+              <td>Display settings such as hiding codes and showing on-page prompts</td>
             </tr>
           </tbody>
         </table>
@@ -195,6 +200,12 @@ export const privacy: Record<LegalLang, LegalDoc> = {
             results
           </li>
         </ul>
+        <p>
+          When you open a SOOP or CHZZK drops inventory page, or open the popup on one, the Extension automatically loads your reward list so it can tell
+          you whether there are codes to extract. It does not load the list again if it did so within the last 10 minutes. Extracting and redeeming codes
+          only start when you press a button. If you turn off "Show on-page prompts" in the settings, the list is not loaded automatically when you open an
+          inventory page.
+        </p>
         <p>
           The Extension also loads the reward image URLs provided by each platform to show them in the popup. Each site receives the same information as when
           you visit it yourself, and that site's privacy policy applies. No information is sent anywhere other than the sites above.

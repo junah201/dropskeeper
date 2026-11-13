@@ -24,6 +24,8 @@ export interface SourceMeta {
   name: string;
   /** 드롭스 인벤토리 페이지 주소 */
   inventoryUrl: string;
+  /** 인벤토리 페이지인지 가리는 주소 패턴. 이 페이지에서만 목록을 자동으로 불러오고 안내 카드를 띄운다. */
+  inventoryPattern: RegExp;
   /** content script와 host_permissions에 쓰는 match pattern */
   matches: string[];
   /** 플랫폼이 '획득 완료'(코드를 이미 받아 감) 여부를 알려 주는지. false면 관련 필터를 숨긴다. */

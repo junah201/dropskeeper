@@ -83,8 +83,13 @@ export interface Job {
 export interface Settings {
   /** 화면에 보이는 코드 가운데를 ••••로 가린다. 복사는 설정과 상관없이 전체 코드로 한다. */
   maskCodes: boolean;
+  /**
+   * 드롭스 인벤토리와 Battle.net 등록 페이지에 안내 카드를 띄운다.
+   * 켜져 있으면 인벤토리를 열 때 보상 목록을 자동으로 불러와 추출할 코드를 센다.
+   */
+  pageHints: boolean;
 }
 
-export const defaultSettings: Settings = { maskCodes: true };
+export const defaultSettings: Settings = { maskCodes: true, pageHints: true };
 
 export const isDefined = <T,>(v: T | undefined | null): v is T => v != null;

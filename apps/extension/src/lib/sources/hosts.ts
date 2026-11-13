@@ -7,6 +7,7 @@ export const sourceMetas: Record<SourceId, SourceMeta> = {
     id: 'soop',
     name: 'SOOP',
     inventoryUrl: 'https://drops.sooplive.com/inventory',
+    inventoryPattern: /^https:\/\/drops\.sooplive\.com\/inventory(?:[/?#]|$)/,
     matches: ['https://drops.sooplive.com/*'],
     tracksClaimed: true,
   },
@@ -14,6 +15,8 @@ export const sourceMetas: Record<SourceId, SourceMeta> = {
     id: 'chzzk',
     name: 'CHZZK',
     inventoryUrl: 'https://game.naver.com/profile#drops',
+    // 인벤토리는 프로필 페이지의 #drops 탭이다
+    inventoryPattern: /^https:\/\/game\.naver\.com\/profile(?:[/?][^#]*)?#drops(?:[/?&]|$)/,
     matches: ['https://game.naver.com/*'],
     tracksClaimed: false,
   },

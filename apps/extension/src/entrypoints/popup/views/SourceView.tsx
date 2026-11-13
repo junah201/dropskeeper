@@ -4,7 +4,7 @@ import { i18n } from '#i18n';
 import { sendToBackground } from '@/lib/messages';
 import { msg, tx, type LocalText } from '@/lib/i18n';
 import { sourceMetas } from '@/lib/sources/hosts';
-import { lastLoadedItem } from '@/lib/storage';
+import { lastLoadedItem, needsAutoLoad } from '@/lib/storage';
 import { defaultBattlenetSite, keyClaimPageUrl } from '@/lib/redeem/battlenet/constants';
 import { uiLang } from '@/lib/i18n';
 import type { Job, RewardEntry, RewardKey, SourceId } from '@/lib/types';
@@ -12,7 +12,7 @@ import { isDefined, rewardKey } from '@/lib/types';
 import { fmtDateTime, isExpired } from '@/lib/expiry';
 import { useStored } from '../hooks';
 import { BusyLabel, ChipBtn, FailCard, FilterChip, FootNote, Hint, IntroBody, ProgressHeader, ProgressList, ProgressRow, QuietTag, RewardRow, StatusText, TextBtn } from '@dropskeeper/popup-ui';
-import { Btn, CodeChip, Notice, ExpiryLine, Rich, SelectAllBar, SelectedCount, Shell, StatGrid, Tag } from '../ui';
+import { Btn, CodeChip, NextSteps, Notice, ExpiryLine, Rich, SelectAllBar, SelectedCount, Shell, StatGrid, Tag } from '../ui';
 
 interface Props {
   sourceId: SourceId;
@@ -48,7 +48,8 @@ async function loadRewards(sourceId: SourceId, tabId: number): Promise<LocalText
 function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; tabId: number; list: RewardEntry[]; jobBusy: boolean }) {
   const meta = sourceMetas[sourceId];
   const lastLoaded = useStored(lastLoadedItem)?.[sourceId];
-  const [loading, setLoading] = useState(false);
+  // 목록이 비어 있으면 열자마자 불러오므로 처음부터 불러오는 중으로 그린다(버튼이 잠깐 보였다 바뀌지 않게)
+  const [loading, setLoading] = useState(list.length === 0);
   const [error, setError] = useState<LocalText | null>(null);
   const [selected, setSelected] = useState<Set<RewardKey>>(new Set());
   const [hideExtracted, setHideExtracted] = useState(false);
@@ -61,6 +62,11 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
     setError(await loadRewards(sourceId, tabId));
     setLoading(false);
   };
+
+  // 팝업을 열면 목록을 바로 불러온다. 목록이 있어도 오래됐으면 새로 불러온다.
+  useEffect(() => {
+    void lastLoadedItem.getValue().then((l) => (list.length === 0 || needsAutoLoad(l[sourceId]) ? load() : setLoading(false)));
+  }, []);
 
   const visible = useMemo(
     () =>
@@ -301,7 +307,7 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
             </Btn>
           )}
           <Btn kind={ok.length > 0 ? undefined : 'ghost'} full onClick={() => browser.tabs.create({ url: keyClaimPageUrl(defaultBattlenetSite(uiLang())) })}>
-            {i18n.t('common.openRedeemPage')}
+            {i18n.t('extractDone.goRedeem')}
           </Btn>
           <Btn kind="ghost" full onClick={() => sendToBackground({ type: 'job/clear' })}>
             {i18n.t('extractDone.backToList')}
@@ -313,7 +319,19 @@ function ExtractDone({ job, rewards }: { job: Job; rewards: Record<RewardKey, Re
         <h2 className="text-[16px] font-semibold">
           {job.status === 'stopped' ? i18n.t('extractDone.stopped') : i18n.t('extractDone.done', ok.length)}
         </h2>
-        <p className="mt-1 text-[13px] text-sub">{i18n.t('extractDone.description')}</p>
+        {/* 추출을 클립보드 복사로 오해하거나 다음 할 일을 몰라 멈추는 일이 많아, 저장한 코드가 있으면 다음 단계를 먼저 보여 준다 */}
+        {ok.length > 0 && (
+          <>
+            <p className="mt-1 text-[13px] leading-relaxed text-sub">{i18n.t('extractDone.description')}</p>
+            <div className="mt-4">
+              <NextSteps
+                title={i18n.t('extractDone.nextTitle')}
+                steps={[i18n.t('extractDone.step1'), i18n.t('extractDone.step2')]}
+                hint={i18n.t('extractDone.stepHint')}
+              />
+            </div>
+          </>
+        )}
         <div className="mt-4">
           <StatGrid
             items={[

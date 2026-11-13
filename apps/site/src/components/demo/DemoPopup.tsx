@@ -11,6 +11,7 @@ import {
   FootNote,
   Hint,
   IntroBody,
+  NextSteps,
   ProgressHeader,
   ProgressList,
   ProgressRow,
@@ -60,14 +61,12 @@ const pauseStop = (t: T) => (
 export function DemoPopup({ scene, t }: { scene: Scene; t: T }) {
   switch (scene.kind) {
     // SourceView B1
-    case 'intro':
     case 'loading': {
-      const loading = scene.kind === 'loading';
       return (
         <Frame t={t} step="collect">
           <IntroBody title={t('source.introTitle', { name: 'SOOP' })} description={t('source.introDescription')}>
-            <Btn full className={scene.kind === 'intro' && scene.pressing ? pressed : ''}>
-              {loading ? <BusyLabel icon={<LoaderCircle size={16} strokeWidth={2} className="demo-spin" aria-hidden />}>{t('source.loading')}</BusyLabel> : t('source.load')}
+            <Btn full>
+              <BusyLabel icon={<LoaderCircle size={16} strokeWidth={2} className="demo-spin" aria-hidden />}>{t('source.loading')}</BusyLabel>
             </Btn>
             <Hint>{t('source.loadHint')}</Hint>
           </IntroBody>
@@ -150,7 +149,7 @@ export function DemoPopup({ scene, t }: { scene: Scene; t: T }) {
           step="collect"
           footer={
             <div className="grid gap-2">
-              <Btn full>{t('common.openRedeemPage')}</Btn>
+              <Btn full>{t('extractDone.goRedeem')}</Btn>
               <Btn kind="ghost" full>
                 {t('extractDone.backToList')}
               </Btn>
@@ -159,7 +158,14 @@ export function DemoPopup({ scene, t }: { scene: Scene; t: T }) {
         >
           <div className="px-4 pb-4 pt-6">
             <h2 className="text-[16px] font-semibold">{t('extractDone.done', {}, N)}</h2>
-            <p className="mt-1 text-[13px] text-sub">{t('extractDone.description')}</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-sub">{t('extractDone.description')}</p>
+            <div className="mt-4">
+              <NextSteps
+                title={t('extractDone.nextTitle')}
+                steps={[t('extractDone.step1'), t('extractDone.step2')]}
+                hint={t('extractDone.stepHint')}
+              />
+            </div>
             <div className="mt-4">
               <StatGrid
                 items={[

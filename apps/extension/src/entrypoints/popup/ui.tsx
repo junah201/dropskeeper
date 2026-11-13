@@ -8,7 +8,7 @@ import { siteUrl } from '@/lib/site';
 import * as UI from '@dropskeeper/popup-ui';
 import { usePopup } from './context';
 
-export { Bar, Btn, Check, Counts, FilterChip, Notice, Rich, StatGrid, Switch, Tag, mask, type Step, type Tone } from '@dropskeeper/popup-ui';
+export { Bar, Btn, Check, Counts, FilterChip, NextSteps, Notice, Rich, StatGrid, Switch, Tag, mask, type Step, type Tone } from '@dropskeeper/popup-ui';
 
 export function Shell({
   step,

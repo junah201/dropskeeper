@@ -10,7 +10,7 @@ extDescription: Collects the drop reward codes you earn watching SOOP and CHZZK 
 common:
   back: Back
   settings: Settings
-  openSite: Open website
+  openSite: Open DropsKeeper website
   selectAll: Select all
   selected: '{count} selected'
   delete: Delete
@@ -81,10 +81,15 @@ extracting:
 extractDone:
   stopped: Extraction stopped
   done:
-    1: Extracted 1 code
-    n: Extracted $1 codes
-  description: Open the extension again on the Battle.net redeem page to continue redeeming.
-  statOk: Extracted
+    1: Saved 1 code to DropsKeeper
+    n: Saved $1 codes to DropsKeeper
+  description: They're not on Battle.net yet. You don't need to paste them. DropsKeeper redeems them for you.
+  nextTitle: Next, redeem them
+  step1: Click the button below to open the Battle.net redeem page
+  step2: Click "Redeem now" in the prompt at the top right
+  stepHint: Don't see the prompt? Click the DropsKeeper icon in your browser toolbar instead.
+  goRedeem: Redeem on Battle.net
+  statOk: Saved
   retryAll: Retry all failed ({count})
   backToList: Back to list
 
@@ -135,9 +140,32 @@ reason:
     label: Unknown error
     help: Check the original message below, then try again or redeem it yourself.
 
+card:
+  details: Open DropsKeeper
+  close: Close
+  starting: Starting…
+  extractFound:
+    1: 1 code ready to extract
+    n: $1 codes ready to extract
+  extractFoundDescription: Codes are saved to DropsKeeper, and {name} will show these rewards as claimed.
+  extractStart: Extract now
+  extracting: Extracting codes {done}/{total}
+  extractingDescription: Keep this tab open until it finishes.
+  extractDoneDescription: They're not on Battle.net yet. Go to the redeem page to finish.
+  extractSomeFailed: "{count} couldn't be extracted. Open DropsKeeper to try again."
+  extractNone: Couldn't extract any codes
+  extractNoneDescription: Open DropsKeeper to see why, then try again.
+  redeemFound:
+    1: 1 code ready to redeem
+    n: $1 codes ready to redeem
+  redeemDescription: DropsKeeper redeems them one by one in this tab. Open DropsKeeper to see progress.
+  redeemStart: Redeem now
+
 settings:
   maskCodes: Hide codes
   maskCodesDescription: Hides the middle of codes in lists. The copy button always copies the full code.
+  pageHints: Show on-page prompts
+  pageHintsDescription: Shows codes to extract on your drops inventory and codes to redeem on the Battle.net redeem page. Your reward list is checked automatically when you open the inventory.
   site: Website
   privacy: Privacy Policy
   terms: Terms of Service
@@ -154,6 +182,9 @@ msg:
   battlenetLogin: Sign in to Battle.net, then press Resume.
   tooManyUnknown: Stopped after {count} unknown errors in a row. Check the page.
   noExtractedCode: No extracted code.
+  noPendingCodes: No codes to redeem. Extract codes from your drops inventory first.
+  noExtractableCodes: No codes to extract. They're already extracted or expired.
+  popupOpenFailed: Couldn't open DropsKeeper. Click its icon in your browser toolbar.
   resultUnconfirmed: Pressed the confirm button but couldn't read the result.
   pageUnreadable: "Couldn't read the page: {text}"
   redeemPageMissing: Couldn't find the redeem page.

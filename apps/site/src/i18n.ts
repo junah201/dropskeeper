@@ -52,7 +52,7 @@ const ko = {
     title: '드롭스 인벤토리에서 코드 추출',
     desc: 'SOOP이나 CHZZK의 드롭스 인벤토리 탭에서 확장 팝업을 여세요.',
     stages: [
-      { label: '보상 목록 불러오기', desc: '로그인된 계정의 보상을 한 번에 가져와요' },
+      { label: '보상 목록 불러오기', desc: '팝업을 열면 로그인된 계정의 보상을 바로 가져와요' },
       { label: '추출할 보상 고르기', desc: '유효기간이 남은 오버워치 코드형 보상만 나와요' },
       { label: '코드 추출', desc: '고른 보상의 코드만 받아 등록 대기열에 쌓아요' },
     ],
@@ -140,7 +140,7 @@ const en: Copy = {
     title: 'Extract codes from your drops inventory',
     desc: 'Open the extension popup on your SOOP or CHZZK drops inventory tab.',
     stages: [
-      { label: 'Load rewards', desc: 'Fetches every reward on your signed-in account' },
+      { label: 'Load rewards', desc: 'Fetches every reward on your signed-in account when you open the popup' },
       { label: 'Pick rewards to extract', desc: 'Only Overwatch code rewards that have not expired are listed' },
       { label: 'Extract codes', desc: 'Only the rewards you pick get codes, added to the redeem queue' },
     ],

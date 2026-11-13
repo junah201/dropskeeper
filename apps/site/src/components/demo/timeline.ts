@@ -3,7 +3,6 @@ import { FAIL_AT, N } from './data';
 
 /** 팝업 화면. 이름은 확장의 views(SourceView, RedeemView) 화면과 맞춘다. */
 export type Scene =
-  | { kind: 'intro'; pressing?: boolean }
   | { kind: 'loading' }
   | { kind: 'list'; checked: number; pressing?: boolean }
   | { kind: 'extracting'; done: number }
@@ -76,8 +75,8 @@ const steps = (n: number, step: number) => Array.from({ length: n }, (_, k) => (
 /** 1단계: 드롭스 인벤토리에서 보상을 불러와 고르고 코드를 추출한다 */
 export const extractLine = make(
   [
-    { stage: 0, ms: 1300, at: (l, ms) => ({ scene: { kind: 'intro', pressing: l >= ms - PRESS }, bn: form, cur: 0 }), cuts: (ms) => [ms - PRESS] },
-    { stage: 0, ms: 700, at: () => ({ scene: { kind: 'loading' }, bn: form, cur: 0 }) },
+    // 팝업을 열면 목록을 바로 불러온다
+    { stage: 0, ms: 1500, at: () => ({ scene: { kind: 'loading' }, bn: form, cur: 0 }) },
     {
       stage: 1,
       ms: N * 260 + 700,
@@ -90,9 +89,9 @@ export const extractLine = make(
       at: (l) => ({ scene: { kind: 'extracting', done: Math.min(N, Math.floor(l / 380)) }, bn: form, cur: 0 }),
       cuts: () => steps(N, 380),
     },
-    { stage: 2, ms: 2200, at: () => ({ scene: { kind: 'extractDone' }, bn: form, cur: 0 }) },
+    { stage: 2, ms: 4000, at: () => ({ scene: { kind: 'extractDone' }, bn: form, cur: 0 }) },
   ],
-  2000 + N * 260 + 700 + 4 * 380,
+  1500 + N * 260 + 700 + 4 * 380,
 );
 
 const PER = 1100;

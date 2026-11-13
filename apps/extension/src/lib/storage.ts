@@ -12,6 +12,10 @@ export const lastLoadedItem = storage.defineItem<Partial<Record<SourceId, number
   fallback: {},
 });
 
+/** 이 시간 안에 불러온 적이 있으면 자동으로 다시 불러오지 않는다. 열 때마다 플랫폼 API를 부르지 않기 위해서다. */
+const AUTO_LOAD_INTERVAL = 10 * 60_000;
+export const needsAutoLoad = (lastLoaded: number | undefined, now = Date.now()) => lastLoaded == null || now - lastLoaded >= AUTO_LOAD_INTERVAL;
+
 export const settingsItem = storage.defineItem<Settings>('local:settings', { fallback: defaultSettings });
 
 // 동시에 고쳐도 덮어쓰지 않도록 쓰기를 한 줄로 세운다. 이 줄은 실행 환경마다 따로 생기므로

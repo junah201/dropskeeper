@@ -29,6 +29,14 @@ export function SettingsView() {
           >
             <CodeChip code={SAMPLE_CODE} />
           </SettingRow>
+          <div className="border-t border-line">
+            <SettingRow
+              title={i18n.t('settings.pageHints')}
+              description={i18n.t('settings.pageHintsDescription')}
+              on={settings.pageHints}
+              onChange={(pageHints) => set({ pageHints })}
+            />
+          </div>
         </section>
 
         <div className="mt-auto flex justify-center gap-3 pt-6 text-[12px] text-faint">
