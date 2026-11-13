@@ -43,7 +43,7 @@ export type BackgroundMessage =
   | { type: 'job/stop' }
   | { type: 'job/clear' }
   | { type: 'settings/set'; patch: Partial<Settings> }
-  /** 페이지 안내 카드의 "자세히 보기". 툴바 아이콘 아래에 확장 팝업을 연다. */
+  /** 페이지 안내 카드의 "DropsKeeper 열기". 툴바 아이콘 아래에 확장 팝업을 연다. */
   | { type: 'ui/openPopup' };
 
 type AnyMessage = SourceMessage | BnetMessage | BackgroundMessage;

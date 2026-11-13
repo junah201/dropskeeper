@@ -5,7 +5,6 @@ import { sourceMetas } from './sources/hosts';
 /** 정렬용 만료 시각. 만료일이 없으면 맨 뒤로 보낸다. */
 const expiryOrder = (r: RewardEntry) => parseDate(r.expiresAt) ?? Infinity;
 
-/** 등록 순서: 실패한 코드는 뒤로, 그 안에서는 만료가 가까운 순(만료일 없는 것은 맨 뒤), 같으면 이름순 */
 export const redeemOrder = (a: RewardEntry, b: RewardEntry) =>
   Number(a.redeem.status === 'failed') - Number(b.redeem.status === 'failed') ||
   expiryOrder(a) - expiryOrder(b) ||

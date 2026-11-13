@@ -63,7 +63,6 @@ function RewardList({ sourceId, tabId, list, jobBusy }: { sourceId: SourceId; ta
     setLoading(false);
   };
 
-  // 팝업을 열면 목록을 바로 불러온다. 목록이 있어도 오래됐으면 새로 불러온다.
   useEffect(() => {
     void lastLoadedItem.getValue().then((l) => (list.length === 0 || needsAutoLoad(l[sourceId]) ? load() : setLoading(false)));
   }, []);

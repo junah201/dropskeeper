@@ -85,7 +85,7 @@ export class PageCard {
   private closed = false;
   private busy = false;
   private state: CardState | null = null;
-  /** 브라우저가 팝업 열기를 지원하지 않으면 "자세히 보기"를 숨긴다 */
+  /** 브라우저가 팝업 열기를 지원하지 않으면 "DropsKeeper 열기"를 숨긴다 */
   private noPopup = false;
 
   /** null이면 숨긴다. 사용자가 닫았으면 이 페이지에서는 다시 띄우지 않는다. */

@@ -75,7 +75,6 @@ const steps = (n: number, step: number) => Array.from({ length: n }, (_, k) => (
 /** 1단계: 드롭스 인벤토리에서 보상을 불러와 고르고 코드를 추출한다 */
 export const extractLine = make(
   [
-    // 팝업을 열면 목록을 바로 불러온다
     { stage: 0, ms: 1500, at: () => ({ scene: { kind: 'loading' }, bn: form, cur: 0 }) },
     {
       stage: 1,
