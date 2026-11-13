@@ -66,6 +66,18 @@ src/
     messages.ts            internal message types
 ```
 
+## Flow
+
+Rewards are loaded and codes extracted in the drops tab, then the codes are redeemed one by one in the Battle.net tab. The background runs every job and is the only part that writes to storage.
+
+![DropsKeeper overview](docs/flow/overview.en.png)
+
+How one code is redeemed by reading the Battle.net page:
+
+![Redeeming one code](docs/flow/redeem.en.png)
+
+The source is [docs/flow/flow.en.drawio](docs/flow/flow.en.drawio), which you can open and edit in draw.io.
+
 ## Adding a drops platform
 
 1. Add an id to `SourceId` in `src/lib/types.ts` (e.g. `'twitch'`)

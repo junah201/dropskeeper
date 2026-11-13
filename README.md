@@ -66,6 +66,18 @@ src/
     messages.ts            확장 내부 메시지 타입
 ```
 
+## 동작 흐름
+
+드롭스 탭에서 보상 목록을 불러와 코드를 추출하고, Battle.net 탭에서 코드를 차례로 등록합니다. 작업은 background가 돌리고 저장소 쓰기도 background만 합니다.
+
+![DropsKeeper 전체 흐름](docs/flow/overview.ko.png)
+
+코드 하나를 등록할 때 Battle.net 화면을 읽고 판단하는 과정입니다.
+
+![코드 하나 등록하기](docs/flow/redeem.ko.png)
+
+원본은 [docs/flow/flow.ko.drawio](docs/flow/flow.ko.drawio)이고 draw.io에서 열어 고칠 수 있습니다.
+
 ## 새 드롭스 플랫폼 추가하기
 
 1. `src/lib/types.ts`의 `SourceId`에 id 추가 (예: `'twitch'`)

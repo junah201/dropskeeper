@@ -1,0 +1,253 @@
+<mxfile host="localhost" pages="2">
+  <diagram id="overview" name="전체 흐름">
+    <mxGraphModel dx="1969" dy="2162" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="text;fontSize=18;align=left;verticalAlign=middle;whiteSpace=wrap;html=1;" value="&lt;b&gt;DropsKeeper 전체 흐름&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="400" x="20" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="L1" parent="1" style="swimlane;startSize=36;fillColor=#fff2cc;strokeColor=#d6b656;swimlaneFillColor=#fffdf3;whiteSpace=wrap;html=1;" value="사용자" vertex="1">
+          <mxGeometry height="840" width="220" x="20" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="L2" parent="1" style="swimlane;startSize=36;fillColor=#d5e8d4;strokeColor=#82b366;swimlaneFillColor=#f6fbf5;whiteSpace=wrap;html=1;" value="안내 카드 · 팝업" vertex="1">
+          <mxGeometry height="840" width="220" x="240" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="L3" parent="1" style="swimlane;startSize=36;fillColor=#dae8fc;strokeColor=#6c8ebf;swimlaneFillColor=#f4f8fe;whiteSpace=wrap;html=1;" value="background (작업 실행기)" vertex="1">
+          <mxGeometry height="840" width="220" x="460" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="L4" parent="1" style="swimlane;startSize=36;fillColor=#e1d5e7;strokeColor=#9673a6;swimlaneFillColor=#faf6fc;whiteSpace=wrap;html=1;" value="SOOP·CHZZK 탭 (content script)" vertex="1">
+          <mxGeometry height="840" width="220" x="680" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="L5" parent="1" style="swimlane;startSize=36;fillColor=#ffe6cc;strokeColor=#d79b00;swimlaneFillColor=#fffaf4;whiteSpace=wrap;html=1;" value="Battle.net 탭 (content script)" vertex="1">
+          <mxGeometry height="840" width="220" x="900" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="U1" parent="1" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;whiteSpace=wrap;html=1;" value="드롭스 인벤토리 열기&lt;br&gt;(플랫폼에 로그인)" vertex="1">
+          <mxGeometry height="60" width="150" x="55" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="C1" parent="1" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" value="안내 카드가 자동으로&lt;br&gt;또는 팝업에서&lt;br&gt;목록 불러오기" vertex="1">
+          <mxGeometry height="60" width="150" x="275" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="B1" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="loadRewards()" vertex="1">
+          <mxGeometry height="60" width="150" x="495" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="S1" parent="1" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;whiteSpace=wrap;html=1;" value="listRewards()&lt;br&gt;플랫폼 API 호출&lt;br&gt;(1st-party 쿠키)" vertex="1">
+          <mxGeometry height="60" width="150" x="715" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="B2" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="mergeRewards()&lt;br&gt;보상 목록 저장" vertex="1">
+          <mxGeometry height="60" width="150" x="495" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="C2" parent="1" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" value="추출할 코드 N개 안내&lt;br&gt;&lt;b&gt;&#39;지금 추출하기&#39;&lt;/b&gt; 클릭" vertex="1">
+          <mxGeometry height="60" width="150" x="275" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="B3" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="startJob(&#39;extract&#39;)&lt;br&gt;runLoop()" vertex="1">
+          <mxGeometry height="60" width="150" x="495" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="B4" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="보상마다 코드 요청&lt;br&gt;(EXTRACT_DELAY 간격)" vertex="1">
+          <mxGeometry height="60" width="150" x="495" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="S2" parent="1" style="rounded=1;fillColor=#e1d5e7;strokeColor=#9673a6;whiteSpace=wrap;html=1;" value="extractCode()&lt;br&gt;코드 문자열 반환" vertex="1">
+          <mxGeometry height="60" width="150" x="715" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="B5" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="코드 저장&lt;br&gt;툴바 배지에 대기 수" vertex="1">
+          <mxGeometry height="60" width="150" x="495" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="C3" parent="1" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" value="추출 완료 카드&lt;br&gt;Battle.net 등록&lt;br&gt;페이지로 안내" vertex="1">
+          <mxGeometry height="60" width="150" x="275" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="U3" parent="1" style="rounded=1;fillColor=#fff2cc;strokeColor=#d6b656;whiteSpace=wrap;html=1;" value="Battle.net 코드 등록&lt;br&gt;페이지 열기&lt;br&gt;(kr·us·eu·tw / ko·en)" vertex="1">
+          <mxGeometry height="60" width="150" x="55" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="N1" parent="1" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" value="등록 대기 N개 안내&lt;br&gt;&lt;b&gt;&#39;등록 시작&#39;&lt;/b&gt; 클릭&lt;br&gt;(또는 팝업)" vertex="1">
+          <mxGeometry height="60" width="150" x="275" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="B6" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="startJob(&#39;redeem&#39;)&lt;br&gt;탭의 지역·언어 확인" vertex="1">
+          <mxGeometry height="60" width="150" x="495" y="580" as="geometry" />
+        </mxCell>
+        <mxCell id="B7" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="코드마다 redeemOne()&lt;br&gt;(무작위 간격)" vertex="1">
+          <mxGeometry height="60" width="150" x="495" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="T1" parent="1" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;whiteSpace=wrap;html=1;" value="화면 상태 읽기&lt;br&gt;&#39;확인&#39; 버튼 클릭&lt;br&gt;(2페이지 참고)" vertex="1">
+          <mxGeometry height="60" width="150" x="935" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="B8" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="결과 저장&lt;br&gt;성공 / 실패 사유" vertex="1">
+          <mxGeometry height="60" width="150" x="495" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="C4" parent="1" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" value="팝업: 진행·결과 표시&lt;br&gt;일시정지 · 재개 · 중지" vertex="1">
+          <mxGeometry height="60" width="150" x="275" y="780" as="geometry" />
+        </mxCell>
+        <mxCell id="DB" parent="1" style="shape=cylinder3;boundedLbl=1;size=8;direction=south;fillColor=#f5f5f5;strokeColor=#666666;whiteSpace=wrap;html=1;" value="&lt;b&gt;chrome.storage.local&lt;/b&gt;  rewards · job · settings   (쓰기는 background만, 팝업·카드는 읽고 감시)" vertex="1">
+          <mxGeometry height="50" width="1100" x="20" y="890" as="geometry" />
+        </mxCell>
+        <mxCell id="NT" parent="1" style="shape=note;size=14;align=left;spacingLeft=8;fillColor=#f8cecc;strokeColor=#b85450;whiteSpace=wrap;html=1;" value="&lt;b&gt;일시정지되는 경우&lt;/b&gt;&lt;br&gt;• 플랫폼·Battle.net 로그인 필요&lt;br&gt;• 작업 탭이 닫히거나 연결 끊김&lt;br&gt;• 결과 확인 불가 3번 연속&lt;br&gt;• 서비스 워커가 다시 켜짐&lt;br&gt;• CAPTCHA·봇 탐지 (우회하지 않음)&lt;br&gt;&lt;br&gt;사용자가 해결한 뒤 팝업에서 재개" vertex="1">
+          <mxGeometry height="170" width="170" x="935" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="U1" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;html=1;" target="C1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="C1" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="B1" value="rewards/load">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="B1" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="S1" value="source/list">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="S1" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=1;entryY=0.5;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="B2" value="보상 목록">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="B2" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=1;entryY=0.5;dashed=1;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="C2" value="저장소 감시">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="C2" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="B3" value="job/extractPending">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="B3" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;html=1;" target="B4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="B4" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.3;entryX=0;entryY=0.3;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="S2" value="source/extract">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="S2" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.7;entryX=1;entryY=0.7;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="B4" value="코드">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="B4" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;html=1;" target="B5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="B5" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=1;entryY=0.5;dashed=1;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="C3" value="저장소 감시">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="C3" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=0.5;entryY=0;html=1;" target="U3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="130" y="510" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="U3" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;html=1;" target="N1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="N1" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="B6" value="job/&lt;br&gt;redeemPending">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="B6" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;html=1;" target="B7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="B7" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.3;entryX=0;entryY=0.3;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="T1" value="탭 이동 · bnet/inspect · bnet/confirm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="T1" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.7;entryX=1;entryY=0.7;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="B7" value="화면 상태">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="B7" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;html=1;" target="B8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="B8" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=1;entryY=0.9;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="B7" value="다음 코드">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="670" y="810" />
+              <mxPoint x="670" y="734" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="B8" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=1;entryY=0.5;dashed=1;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="C4" value="저장소 감시">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="B8" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0;entryY=0.5;dashed=1;labelBackgroundColor=#ffffff;fontSize=9;html=1;" target="DB" value="쓰기">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="redeem" name="코드 등록 상세">
+    <mxGraphModel dx="1674" dy="2013" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="t" parent="1" style="text;fontSize=18;align=left;verticalAlign=middle;whiteSpace=wrap;html=1;" value="&lt;b&gt;redeemOne(): 코드 하나 등록하기&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="460" x="40" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="P1" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="key-claim?keyCode=&amp;lt;코드&amp;gt; 로 탭 이동" vertex="1">
+          <mxGeometry height="50" width="240" x="280" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="P2" parent="1" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;whiteSpace=wrap;html=1;" value="자동 리다이렉트&lt;br&gt;preload/&amp;lt;base64&amp;gt; (자동 POST)" vertex="1">
+          <mxGeometry height="50" width="200" x="300" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="P3" parent="1" style="rhombus;fillColor=#fff2cc;strokeColor=#d6b656;whiteSpace=wrap;html=1;" value="로그인 페이지?" vertex="1">
+          <mxGeometry height="80" width="160" x="320" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="X1" parent="1" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;whiteSpace=wrap;html=1;" value="작업 일시정지&lt;br&gt;(Battle.net 로그인 필요)" vertex="1">
+          <mxGeometry height="60" width="180" x="580" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="P4" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="bnet/inspect 로 화면 상태 읽기&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;0.5초마다, loading·unknown이면 다시&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="200" x="300" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="TO" parent="1" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;whiteSpace=wrap;html=1;" value="시간 초과 (RESULT_TIMEOUT)&lt;br&gt;unknown 실패&lt;br&gt;3번 연속이면 일시정지" vertex="1">
+          <mxGeometry height="60" width="180" x="580" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="P5" parent="1" style="rhombus;fillColor=#fff2cc;strokeColor=#d6b656;whiteSpace=wrap;html=1;" value="화면 상태" vertex="1">
+          <mxGeometry height="80" width="160" x="320" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="E" parent="1" style="rounded=1;fillColor=#f8cecc;strokeColor=#b85450;whiteSpace=wrap;html=1;" value="&lt;b&gt;실패&lt;/b&gt; (key-lookup 결과·오류 배너)&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;already_used · already_owned ·&lt;br&gt;expired · not_redeemable&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="220" x="20" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="S" parent="1" style="rounded=1;fillColor=#d5e8d4;strokeColor=#82b366;whiteSpace=wrap;html=1;" value="&lt;b&gt;성공&lt;/b&gt;&lt;br&gt;Code successfully redeemed!" vertex="1">
+          <mxGeometry height="60" width="180" x="580" y="420" as="geometry" />
+        </mxCell>
+        <mxCell id="C" parent="1" style="rounded=1;fillColor=#ffe6cc;strokeColor=#d79b00;whiteSpace=wrap;html=1;" value="confirm-key-claim 확인 페이지&lt;br&gt;&#39;확인&#39; 버튼 클릭 (bnet/confirm)&lt;br&gt;&lt;font style=&quot;font-size:10px&quot;&gt;주소당 1번, 최대 3번&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="200" x="300" y="530" as="geometry" />
+        </mxCell>
+        <mxCell id="F" parent="1" style="rounded=1;fillColor=#dae8fc;strokeColor=#6c8ebf;whiteSpace=wrap;html=1;" value="결과 저장 (patchReward)&lt;br&gt;무작위 간격 뒤 다음 코드" vertex="1">
+          <mxGeometry height="60" width="200" x="300" y="640" as="geometry" />
+        </mxCell>
+        <mxCell id="f1" edge="1" parent="1" source="P1" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;html=1;" target="P2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f2" edge="1" parent="1" source="P2" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;html=1;" target="P3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f3" edge="1" parent="1" source="P3" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;html=1;" target="X1" value="예">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f4" edge="1" parent="1" source="P3" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;html=1;" target="P4" value="아니오">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f5" edge="1" parent="1" source="P4" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;dashed=1;labelBackgroundColor=#ffffff;html=1;" target="TO" value="시간 초과">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f6" edge="1" parent="1" source="P4" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;html=1;" target="P5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f7" edge="1" parent="1" source="P5" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=1;entryY=0.5;labelBackgroundColor=#ffffff;jumpStyle=arc;html=1;" target="E" value="error">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f8" edge="1" parent="1" source="P5" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;html=1;" target="S" value="success">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f9" edge="1" parent="1" source="P5" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0.5;entryY=0;labelBackgroundColor=#ffffff;html=1;" target="C" value="confirm">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f10" edge="1" parent="1" source="C" style="edgeStyle=orthogonalEdgeStyle;exitX=0;exitY=0.5;entryX=0;entryY=0.5;labelBackgroundColor=#ffffff;html=1;" target="P4" value="다시 읽기">
+          <mxGeometry relative="1" x="0.45" as="geometry">
+            <Array as="points">
+              <mxPoint x="270" y="560" />
+              <mxPoint x="270" y="340" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="f11" edge="1" parent="1" source="E" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=0;entryY=0.5;html=1;" target="F">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f12" edge="1" parent="1" source="S" style="edgeStyle=orthogonalEdgeStyle;exitX=0.5;exitY=1;entryX=1;entryY=0.3;html=1;" target="F">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="f13" edge="1" parent="1" source="TO" style="edgeStyle=orthogonalEdgeStyle;exitX=1;exitY=0.5;entryX=1;entryY=0.7;dashed=1;html=1;" target="F">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="790" y="340" />
+              <mxPoint x="790" y="682" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
