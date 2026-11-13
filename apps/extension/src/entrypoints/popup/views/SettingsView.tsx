@@ -2,6 +2,7 @@ import type { ComponentChildren } from 'preact';
 import { useId } from 'preact/hooks';
 import { i18n } from '#i18n';
 import { sendToBackground } from '@/lib/messages';
+import { siteUrl } from '@/lib/site';
 import type { Settings } from '@/lib/types';
 import { usePopup } from '../context';
 import { CodeChip, Shell, Switch } from '../ui';
@@ -31,6 +32,10 @@ export function SettingsView() {
         </section>
 
         <div className="mt-auto flex justify-center gap-3 pt-6 text-[12px] text-faint">
+          <a className="hover:text-sub hover:underline" href={siteUrl()} target="_blank" rel="noopener noreferrer">
+            {i18n.t('settings.site')}
+          </a>
+          <span aria-hidden>·</span>
           <button className="hover:text-sub hover:underline" onClick={() => openPage('/privacy.html')}>
             {i18n.t('settings.privacy')}
           </button>

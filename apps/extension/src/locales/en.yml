@@ -10,6 +10,7 @@ extDescription: Collects the drop reward codes you earn watching SOOP and CHZZK 
 common:
   back: Back
   settings: Settings
+  openSite: Open website
   selectAll: Select all
   selected: '{count} selected'
   delete: Delete
@@ -137,6 +138,7 @@ reason:
 settings:
   maskCodes: Hide codes
   maskCodesDescription: Hides the middle of codes in lists. The copy button always copies the full code.
+  site: Website
   privacy: Privacy Policy
   terms: Terms of Service
 

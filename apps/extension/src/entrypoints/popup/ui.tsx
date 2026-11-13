@@ -4,6 +4,7 @@ import { i18n } from '#i18n';
 import type { RewardEntry, SourceId } from '@/lib/types';
 import { expiryDays, fmtDate } from '@/lib/expiry';
 import { sourceMetas } from '@/lib/sources/hosts';
+import { siteUrl } from '@/lib/site';
 import * as UI from '@dropskeeper/popup-ui';
 import { usePopup } from './context';
 
@@ -29,6 +30,7 @@ export function Shell({
       settingsLabel={i18n.t('common.settings')}
       onSettings={openSettings}
       back={title ? { title, label: i18n.t('common.back'), onClick: closeSettings } : undefined}
+      home={{ href: siteUrl(), label: i18n.t('common.openSite') }}
       footer={footer}
     >
       {children}

@@ -8,6 +8,7 @@ extDescription: 방송을 보며 받은 SOOP·CHZZK 드롭스 보상 코드를 �
 common:
   back: 뒤로
   settings: 설정
+  openSite: 사이트 열기
   selectAll: 전체 선택
   selected: '{count}개 선택'
   delete: 삭제
@@ -130,6 +131,7 @@ reason:
 settings:
   maskCodes: 코드 가리기
   maskCodesDescription: 목록에 보이는 코드의 가운데를 가려요. 복사 버튼은 설정과 상관없이 전체 코드를 복사해요.
+  site: 소개 사이트
   privacy: 개인정보처리방침
   terms: 서비스 이용약관
 

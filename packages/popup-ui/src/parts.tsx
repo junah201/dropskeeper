@@ -29,11 +29,19 @@ export interface ShellProps {
   onSettings?: () => void;
   /** 주면 로고 대신 뒤로 가기와 제목을 보여 준다 (설정 화면) */
   back?: { title: string; label: string; onClick: () => void };
+  /** 주면 로고와 이름을 새 탭으로 여는 링크로 감싼다 (사이트 데모에서는 비워 둔다) */
+  home?: { href: string; label: string };
   children: ComponentChildren;
   footer?: ComponentChildren;
 }
 
-export function Shell({ step, stepLabels, logo, settingsLabel, onSettings, back, children, footer }: ShellProps) {
+export function Shell({ step, stepLabels, logo, settingsLabel, onSettings, back, home, children, footer }: ShellProps) {
+  const brand = (
+    <>
+      <img src={logo} alt="" width={24} height={24} className="h-6 w-6" />
+      <span className="text-[14px] font-semibold">DropsKeeper</span>
+    </>
+  );
   const steps = [
     { id: 'collect', label: stepLabels.collect },
     { id: 'redeem', label: stepLabels.redeem },
@@ -50,10 +58,20 @@ export function Shell({ step, stepLabels, logo, settingsLabel, onSettings, back,
           </div>
         ) : (
           <>
-            <div className="flex items-center gap-2">
-              <img src={logo} alt="" width={24} height={24} className="h-6 w-6" />
-              <span className="text-[14px] font-semibold">DropsKeeper</span>
-            </div>
+            {home ? (
+              <a
+                href={home.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={home.label}
+                title={home.label}
+                className="-ml-1 flex items-center gap-2 rounded-lg px-1 py-0.5 transition-opacity hover:opacity-75"
+              >
+                {brand}
+              </a>
+            ) : (
+              <div className="flex items-center gap-2">{brand}</div>
+            )}
             <div className="-mr-2 flex items-center gap-2">
               <ol className="flex items-center gap-1 font-mono text-[12px]">
                 {steps.map((s, i) => {
